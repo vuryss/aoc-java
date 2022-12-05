@@ -41,7 +41,7 @@ public class Game {
             if (testResult.equals(testSet.getValue())) {
                 System.out.println("success!");
             } else {
-                System.out.println("error!");
+                System.out.printf("error! Expected: %s | Result: %s\n", testSet.getValue(), testResult);
             }
         }
 
