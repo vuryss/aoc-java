@@ -17,7 +17,6 @@ public class InputResolver {
 
     @Cacheable("userInput")
     public String downloadForEventDay(int eventYear, int eventDay) {
-        System.out.println("Session token: " + sessionToken);
         var sessionCookie = new HttpCookie("session", sessionToken);
         sessionCookie.setPath("/");
         sessionCookie.setVersion(0);
