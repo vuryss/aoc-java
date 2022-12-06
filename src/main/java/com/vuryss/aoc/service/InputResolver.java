@@ -1,5 +1,6 @@
 package com.vuryss.aoc.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +12,13 @@ import java.time.Duration;
 
 @Service
 public class InputResolver {
+    @Value("${app.sessionToken}")
+    String sessionToken;
+
     @Cacheable("userInput")
     public String downloadForEventDay(int eventYear, int eventDay) {
-        var sessionCookie = new HttpCookie("session", "fill-in");
+        System.out.println("Session token: " + sessionToken);
+        var sessionCookie = new HttpCookie("session", sessionToken);
         sessionCookie.setPath("/");
         sessionCookie.setVersion(0);
 
