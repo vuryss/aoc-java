@@ -89,7 +89,7 @@ public class Day7 implements DayInterface {
         var root = constructFilesystem(input);
         var neededSpace = 30000000 - (70000000 - root.getSize());
         var dirs = getAllDirectories(root);
-        var sorted = new TreeMap<Integer, Dir>();
+        var sorted = new TreeMap<Integer, Entity>();
 
         for (var dir: dirs) {
             sorted.put(dir.getSize(), dir);
@@ -104,9 +104,9 @@ public class Day7 implements DayInterface {
         return "-error-";
     }
 
-    private Dir constructFilesystem(String input) {
+    private Entity constructFilesystem(String input) {
         var lines = input.split("\n");
-        var root = new Dir("/");
+        var root = new Entity(EntityType.DIRECTORY, "/");
         var currentDirectory = root;
 
         for (var line: lines) {
@@ -121,7 +121,7 @@ public class Day7 implements DayInterface {
                     var existingDir = currentDirectory.getSubdirectory(directoryName);
 
                     if (existingDir == null) {
-                        var newDirectory = new Dir(directoryName);
+                        var newDirectory = new Entity(EntityType.DIRECTORY, directoryName);
                         currentDirectory.add(newDirectory);
                         currentDirectory = newDirectory;
                     } else {
@@ -136,7 +136,7 @@ public class Day7 implements DayInterface {
                 var existingDir = currentDirectory.getSubdirectory(line);
 
                 if (existingDir == null) {
-                    var newDirectory = new Dir(line);
+                    var newDirectory = new Entity(EntityType.DIRECTORY, line);
                     currentDirectory.add(newDirectory);
                 }
             } else {
@@ -144,7 +144,7 @@ public class Day7 implements DayInterface {
                 var existingFile = currentDirectory.getFile(parts[1]);
 
                 if (existingFile == null) {
-                    var newFile = new File(parts[1], Integer.parseInt(parts[0]));
+                    var newFile = new Entity(EntityType.FILE, parts[1], Integer.parseInt(parts[0]));
                     currentDirectory.add(newFile);
                 }
             }
@@ -153,14 +153,14 @@ public class Day7 implements DayInterface {
         return root;
     }
 
-    private Set<Dir> getAllDirectories(Dir dir) {
-        var set = new HashSet<Dir>();
+    private Set<Entity> getAllDirectories(Entity dir) {
+        var set = new HashSet<Entity>();
 
         set.add(dir);
 
         for (var entity: dir.contents) {
-            if (entity instanceof Dir) {
-                set.addAll(getAllDirectories((Dir) entity));
+            if (entity.type.equals(EntityType.DIRECTORY)) {
+                set.addAll(getAllDirectories(entity));
             }
         }
 
@@ -168,34 +168,43 @@ public class Day7 implements DayInterface {
     }
 }
 
-interface Entity {
-    void setParent(Dir parent);
-    int getSize();
+enum EntityType {
+    DIRECTORY,
+    FILE,
 }
 
-class Dir implements Entity {
+class Entity {
+    public EntityType type;
     public String name;
-    public Dir parent = null;
+    public int size;
+    public Entity parent = null;
     public List<Entity> contents = new ArrayList<>();
 
-    public Dir(String name) {
+    public Entity(EntityType type, String name) {
+        this.type = type;
         this.name = name;
     }
 
-    public Dir getSubdirectory(String name) {
+    public Entity(EntityType type, String name, int size) {
+        this.type = type;
+        this.name = name;
+        this.size = size;
+    }
+
+    public Entity getSubdirectory(String name) {
         for (var entity: contents) {
-            if (entity instanceof Dir && ((Dir) entity).name.equals(name)) {
-                return (Dir) entity;
+            if (entity.type.equals(EntityType.DIRECTORY) && entity.name.equals(name)) {
+                return entity;
             }
         }
 
         return null;
     }
 
-    public File getFile(String name) {
+    public Entity getFile(String name) {
         for (var entity: contents) {
-            if (entity instanceof File && ((File) entity).name.equals(name)) {
-                return (File) entity;
+            if (entity.type.equals(EntityType.FILE) && entity.name.equals(name)) {
+                return entity;
             }
         }
 
@@ -203,43 +212,21 @@ class Dir implements Entity {
     }
 
     public void add(Entity entity) {
-        entity.setParent(this);
+        entity.parent = this;
         contents.add(entity);
     }
 
-    @Override
-    public void setParent(Dir parent) {
-        this.parent = parent;
-    }
-
     public int getSize() {
+        if (type.equals(EntityType.FILE)) {
+            return this.size;
+        }
+
         int size = 0;
 
         for (var entity: contents) {
             size += entity.getSize();
         }
 
-        return size;
-    }
-}
-
-class File implements Entity {
-    public String name;
-    public Dir parent;
-    public int size;
-
-    public File(String name, int size) {
-        this.name = name;
-        this.size = size;
-    }
-
-    @Override
-    public void setParent(Dir parent) {
-        this.parent = parent;
-    }
-
-    @Override
-    public int getSize() {
         return size;
     }
 }
