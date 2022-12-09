@@ -1,10 +1,8 @@
 package com.vuryss.aoc.service;
 
 import com.vuryss.aoc.DayInterface;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -66,8 +64,23 @@ public class Game {
         var solution = getEventDaySolution(year, day);
         var input = inputResolver.downloadForEventDay(year, day);
 
-        System.out.printf("Solution for day %s part 1: %s\n", day, solution.part1Solution(input));
-        System.out.printf("Solution for day %s part 2: %s\n", day, solution.part2Solution(input));
+        System.out.println("\n\n");
+
+        long startTime, executionInMs;
+
+        startTime = System.nanoTime();
+        System.out.printf("\tSolution for day %s part 1: %s\n", day, solution.part1Solution(input));
+        executionInMs = (System.nanoTime() - startTime) / 1_000_000;
+        System.out.printf("\tExecution time day %s part 1: %s ms\n", day, executionInMs);
+
+        System.out.println("\n");
+
+        startTime = System.nanoTime();
+        System.out.printf("\tSolution for day %s part 2: %s\n", day, solution.part2Solution(input));
+        executionInMs = (System.nanoTime() - startTime) / 1_000_000;
+        System.out.printf("\tExecution time day %s part 2: %s ms\n", day, executionInMs);
+
+        System.out.println("\n");
     }
 
     private DayInterface getEventDaySolution(int year, int day) {
