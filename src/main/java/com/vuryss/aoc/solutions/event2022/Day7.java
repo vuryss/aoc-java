@@ -166,67 +166,67 @@ public class Day7 implements DayInterface {
 
         return set;
     }
-}
 
-enum EntityType {
-    DIRECTORY,
-    FILE,
-}
-
-class Entity {
-    public EntityType type;
-    public String name;
-    public int size;
-    public Entity parent = null;
-    public List<Entity> contents = new ArrayList<>();
-
-    public Entity(EntityType type, String name) {
-        this.type = type;
-        this.name = name;
+    enum EntityType {
+        DIRECTORY,
+        FILE,
     }
 
-    public Entity(EntityType type, String name, int size) {
-        this.type = type;
-        this.name = name;
-        this.size = size;
-    }
+    static class Entity {
+        public EntityType type;
+        public String name;
+        public int size;
+        public Entity parent = null;
+        public List<Entity> contents = new ArrayList<>();
 
-    public Entity getSubdirectory(String name) {
-        for (var entity: contents) {
-            if (entity.type.equals(EntityType.DIRECTORY) && entity.name.equals(name)) {
-                return entity;
+        public Entity(EntityType type, String name) {
+            this.type = type;
+            this.name = name;
+        }
+
+        public Entity(EntityType type, String name, int size) {
+            this.type = type;
+            this.name = name;
+            this.size = size;
+        }
+
+        public Entity getSubdirectory(String name) {
+            for (var entity: contents) {
+                if (entity.type.equals(EntityType.DIRECTORY) && entity.name.equals(name)) {
+                    return entity;
+                }
             }
+
+            return null;
         }
 
-        return null;
-    }
-
-    public Entity getFile(String name) {
-        for (var entity: contents) {
-            if (entity.type.equals(EntityType.FILE) && entity.name.equals(name)) {
-                return entity;
+        public Entity getFile(String name) {
+            for (var entity: contents) {
+                if (entity.type.equals(EntityType.FILE) && entity.name.equals(name)) {
+                    return entity;
+                }
             }
+
+            return null;
         }
 
-        return null;
-    }
-
-    public void add(Entity entity) {
-        entity.parent = this;
-        contents.add(entity);
-    }
-
-    public int getSize() {
-        if (type.equals(EntityType.FILE)) {
-            return this.size;
+        public void add(Entity entity) {
+            entity.parent = this;
+            contents.add(entity);
         }
 
-        int size = 0;
+        public int getSize() {
+            if (type.equals(EntityType.FILE)) {
+                return this.size;
+            }
 
-        for (var entity: contents) {
-            size += entity.getSize();
+            int size = 0;
+
+            for (var entity: contents) {
+                size += entity.getSize();
+            }
+
+            return size;
         }
-
-        return size;
     }
 }
