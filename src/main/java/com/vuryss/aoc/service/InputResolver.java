@@ -25,14 +25,15 @@ public class InputResolver {
         cookieManager.getCookieStore().add(URI.create("https://adventofcode.com"), sessionCookie);
 
         var httpClient = HttpClient.newBuilder()
-                .cookieHandler(cookieManager)
-                .connectTimeout(Duration.ofSeconds(10))
-                .build();
+            .cookieHandler(cookieManager)
+            .connectTimeout(Duration.ofSeconds(10))
+            .build();
 
         var request = HttpRequest.newBuilder()
-                .uri(URI.create(String.format("https://adventofcode.com/%s/day/%s/input", eventYear, eventDay)))
-                .GET()
-                .build();
+            .uri(URI.create(String.format("https://adventofcode.com/%s/day/%s/input", eventYear, eventDay)))
+            .header("User-Agent", "github.com/vuryss/aoc-java by vuryss@gmail.com")
+            .GET()
+            .build();
 
         HttpResponse<String> response;
 
