@@ -126,12 +126,13 @@ public class Day11 implements DayInterface {
                 for (var item: monkey.items) {
                     monkey.inspectedItems++;
 
-                    var operationParts = monkey.operation.split(" ");
-                    var operationTarget = operationParts[1].equals("old") ? item : Integer.parseInt(operationParts[1]);
+                    var operationParameter = monkey.operationParameter.equals("old")
+                        ? item
+                        : Integer.parseInt(monkey.operationParameter);
 
-                    switch (operationParts[0]) {
-                        case "+" -> item = item + operationTarget;
-                        case "*" -> item = item * operationTarget;
+                    switch (monkey.operation) {
+                        case '+' -> item = item + operationParameter;
+                        case '*' -> item = item * operationParameter;
                     }
 
                     if (reliefWorryLevel) {
@@ -161,7 +162,8 @@ public class Day11 implements DayInterface {
 
     static class Monkey {
         public List<Long> items;
-        public String operation;
+        public char operation;
+        public String operationParameter;
         public int divisible;
         public int trueTarget;
         public int falseTarget;
@@ -169,7 +171,8 @@ public class Day11 implements DayInterface {
 
         public Monkey(List<Long> items, String operation, int divisible, int trueTarget, int falseTarget) {
             this.items = items;
-            this.operation = operation;
+            this.operation = operation.charAt(0);
+            this.operationParameter = operation.substring(2);
             this.divisible = divisible;
             this.trueTarget = trueTarget;
             this.falseTarget = falseTarget;
