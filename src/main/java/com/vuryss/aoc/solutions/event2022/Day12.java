@@ -49,14 +49,13 @@ public class Day12 implements DayInterface {
     private String findShortestPath(String input, boolean fromPredefinedStartPosition) {
         var lines = input.split("\n");
         char[][] grid = new char[lines.length][lines[0].length()];
-        int[][] gridMinSteps = new int[grid.length][grid[0].length];
+        var visited = new HashSet<Point>();
 
         Point startPosition = null, targetPosition = null;
 
         for (var rowId = 0; rowId < lines.length; rowId++) {
             for (var columnId = 0; columnId < lines[0].length(); columnId++) {
                 grid[rowId][columnId] = lines[rowId].charAt(columnId);
-                gridMinSteps[rowId][columnId] = Integer.MAX_VALUE;
 
                 if (grid[rowId][columnId] == 'S') {
                     startPosition = new Point(columnId, rowId);
@@ -71,10 +70,15 @@ public class Day12 implements DayInterface {
         }
 
         var queue = new PriorityQueue<PathState>(Comparator.comparingInt(a -> a.steps));
-        queue.add(new PathState(targetPosition, 0, new HashSet<>()));
+        queue.add(new PathState(targetPosition, 0));
 
         while (!queue.isEmpty()) {
             var state = queue.poll();
+
+            if (visited.contains(state.position)) {
+                continue;
+            }
+
             var completed = fromPredefinedStartPosition
                 ? state.position.equals(startPosition)
                 : grid[state.position.y][state.position.x] == 'a';
@@ -83,6 +87,8 @@ public class Day12 implements DayInterface {
                 return String.valueOf(state.steps);
             }
 
+            visited.add(state.position);
+
             for (var delta: deltas) {
                 var nextPosition = new Point(state.position.x + delta.x, state.position.y + delta.y);
 
@@ -90,24 +96,18 @@ public class Day12 implements DayInterface {
                     || nextPosition.x >= lines[0].length()
                     || nextPosition.y < 0
                     || nextPosition.y >= lines.length
-                    || state.previousPositions.contains(nextPosition)
+                    || visited.contains(nextPosition)
                     || grid[nextPosition.y][nextPosition.x] < grid[state.position.y][state.position.x] - 1
-                    || gridMinSteps[nextPosition.y][nextPosition.x] <= state.steps + 1
                 ) {
                     continue;
                 }
 
-                var newState = new PathState(nextPosition, state.steps + 1, new HashSet<>(state.previousPositions));
-                newState.previousPositions.add(state.position);
-
-                gridMinSteps[nextPosition.y][nextPosition.x] = newState.steps;
-
-                queue.add(newState);
+                queue.add(new PathState(nextPosition, state.steps + 1));
             }
         }
 
         return "";
     }
 
-    record PathState(Point position, int steps, Set<Point> previousPositions) {}
+    record PathState(Point position, int steps) {}
 }
