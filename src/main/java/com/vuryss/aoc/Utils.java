@@ -1,7 +1,9 @@
 package com.vuryss.aoc;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 public class Utils {
     public static List<Integer> toIntList(String[] strings) {
@@ -19,6 +21,16 @@ public class Utils {
 
         for (var str: strings) {
             list.add(Long.parseLong(str));
+        }
+
+        return list;
+    }
+
+    public static Queue<Character> toCharacterQueue(String input) {
+        var list = new LinkedList<Character>();
+
+        for (var c: input.toCharArray()) {
+            list.add(c);
         }
 
         return list;
