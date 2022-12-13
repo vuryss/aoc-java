@@ -12,12 +12,12 @@ public class Day12 implements DayInterface {
     public Map<String, String> part1Tests() {
         return Map.of(
         """
-            Sabqponm
-            abcryxxl
-            accszExk
-            acctuvwj
-            abdefghi
-            """,
+        Sabqponm
+        abcryxxl
+        accszExk
+        acctuvwj
+        abdefghi
+        """,
         "31"
         );
     }
