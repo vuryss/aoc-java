@@ -123,14 +123,10 @@ public class Day13 implements DayInterface {
 
         var list = new Item(new ArrayList<>());
 
-        while (!characters.isEmpty()) {
+        while (!characters.isEmpty() && !characters.peek().equals(']')) {
             if (characters.peek().equals('[')) {
                 list.list.add(parseList(characters));
                 continue;
-            }
-
-            if (characters.peek().equals(']')) {
-                break;
             }
 
             if (characters.peek().equals(',')) {
@@ -171,20 +167,20 @@ public class Day13 implements DayInterface {
 
         public int isInRightOrderComparedTo(Item item) {
             if (this.type == ItemType.LIST && item.type == ItemType.LIST) {
-                var index = 0;
+                int index = 0, thisListSize = this.list.size(), itemListSize = item.list.size();
 
                 while (true) {
-                    if (this.list.size() > index && item.list.size() > index) {
+                    if (thisListSize > index && itemListSize > index) {
                         var result = this.list.get(index).isInRightOrderComparedTo(item.list.get(index));
 
                         if (result != 0) {
                             return result;
                         }
-                    } else if (this.list.size() == item.list.size()) {
+                    } else if (thisListSize == itemListSize) {
                         return 0;
-                    } else if (this.list.size() == index) {
+                    } else if (thisListSize == index) {
                         return 1;
-                    } else if (item.list.size() == index) {
+                    } else if (itemListSize == index) {
                         return -1;
                     }
 
