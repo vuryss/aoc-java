@@ -68,41 +68,29 @@ public class Day14 implements DayInterface {
     public String part2Solution(String input) {
         var grid = createCave(input);
         var maxY = grid.stream().mapToInt(a -> a.y).max().getAsInt() + 1;
-        var totalSands = 0;
+        var startPoint = new Point(500, 0);
+        var visited = new HashSet<Point>();
+        var queue = new LinkedList<Point>();
+        queue.add(startPoint);
 
-        outer:
-        while (true) {
-            var sandPoint = new Point(500, 0);
-            var moved = false;
+        while (!queue.isEmpty()) {
+            var point = queue.poll();
 
-            do {
-                moved = false;
+            if (visited.contains(point)) {
+                continue;
+            }
 
-                for (var delta : deltas) {
-                    if (!grid.contains(new Point(sandPoint.x + delta.x, sandPoint.y + delta.y))) {
-                        sandPoint.x += delta.x;
-                        sandPoint.y += delta.y;
-                        moved = true;
-                        break;
-                    }
+            visited.add(point);
+
+            for (var delta : deltas) {
+                var nextPoint = new Point(point.x + delta.x, point.y + delta.y);
+                if (!grid.contains(nextPoint) && !visited.contains(nextPoint) && nextPoint.y <= maxY) {
+                    queue.add(nextPoint);
                 }
-
-                if (!moved && sandPoint.x == 500 && sandPoint.y == 0) {
-                    grid.add(sandPoint);
-                    totalSands++;
-                    break outer;
-                }
-
-                if (sandPoint.y == maxY) {
-                    break;
-                }
-            } while (moved);
-
-            grid.add(sandPoint);
-            totalSands++;
+            }
         }
 
-        return String.valueOf(totalSands);
+        return String.valueOf(visited.size());
     }
 
     private HashSet<Point> createCave(String input) {
