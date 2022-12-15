@@ -1,5 +1,6 @@
 package com.vuryss.aoc;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,5 +35,13 @@ public class Utils {
         }
 
         return list;
+    }
+
+    public static int getNumberFromString(String s) {
+        return Integer.parseInt(s.replaceAll("[^\\d-]+", ""));
+    }
+
+    public static int manhattan(Point a, Point b) {
+        return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
     }
 }
