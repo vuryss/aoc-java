@@ -143,13 +143,5 @@ public class Day15 implements DayInterface {
         return "";
     }
 
-    public static class Sensor {
-        public Point position;
-        public int manhattan;
-
-        Sensor(Point position, int manhattan) {
-            this.position = position;
-            this.manhattan = manhattan;
-        }
-    }
+    record Sensor(Point position, int manhattan) {}
 }
