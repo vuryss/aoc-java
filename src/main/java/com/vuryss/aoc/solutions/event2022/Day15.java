@@ -2,10 +2,12 @@ package com.vuryss.aoc.solutions.event2022;
 
 import com.vuryss.aoc.DayInterface;
 import com.vuryss.aoc.Utils;
+import com.vuryss.aoc.util.RangeUtil;
 import org.apache.commons.lang3.Range;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class Day15 implements DayInterface {
     @Override
@@ -57,21 +59,17 @@ public class Day15 implements DayInterface {
     @Override
     public String part1Solution(String input) {
         var inputLines = input.split("\n");
-        var ranges = new LinkedList<Range<Integer>>();
+        List<Range<Integer>> ranges = new ArrayList<>();
         var targetY = inputLines.length > 15 ? 2000000 : 10;
         var beacons = new HashSet<Point>();
 
         for (var line: inputLines) {
             var parts = line.split(" ");
-            var sx = Utils.getNumberFromString(parts[2]);
-            var sy = Utils.getNumberFromString(parts[3]);
-            var bx = Utils.getNumberFromString(parts[8]);
-            var by = Utils.getNumberFromString(parts[9]);
-            var beaconPosition = new Point(bx, by);
+            var position = new Point(Utils.getNumberFromString(parts[2]), Utils.getNumberFromString(parts[3]));
+            var beacon = new Point(Utils.getNumberFromString(parts[8]), Utils.getNumberFromString(parts[9]));
+            var sensor = new Sensor(position, Utils.manhattan(position, beacon));
 
-            var sensor = new Sensor(new Point(sx, sy), beaconPosition);
-
-            beacons.add(beaconPosition);
+            beacons.add(beacon);
 
             var xDelta = sensor.manhattan - Math.abs(sensor.position.y - targetY);
 
@@ -80,42 +78,17 @@ public class Day15 implements DayInterface {
             }
         }
 
-        var change = true;
-
-        while (change) {
-            change = false;
-
-            outer:
-            for (var i = 0; i < ranges.size() - 1; i++) {
-                for (var j = i + 1; j < ranges.size(); j++) {
-                    var range1 = ranges.get(i);
-                    var range2 = ranges.get(j);
-                    if (range1.isOverlappedBy(range2)) {
-                        change = true;
-                        ranges.set(
-                            i,
-                            Range.between(
-                                Math.min(range1.getMinimum(), range2.getMinimum()),
-                                Math.max(range1.getMaximum(), range2.getMaximum())
-                            )
-                        );
-                        ranges.remove(j);
-                        break outer;
-                    }
-                }
-            }
-        }
+        RangeUtil.mergeOverlapping(ranges);
 
         var total = 0;
 
         for (var range: ranges) {
-            var matchBeacons = 0;
             for (var beacon: beacons) {
                 if (beacon.y == targetY && range.contains(beacon.x)) {
-                    matchBeacons++;
+                    total--;
                 }
             }
-            total += range.getMaximum() - range.getMinimum() + 1 - matchBeacons;
+            total += range.getMaximum() - range.getMinimum() + 1;
         }
 
         return String.valueOf(total);
@@ -129,50 +102,40 @@ public class Day15 implements DayInterface {
 
         for (var line: inputLines) {
             var parts = line.split(" ");
-            var sx = Utils.getNumberFromString(parts[2]);
-            var sy = Utils.getNumberFromString(parts[3]);
-            var bx = Utils.getNumberFromString(parts[8]);
-            var by = Utils.getNumberFromString(parts[9]);
+            var position = new Point(Utils.getNumberFromString(parts[2]), Utils.getNumberFromString(parts[3]));
+            var beacon = new Point(Utils.getNumberFromString(parts[8]), Utils.getNumberFromString(parts[9]));
 
-            sensors.add(new Sensor(new Point(sx, sy), new Point(bx, by)));
+            sensors.add(new Sensor(position, Utils.manhattan(position, beacon) + 1));
         }
 
         for (var sensor: sensors) {
-            for (
-                var x = sensor.position.x - sensor.manhattan - 1;
-                x <= sensor.position.x + sensor.manhattan + 1;
-                x++
-            ) {
+            for (var x = sensor.position.x - sensor.manhattan; x <= sensor.position.x + sensor.manhattan; x++) {
                 if (x < 0 || x > maxSize) {
                     continue;
                 }
 
                 var points = new Point[]{
-                    new Point(x, sensor.position.y - (sensor.manhattan + 1 - Math.abs(sensor.position.x - x))),
-                    new Point(x, sensor.position.y + (sensor.manhattan + 1 - Math.abs(sensor.position.x - x)))
+                    new Point(x, sensor.position.y - (sensor.manhattan - Math.abs(sensor.position.x - x))),
+                    new Point(x, sensor.position.y + (sensor.manhattan - Math.abs(sensor.position.x - x)))
                 };
 
+                outer:
                 for (var point: points) {
                     if (point.y < 0 || point.y > maxSize) {
                         continue;
                     }
-
-                    var match = true;
 
                     for (var otherSensor: sensors) {
                         if (sensor.equals(otherSensor)) {
                             continue;
                         }
 
-                        if (Utils.manhattan(point, otherSensor.position) <= otherSensor.manhattan) {
-                            match = false;
-                            break;
+                        if (Utils.manhattan(point, otherSensor.position) < otherSensor.manhattan) {
+                            continue outer;
                         }
                     }
 
-                    if (match) {
-                        return String.valueOf((long) point.x * 4000000L + (long) point.y);
-                    }
+                    return String.valueOf((long) point.x * 4000000L + (long) point.y);
                 }
             }
         }
@@ -182,13 +145,11 @@ public class Day15 implements DayInterface {
 
     public static class Sensor {
         public Point position;
-        public Point beaconPosition;
         public int manhattan;
 
-        Sensor(Point position, Point closestBeaconPosition) {
+        Sensor(Point position, int manhattan) {
             this.position = position;
-            this.beaconPosition = closestBeaconPosition;
-            this.manhattan = Math.abs(position.x - beaconPosition.x) + Math.abs(position.y - beaconPosition.y);
+            this.manhattan = manhattan;
         }
     }
 }
