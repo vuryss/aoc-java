@@ -70,7 +70,7 @@ public class Day16 implements DayInterface {
 
     private String solveWithPlayers(List<SinglePath> players) {
         var maxReleasedPressure = 0;
-        var bestPerOpened = new HashMap<Integer, Double>();
+        var bestPerOpened = new HashMap<Integer, Integer>();
         var queue = new LinkedList<MultiPath>();
         queue.add(new MultiPath(players, new HashSet<>()));
 
@@ -109,11 +109,11 @@ public class Day16 implements DayInterface {
                     var newMultiPath = new MultiPath(newSinglePaths, newOpened);
 
                     if (
-                        !bestPerOpened.containsKey(newMultiPath.hash())
-                        || bestPerOpened.get(newMultiPath.hash()) < newMultiPath.totalPressureScore()
+                        !bestPerOpened.containsKey(newMultiPath.hash)
+                        || bestPerOpened.get(newMultiPath.hash) < newMultiPath.totalPressure()
                     ) {
                         queue.add(newMultiPath);
-                        bestPerOpened.put(newMultiPath.hash(), newMultiPath.totalPressureScore());
+                        bestPerOpened.put(newMultiPath.hash, newMultiPath.totalPressure());
                     }
                 }
 
@@ -123,13 +123,7 @@ public class Day16 implements DayInterface {
             }
 
             if (!hasChange) {
-                var totalReleasedPressure = 0;
-
-                for (var singlePath: multiPath.paths) {
-                    totalReleasedPressure += singlePath.totalPressure();
-                }
-
-                maxReleasedPressure = Math.max(maxReleasedPressure, totalReleasedPressure);
+                maxReleasedPressure = Math.max(maxReleasedPressure, multiPath.totalPressure());
             }
         }
 
@@ -194,25 +188,17 @@ public class Day16 implements DayInterface {
         }
     }
 
-    record MultiPath(List<SinglePath> paths, HashSet<Valve> openedValves) {
-        public Integer hash() {
-            int h = 0;
-
-            for (var path: paths) {
-                h += path.valve.id.hashCode();
-            }
-
-            return h + this.openedValves.hashCode();
+    record MultiPath(List<SinglePath> paths, HashSet<Valve> openedValves, int hash) {
+        MultiPath(List<SinglePath> paths, HashSet<Valve> openedValves) {
+            this(
+                paths,
+                openedValves,
+                openedValves.hashCode() + paths.stream().mapToInt(p -> p.valve.id.hashCode()).sum()
+            );
         }
 
-        public double totalPressureScore() {
-            int a = 0;
-
-            for (var path: paths) {
-                a += path.totalPressure();
-            }
-
-            return a;
+        public int totalPressure() {
+            return paths.stream().mapToInt(SinglePath::totalPressure).sum();
         }
     }
 
