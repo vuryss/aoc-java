@@ -8,6 +8,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import java.util.*;
 
 public class Day16 implements DayInterface {
+    static int minutes;
     @Override
     public Map<String, String> part1Tests() {
         return Map.of(
@@ -49,62 +50,29 @@ public class Day16 implements DayInterface {
     @Override
     public String part1Solution(String input) {
         var valves = constructValves(input);
+        Day16.minutes = 30;
 
-        var maxReleasedPressure = 0;
-        var queue = new LinkedList<PlayerPath>();
-        queue.add(new PlayerPath(valves.get("AA"), 0, 0, 0, new HashSet<>()));
-
-        while (!queue.isEmpty()) {
-            var node = queue.poll();
-            var hasNext = false;
-
-            for (var pair: node.valve.distanceToValves.entrySet()) {
-                var resultingMinutes = pair.getValue() + node.minutes + 1;
-                var nextValve = pair.getKey();
-
-                if (resultingMinutes > 30 || node.openedValves.contains(pair.getKey()) || nextValve.rate == 0) {
-                    continue;
-                }
-
-                hasNext = true;
-
-                var newOpened = new HashSet<>(node.openedValves);
-                newOpened.add(pair.getKey());
-
-                queue.add(new PlayerPath(
-                    pair.getKey(),
-                    resultingMinutes,
-                    node.rate + nextValve.rate,
-                    node.releasedPressure + ((resultingMinutes - node.minutes) * node.rate),
-                    newOpened
-                ));
-            }
-
-            if (!hasNext) {
-                maxReleasedPressure = Math.max(
-                    maxReleasedPressure,
-                    node.releasedPressure + ((30 - node.minutes) * node.rate)
-                );
-            }
-        }
-
-        return String.valueOf(maxReleasedPressure);
+        return solveWithPlayers(List.of(new SinglePath(valves.get("AA"), 0, 0 ,0)));
     }
 
     @Override
     public String part2Solution(String input) {
         var valves = constructValves(input);
+        Day16.minutes = 26;
 
-        var maxReleasedPressure = 0;
-        var bestPerOpened = new HashMap<Integer, Double>();
-        var queue = new LinkedList<MultiPath>();
-        queue.add(new MultiPath(
+        return solveWithPlayers(
             List.of(
                 new SinglePath(valves.get("AA"), 0, 0 ,0),
                 new SinglePath(valves.get("AA"), 0, 0 ,0)
-            ),
-            new HashSet<>()
-        ));
+            )
+        );
+    }
+
+    private String solveWithPlayers(List<SinglePath> players) {
+        var maxReleasedPressure = 0;
+        var bestPerOpened = new HashMap<Integer, Double>();
+        var queue = new LinkedList<MultiPath>();
+        queue.add(new MultiPath(players, new HashSet<>()));
 
         while (!queue.isEmpty()) {
             var multiPath = queue.poll();
@@ -115,7 +83,11 @@ public class Day16 implements DayInterface {
                     var resultingMinutes = valveDistance.getValue() + singlePath.minutes + 1;
                     var nextValve = valveDistance.getKey();
 
-                    if (nextValve.rate == 0 || resultingMinutes > 25 || multiPath.openedValves.contains(nextValve)) {
+                    if (
+                        nextValve.rate == 0
+                        || resultingMinutes > Day16.minutes - 1
+                        || multiPath.openedValves.contains(nextValve)
+                    ) {
                         continue;
                     }
 
@@ -154,7 +126,7 @@ public class Day16 implements DayInterface {
                 var totalReleasedPressure = 0;
 
                 for (var singlePath: multiPath.paths) {
-                    totalReleasedPressure += singlePath.releasedPressure + (singlePath.rate * (26 - singlePath.minutes));
+                    totalReleasedPressure += singlePath.totalPressure();
                 }
 
                 maxReleasedPressure = Math.max(maxReleasedPressure, totalReleasedPressure);
@@ -216,9 +188,11 @@ public class Day16 implements DayInterface {
 
         return valves;
     }
-
-    record PlayerPath(Valve valve, int minutes, int rate, int releasedPressure, HashSet<Valve> openedValves) {}
-    record SinglePath(Valve valve, int minutes, int rate, int releasedPressure) {}
+    record SinglePath(Valve valve, int minutes, int rate, int releasedPressure) {
+        public int totalPressure() {
+            return releasedPressure + rate * (Day16.minutes - minutes);
+        }
+    }
 
     record MultiPath(List<SinglePath> paths, HashSet<Valve> openedValves) {
         public Integer hash() {
@@ -235,7 +209,7 @@ public class Day16 implements DayInterface {
             int a = 0;
 
             for (var path: paths) {
-                a += path.rate * (26 - path.minutes) + path.releasedPressure;
+                a += path.totalPressure();
             }
 
             return a;
