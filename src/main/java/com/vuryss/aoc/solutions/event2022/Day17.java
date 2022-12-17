@@ -103,15 +103,15 @@ public class Day17 implements DayInterface {
             }
         }
 
-        var rockCountAfterRepeatingWindowStarts = targetRockCount - (repeatingWindow.startRockNumber - 1);
-        var repeatingWindowCount = rockCountAfterRepeatingWindowStarts / repeatingWindow.size;
+        var rockCountFromStartOfRepeatingWindow = targetRockCount - (repeatingWindow.startRockNumber - 1);
+        var repeatingWindowCount = rockCountFromStartOfRepeatingWindow / repeatingWindow.size;
         var heightBeforeRepeatingStarts = recordedHeights.get(repeatingWindow.startRockNumber - 1);
         var maxRockHeight = heightBeforeRepeatingStarts + (repeatingWindowCount * repeatingWindow.heightIncrease);
-        var rockCountAfterLastRepeatingWindows = repeatingWindow.startRockNumber - 1 + (repeatingWindowCount * repeatingWindow.size);
+        var countedRocks = repeatingWindow.startRockNumber - 1 + (repeatingWindowCount * repeatingWindow.size);
 
         var recordedHeightDifferencesIndex = repeatingWindow.startRockNumber - 1;
 
-        while (++rockCountAfterLastRepeatingWindows <= targetRockCount) {
+        while (++countedRocks <= targetRockCount) {
             maxRockHeight += heightDifferences.get(recordedHeightDifferencesIndex++);
         }
 
