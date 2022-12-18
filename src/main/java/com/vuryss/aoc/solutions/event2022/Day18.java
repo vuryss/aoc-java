@@ -8,11 +8,11 @@ import java.util.*;
 public class Day18 implements DayInterface {
     static Point3D[] cubeSideDeltas = new Point3D[] {
         new Point3D(0, 0, 1),
-            new Point3D(0, 0, -1),
-            new Point3D(0, 1, 0),
-            new Point3D(0, -1, 0),
-            new Point3D(1, 0, 0),
-            new Point3D(-1, 0, 0),
+        new Point3D(0, 0, -1),
+        new Point3D(0, 1, 0),
+        new Point3D(0, -1, 0),
+        new Point3D(1, 0, 0),
+        new Point3D(-1, 0, 0),
     };
     @Override
     public Map<String, String> part1Tests() {
@@ -70,11 +70,7 @@ public class Day18 implements DayInterface {
 
         for (var cubeDefinition: cubeDefinitions) {
             var parts = cubeDefinition.split(",");
-            points.add(new Point3D(
-                Integer.parseInt(parts[0]),
-                Integer.parseInt(parts[1]),
-                Integer.parseInt(parts[2])
-            ));
+            points.add(new Point3D(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2])));
         }
 
         var exposedSides = 0;
