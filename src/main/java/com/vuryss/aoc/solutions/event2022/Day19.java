@@ -64,10 +64,8 @@ public class Day19 implements DayInterface {
         queue.add(new State(0, new Inventory(0, 0, 0, 0), new RobotsCount(1, 0, 0, 0)));
 
         var mem = new HashMap<RobotsCount, Integer>();
-        var iterations = 0L;
 
         while (!queue.isEmpty()) {
-            iterations++;
             var state = queue.poll();
 
             if (state.minutes == minutes) {
