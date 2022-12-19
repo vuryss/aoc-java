@@ -64,6 +64,7 @@ public class Day19 implements DayInterface {
         queue.add(new State(0, new Inventory(0, 0, 0, 0), new RobotsCount(1, 0, 0, 0)));
 
         var mem = new HashMap<RobotsCount, Integer>();
+        var bestGeodePerMinute = new HashMap<Integer, Integer>();
 
         while (!queue.isEmpty()) {
             var state = queue.poll();
@@ -118,6 +119,18 @@ public class Day19 implements DayInterface {
                 );
 
                 var newState = new State(state.minutes + neededMinutes, newInventory, newRobots);
+
+                if (bestGeodePerMinute.containsKey(newState.minutes)) {
+                    if (bestGeodePerMinute.get(newState.minutes) > newState.robots.geode) {
+                        continue;
+                    }
+
+                    if (bestGeodePerMinute.get(newState.minutes) < newState.robots.geode) {
+                        bestGeodePerMinute.put(newState.minutes, newState.robots.geode);
+                    }
+                } else {
+                    bestGeodePerMinute.put(newState.minutes, newState.robots.geode);
+                }
 
                 if (mem.containsKey(newState.robots)) {
                     if (mem.get(newState.robots) < newState.minutes) {
