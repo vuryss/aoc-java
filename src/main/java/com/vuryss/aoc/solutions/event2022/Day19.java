@@ -60,11 +60,10 @@ public class Day19 implements DayInterface {
 
     private int findMaxGeodeForBlueprint(Blueprint blueprint, int minutes) {
         var maxGeode = 0;
+        var bestMinutePerRobotDistribution = new HashMap<RobotsCount, Integer>();
+        var bestGeodePerMinute = new HashMap<Integer, Integer>();
         var queue = new PriorityQueue<State>((a, b) -> b.minutes - a.minutes);
         queue.add(new State(0, new Inventory(0, 0, 0, 0), new RobotsCount(1, 0, 0, 0)));
-
-        var mem = new HashMap<RobotsCount, Integer>();
-        var bestGeodePerMinute = new HashMap<Integer, Integer>();
 
         while (!queue.isEmpty()) {
             var state = queue.poll();
@@ -120,29 +119,20 @@ public class Day19 implements DayInterface {
 
                 var newState = new State(state.minutes + neededMinutes, newInventory, newRobots);
 
-                if (bestGeodePerMinute.containsKey(newState.minutes)) {
-                    if (bestGeodePerMinute.get(newState.minutes) > newState.robots.geode) {
-                        continue;
-                    }
-
-                    if (bestGeodePerMinute.get(newState.minutes) < newState.robots.geode) {
-                        bestGeodePerMinute.put(newState.minutes, newState.robots.geode);
-                    }
-                } else {
-                    bestGeodePerMinute.put(newState.minutes, newState.robots.geode);
+                if (
+                    (
+                        bestGeodePerMinute.containsKey(newState.minutes)
+                        && bestGeodePerMinute.get(newState.minutes) > newState.robots.geode
+                    ) || (
+                        bestMinutePerRobotDistribution.containsKey(newState.robots)
+                        && bestMinutePerRobotDistribution.get(newState.robots) < newState.minutes
+                    )
+                ) {
+                    continue;
                 }
 
-                if (mem.containsKey(newState.robots)) {
-                    if (mem.get(newState.robots) < newState.minutes) {
-                        continue;
-                    }
-
-                    if (mem.get(newState.robots) > newState.minutes) {
-                        mem.put(newState.robots, newState.minutes);
-                    }
-                } else {
-                    mem.put(newState.robots, newState.minutes);
-                }
+                bestGeodePerMinute.put(newState.minutes, newState.robots.geode);
+                bestMinutePerRobotDistribution.put(newState.robots, newState.minutes);
 
                 queue.add(newState);
             }
@@ -165,14 +155,10 @@ public class Day19 implements DayInterface {
             blueprints.add(new Blueprint(
                 inputNum[0],
                 Map.of(
-                    Type.ORE,
-                    new Cost(inputNum[1], 0, 0, 0),
-                    Type.CLAY,
-                    new Cost(inputNum[2], 0, 0, 0),
-                    Type.OBSIDIAN,
-                    new Cost(inputNum[3], inputNum[4], 0, 0),
-                    Type.GEODE,
-                    new Cost(inputNum[5], 0, inputNum[6], 0)
+                    Type.ORE, new Cost(inputNum[1], 0, 0, 0),
+                    Type.CLAY, new Cost(inputNum[2], 0, 0, 0),
+                    Type.OBSIDIAN, new Cost(inputNum[3], inputNum[4], 0, 0),
+                    Type.GEODE, new Cost(inputNum[5], 0, inputNum[6], 0)
                 )
             ));
         }
@@ -210,10 +196,6 @@ public class Day19 implements DayInterface {
             this.inventory = inventory;
             this.robots = robots;
         }
-        @Override
-        public int hashCode() {
-            return Objects.hash(minutes, inventory, robots);
-        }
     }
 
     static final class Cost {
@@ -227,21 +209,6 @@ public class Day19 implements DayInterface {
             this.clay = clay;
             this.obsidian = obsidian;
             this.geode = geode;
-        }
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == this) return true;
-            if (obj == null || obj.getClass() != this.getClass()) return false;
-            var that = (Cost) obj;
-            return this.ore == that.ore &&
-                this.clay == that.clay &&
-                this.obsidian == that.obsidian &&
-                this.geode == that.geode;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(ore, clay, obsidian, geode);
         }
     }
 
