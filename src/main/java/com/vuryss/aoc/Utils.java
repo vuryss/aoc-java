@@ -28,7 +28,7 @@ public class Utils {
         return list;
     }
 
-    public static Queue<Character> toCharacterQueue(String input) {
+    public static LinkedList<Character> toCharacterQueue(String input) {
         var list = new LinkedList<Character>();
 
         for (var c: input.toCharArray()) {
