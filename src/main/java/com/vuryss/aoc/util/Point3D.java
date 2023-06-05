@@ -1,6 +1,6 @@
 package com.vuryss.aoc.util;
 
-public class Point3D {
+public class Point3D implements Cloneable {
     public Integer x;
     public Integer y;
     public Integer z;
@@ -9,6 +9,10 @@ public class Point3D {
         this.x = x;
         this.y = y;
         this.z = z;
+    }
+
+    public Point3D add(Point3D delta) {
+        return new Point3D(x + delta.x, y + delta.y, z + delta.z);
     }
 
     @Override
@@ -29,5 +33,19 @@ public class Point3D {
         }
 
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "Point3D[x=" + x + ",y=" + y + ",z=" + z + "]";
+    }
+
+    @Override
+    public Point3D clone() {
+        try {
+            return (Point3D) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }
