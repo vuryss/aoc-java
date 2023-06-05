@@ -2,12 +2,14 @@ package com.vuryss.aoc.solutions.event2022;
 
 import com.vuryss.aoc.DayInterface;
 import com.vuryss.aoc.Utils;
+import com.vuryss.aoc.solutions.event2022.day22.Cube;
+import com.vuryss.aoc.solutions.event2022.day22.FlatBoard;
 import org.apache.commons.lang3.StringUtils;
 
 import java.awt.*;
 import java.util.*;
 
-@SuppressWarnings({"SuspiciousNameCombination", "DataFlowIssue"})
+@SuppressWarnings({"DataFlowIssue"})
 public class Day22 implements DayInterface {
     final byte TEST_SIZE = 4;
     final byte INPUT_SIZE = 50;
@@ -73,7 +75,7 @@ public class Day22 implements DayInterface {
     @Override
     public String part1Solution(String input) {
         var parts = input.split("\n\n");
-        var zoneMap = new ZoneMap();
+        var flatBoard = new FlatBoard();
         var lineIndex = 1;
 
         for (var line: parts[0].split("\n")) {
@@ -81,9 +83,9 @@ public class Day22 implements DayInterface {
 
             for (var c: line.toCharArray()) {
                 if (c == '.') {
-                    zoneMap.addPoint(new Point(columnIndex, lineIndex), false);
+                    flatBoard.addPoint(new Point(columnIndex, lineIndex), false);
                 } else if (c == '#') {
-                    zoneMap.addPoint(new Point(columnIndex, lineIndex), true);
+                    flatBoard.addPoint(new Point(columnIndex, lineIndex), true);
                 }
 
                 columnIndex++;
@@ -92,9 +94,11 @@ public class Day22 implements DayInterface {
             lineIndex++;
         }
 
-        var position = new Point(zoneMap.rowLeftmost.get(1), 1);
+        var position = new Point(flatBoard.rowLeftmost.get(1), 1);
         var facing = Direction.RIGHT;
         var moves = Utils.toCharacterQueue(parts[1].trim());
+
+        flatBoard.setPlayerPosition(position);
 
         while (!moves.isEmpty()) {
             var move = moves.poll().toString();
@@ -106,11 +110,12 @@ public class Day22 implements DayInterface {
             }
 
             if (StringUtils.isNumeric(move)) {
+                int steps = Integer.parseInt(move);
                 switch (facing) {
-                    case UP -> moveUp(Integer.parseInt(move), position, zoneMap);
-                    case DOWN -> moveDown(Integer.parseInt(move), position, zoneMap);
-                    case LEFT -> moveLeft(Integer.parseInt(move), position, zoneMap);
-                    case RIGHT -> moveRight(Integer.parseInt(move), position, zoneMap);
+                    case UP -> flatBoard.moveUp(steps);
+                    case DOWN -> flatBoard.moveDown(steps);
+                    case LEFT -> flatBoard.moveLeft(steps);
+                    case RIGHT -> flatBoard.moveRight(steps);
                 }
             } else if (move.equals("R")) {
                 facing = facing.turnRight();
@@ -372,278 +377,5 @@ public class Day22 implements DayInterface {
         var facingValue = Map.of(Direction.RIGHT, 0, Direction.DOWN, 1, Direction.LEFT, 2, Direction.UP, 3);
 
         return String.valueOf(1000 * (position.y + 1) + 4 * (position.x + 1) + facingValue.get(facing));
-    }
-
-    void moveUp(int steps, Point position, ZoneMap zoneMap) {
-        while (steps > 0) {
-            var newPosition = new Point(position.x, position.y - 1);
-
-            if (zoneMap.contains(newPosition)) {
-                if (zoneMap.isFreeTile(newPosition)) {
-                    position.y--;
-                } else {
-                    break;
-                }
-            } else {
-                newPosition = new Point(position.x, zoneMap.columnBottommost.get(position.x));
-
-                if (zoneMap.isFreeTile(newPosition)) {
-                    position.y = newPosition.y;
-                } else {
-                    break;
-                }
-            }
-
-            steps--;
-        }
-    }
-
-    void moveDown(int steps, Point position, ZoneMap zoneMap) {
-        while (steps > 0) {
-            var newPosition = new Point(position.x, position.y + 1);
-
-            if (zoneMap.contains(newPosition)) {
-                if (zoneMap.isFreeTile(newPosition)) {
-                    position.y++;
-                } else {
-                    break;
-                }
-            } else {
-                newPosition = new Point(position.x, zoneMap.columnTopmost.get(position.x));
-
-                if (zoneMap.isFreeTile(newPosition)) {
-                    position.y = newPosition.y;
-                } else {
-                    break;
-                }
-            }
-
-            steps--;
-        }
-    }
-
-    void moveLeft(int steps, Point position, ZoneMap zoneMap) {
-        while (steps > 0) {
-            var newPosition = new Point(position.x - 1, position.y);
-
-            if (zoneMap.contains(newPosition)) {
-                if (zoneMap.isFreeTile(newPosition)) {
-                    position.x--;
-                } else {
-                    break;
-                }
-            } else {
-                newPosition = new Point(zoneMap.rowRightmost.get(position.y), position.y);
-
-                if (zoneMap.isFreeTile(newPosition)) {
-                    position.x = newPosition.x;
-                } else {
-                    break;
-                }
-            }
-
-            steps--;
-        }
-    }
-
-    void moveRight(int steps, Point position, ZoneMap zoneMap) {
-        while (steps > 0) {
-            var newPosition = new Point(position.x + 1, position.y);
-
-            if (zoneMap.contains(newPosition)) {
-                if (zoneMap.isFreeTile(newPosition)) {
-                    position.x++;
-                } else {
-                    break;
-                }
-            } else {
-                newPosition = new Point(zoneMap.rowLeftmost.get(position.y), position.y);
-
-                if (zoneMap.isFreeTile(newPosition)) {
-                    position.x = newPosition.x;
-                } else {
-                    break;
-                }
-            }
-
-            steps--;
-        }
-    }
-
-    class ZoneMap {
-        public Map<Point, Boolean> map = new HashMap<>();
-        public Map<Integer, Integer> rowLeftmost = new HashMap<>();
-        public Map<Integer, Integer> rowRightmost = new HashMap<>();
-        public Map<Integer, Integer> columnTopmost = new HashMap<>();
-        public Map<Integer, Integer> columnBottommost = new HashMap<>();
-
-        public void addPoint(Point point, boolean isWall) {
-            this.map.put(point, !isWall);
-            this.rowLeftmost.put(
-                point.y,
-                Math.min(rowLeftmost.getOrDefault(point.y, Integer.MAX_VALUE), point.x)
-            );
-            this.rowRightmost.put(
-                point.y,
-                Math.max(rowRightmost.getOrDefault(point.y, Integer.MIN_VALUE), point.x)
-            );
-            this.columnTopmost.put(
-                point.x,
-                Math.min(columnTopmost.getOrDefault(point.x, Integer.MAX_VALUE), point.y)
-            );
-            this.columnBottommost.put(
-                point.x,
-                Math.max(columnBottommost.getOrDefault(point.x, Integer.MIN_VALUE), point.y)
-            );
-        }
-
-        public boolean contains(Point point) {
-            return this.map.containsKey(point);
-        }
-
-        public boolean isFreeTile(Point point) {
-            return this.map.get(point);
-        }
-    }
-
-    class Cube {
-        enum Side {TOP, BOTTOM, LEFT, RIGHT, FRONT, BACK}
-
-        Map<Side, CubeSide> sides;
-
-        Cube(byte size) {
-            sides = new HashMap<>() {{
-                put(Side.TOP, new CubeSide(size));
-                put(Side.BOTTOM, new CubeSide(size));
-                put(Side.LEFT, new CubeSide(size));
-                put(Side.RIGHT, new CubeSide(size));
-                put(Side.FRONT, new CubeSide(size));
-                put(Side.BACK, new CubeSide(size));
-            }};
-        }
-
-        boolean isMapped() {
-            for (var side : sides.values()) {
-                if (!side.isMapped) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        CubeSide getSide(Side side) {
-            return sides.get(side);
-        }
-
-        void rotateUp() {
-            var temp = sides.get(Side.TOP);
-            sides.put(Side.TOP, sides.get(Side.BACK));
-            sides.put(Side.BACK, sides.get(Side.BOTTOM));
-            sides.put(Side.BOTTOM, sides.get(Side.FRONT));
-            sides.put(Side.FRONT, temp);
-            rotateSideClockwise(Side.LEFT);
-            rotateSideAntiClockwise(Side.RIGHT);
-        }
-
-        void rotateDown() {
-            var temp = sides.get(Side.TOP);
-            sides.put(Side.TOP, sides.get(Side.FRONT));
-            sides.put(Side.FRONT, sides.get(Side.BOTTOM));
-            sides.put(Side.BOTTOM, sides.get(Side.BACK));
-            sides.put(Side.BACK, temp);
-            rotateSideAntiClockwise(Side.LEFT);
-            rotateSideClockwise(Side.RIGHT);
-        }
-
-        void rotateLeft() {
-            var temp = sides.get(Side.FRONT);
-            sides.put(Side.FRONT, sides.get(Side.LEFT));
-            rotateSideClockwise(Side.BACK);
-            rotateSideClockwise(Side.BACK);
-            sides.put(Side.LEFT, sides.get(Side.BACK));
-            rotateSideClockwise(Side.RIGHT);
-            rotateSideClockwise(Side.RIGHT);
-            sides.put(Side.BACK, sides.get(Side.RIGHT));
-            sides.put(Side.RIGHT, temp);
-            rotateSideAntiClockwise(Side.TOP);
-            rotateSideClockwise(Side.BOTTOM);
-        }
-
-        void rotateRight() {
-            var temp = sides.get(Side.FRONT);
-            sides.put(Side.FRONT, sides.get(Side.RIGHT));
-            rotateSideClockwise(Side.BACK);
-            rotateSideClockwise(Side.BACK);
-            sides.put(Side.RIGHT, sides.get(Side.BACK));
-            rotateSideClockwise(Side.LEFT);
-            rotateSideClockwise(Side.LEFT);
-            sides.put(Side.BACK, sides.get(Side.LEFT));
-            sides.put(Side.LEFT, temp);
-            rotateSideClockwise(Side.TOP);
-            rotateSideAntiClockwise(Side.BOTTOM);
-        }
-
-        public void rotateSideClockwise(Side side) {
-            var cubeSide = sides.get(side);
-            var sectors = cubeSide.sectors;
-
-            // Rotate the grid matrix clockwise
-            for (var y = 0; y < sectors.length / 2; y++) {
-                for (var x = y; x < sectors.length - y - 1; x++) {
-                    var temp = sectors[y][x];
-                    sectors[y][x] = sectors[sectors.length - 1 - x][y];
-                    sectors[sectors.length - 1 - x][y] = sectors[sectors.length - 1 - y][sectors.length - 1 - x];
-                    sectors[sectors.length - 1 - y][sectors.length - 1 - x] = sectors[x][sectors.length - 1 - y];
-                    sectors[x][sectors.length - 1 - y] = temp;
-                }
-            }
-
-            if (cubeSide.recordWalkingRotations) cubeSide.rotationsDuringWalking++;
-            if (!cubeSide.isMapped) cubeSide.rotationsBeforeMapping++;
-        }
-
-        public void rotateSideAntiClockwise(Side side) {
-            var cubeSide = sides.get(side);
-            var sectors = sides.get(side).sectors;
-
-            // Rotate the grid matrix anti-clockwise
-            for (var y = 0; y < sectors.length / 2; y++) {
-                for (var x = y; x < sectors.length - y - 1; x++) {
-                    var temp = sectors[y][x];
-                    sectors[y][x] = sectors[x][sectors.length - 1 - y];
-                    sectors[x][sectors.length - 1 - y] = sectors[sectors.length - 1 - y][sectors.length - 1 - x];
-                    sectors[sectors.length - 1 - y][sectors.length - 1 - x] = sectors[sectors.length - 1 - x][y];
-                    sectors[sectors.length - 1 - x][y] = temp;
-                }
-            }
-
-            if (cubeSide.recordWalkingRotations) cubeSide.rotationsDuringWalking--;
-            if (!cubeSide.isMapped) cubeSide.rotationsBeforeMapping--;
-        }
-
-        public void recordRotations() {
-            for (var side : sides.values()) {
-                side.recordWalkingRotations = true;
-            }
-        }
-    }
-
-    class CubeSide {
-        public CubeSector[][] sectors;
-        public boolean isMapped = false;
-        public int rotationsBeforeMapping = 0;
-        public int rotationsDuringWalking = 0;
-        public boolean recordWalkingRotations = false;
-
-        public CubeSide(byte size) {
-            sectors = new CubeSector[size][size];
-            for (var i = 0; i < size; i++) for (var j = 0; j < size; j++) sectors[i][j] = new CubeSector();
-        }
-    }
-
-    class CubeSector {
-        public boolean isWall = false;
-        public Point related2dPoint;
     }
 }
