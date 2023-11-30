@@ -1,10 +1,9 @@
 package com.vuryss.aoc.solutions.event2022;
 
-import com.vuryss.aoc.DayInterface;
+import com.vuryss.aoc.solutions.DayInterface;
 import com.vuryss.aoc.util.Point;
 
 import java.util.*;
-import java.util.List;
 
 public class Day23 implements DayInterface {
     enum Direction {

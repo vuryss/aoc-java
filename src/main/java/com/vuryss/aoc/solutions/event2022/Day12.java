@@ -1,10 +1,10 @@
 package com.vuryss.aoc.solutions.event2022;
 
-import com.vuryss.aoc.DayInterface;
+import com.vuryss.aoc.solutions.DayInterface;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class Day12 implements DayInterface {
     private final List<Point> deltas = List.of(new Point(0, 1), new Point(0, -1), new Point(1, 0), new Point(-1, 0));

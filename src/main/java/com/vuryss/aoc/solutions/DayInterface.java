@@ -1,4 +1,4 @@
-package com.vuryss.aoc;
+package com.vuryss.aoc.solutions;
 
 import java.util.Map;
 

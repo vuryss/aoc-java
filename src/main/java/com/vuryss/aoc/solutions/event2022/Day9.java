@@ -1,9 +1,10 @@
 package com.vuryss.aoc.solutions.event2022;
 
-import com.vuryss.aoc.DayInterface;
+import com.vuryss.aoc.solutions.DayInterface;
 
 import java.awt.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
 
 public class Day9 implements DayInterface {
     @Override

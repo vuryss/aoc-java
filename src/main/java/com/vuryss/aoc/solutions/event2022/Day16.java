@@ -1,7 +1,7 @@
 package com.vuryss.aoc.solutions.event2022;
 
-import com.vuryss.aoc.DayInterface;
 import com.vuryss.aoc.Utils;
+import com.vuryss.aoc.solutions.DayInterface;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 

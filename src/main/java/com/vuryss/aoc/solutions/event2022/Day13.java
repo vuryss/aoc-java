@@ -1,9 +1,12 @@
 package com.vuryss.aoc.solutions.event2022;
 
-import com.vuryss.aoc.DayInterface;
 import com.vuryss.aoc.Utils;
+import com.vuryss.aoc.solutions.DayInterface;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 import java.util.stream.Collectors;
 
 public class Day13 implements DayInterface {

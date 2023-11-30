@@ -1,13 +1,15 @@
 package com.vuryss.aoc.solutions.event2022;
 
-import com.vuryss.aoc.DayInterface;
 import com.vuryss.aoc.Utils;
+import com.vuryss.aoc.solutions.DayInterface;
 import com.vuryss.aoc.solutions.event2022.day22.Cube;
 import com.vuryss.aoc.solutions.event2022.day22.FlatBoard;
 import org.apache.commons.lang3.StringUtils;
 
 import java.awt.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
 
 @SuppressWarnings({"DataFlowIssue"})
 public class Day22 implements DayInterface {

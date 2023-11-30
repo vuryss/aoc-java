@@ -1,7 +1,5 @@
 package com.vuryss.aoc.util;
 
-import com.google.common.base.Objects;
-
 public class Point {
     public int x;
     public int y;

@@ -1,2 +1,0 @@
-app:
-  sessionToken: ${env.SESSION_TOKEN}

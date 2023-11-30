@@ -1,13 +1,15 @@
 package com.vuryss.aoc.solutions.event2022;
 
-import com.vuryss.aoc.DayInterface;
 import com.vuryss.aoc.Utils;
+import com.vuryss.aoc.solutions.DayInterface;
 import com.vuryss.aoc.util.RangeUtil;
 import org.apache.commons.lang3.Range;
 
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 public class Day15 implements DayInterface {
     @Override

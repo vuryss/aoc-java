@@ -1,23 +1,18 @@
-package com.vuryss.aoc.service;
+package com.vuryss.aoc;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
+import io.github.cdimascio.dotenv.Dotenv;
 
-import java.net.*;
+import java.net.CookieManager;
+import java.net.HttpCookie;
+import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 
-@Service
 public class InputResolver {
-    @Value("${app.sessionToken}")
-    String sessionToken;
-
-    @Cacheable("userInput")
     public String downloadForEventDay(int eventYear, int eventDay) {
-        var sessionCookie = new HttpCookie("session", sessionToken);
+        var sessionCookie = new HttpCookie("session", getSessionToken());
         sessionCookie.setPath("/");
         sessionCookie.setVersion(0);
 
@@ -43,6 +38,19 @@ public class InputResolver {
             throw new RuntimeException(e);
         }
 
+        httpClient.close();
+
         return response.body();
+    }
+
+    private String getSessionToken() {
+        var dotenv = Dotenv.load();
+        var sessionToken = dotenv.get("SESSION_TOKEN");
+
+        if (sessionToken == null || sessionToken.isEmpty()) {
+            throw new RuntimeException("SESSION_TOKEN not found in .env file");
+        }
+
+        return sessionToken;
     }
 }

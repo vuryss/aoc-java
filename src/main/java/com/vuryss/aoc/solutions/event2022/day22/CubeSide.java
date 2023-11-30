@@ -1,7 +1,5 @@
 package com.vuryss.aoc.solutions.event2022.day22;
 
-import com.vuryss.aoc.solutions.event2022.Day22;
-
 public class CubeSide {
     public CubeSector[][] sectors;
     public boolean isMapped = false;

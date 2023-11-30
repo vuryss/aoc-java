@@ -1,26 +1,34 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.0.0'
-	id 'io.spring.dependency-management' version '1.1.0'
+    id 'application'
 }
 
 group = 'com.vuryss.aoc'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
+version = '1.0'
+
+application {
+    mainClass = 'com.vuryss.aoc.Main'
+}
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter'
-	implementation 'me.paulschwarz:spring-dotenv:2.5.4'
-	implementation 'org.apache.commons:commons-lang3:3.12.0'
-	implementation 'com.google.guava:guava:31.1-jre'
+    implementation 'info.picocli:picocli:4.7.5'
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation 'com.google.guava:guava:31.1-jre'
+    implementation 'io.github.cdimascio:dotenv-java:3.0.0'
 
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    annotationProcessor 'info.picocli:picocli-codegen:4.7.5'
+
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
+test {
+    useJUnitPlatform()
+}
+
+compileJava {
+    options.compilerArgs += ["-Aproject=${project.group}/${project.name}"]
 }
