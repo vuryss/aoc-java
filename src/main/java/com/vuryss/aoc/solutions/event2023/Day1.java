@@ -3,6 +3,7 @@ package com.vuryss.aoc.solutions.event2023;
 import com.vuryss.aoc.solutions.DayInterface;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class Day1 implements DayInterface {
     @Override
@@ -37,20 +38,11 @@ public class Day1 implements DayInterface {
     @Override
     public String part1Solution(String input) {
         var lines = input.trim().split("\n");
-        long sum = 0L;
+        int sum = 0;
 
         for (var line: lines) {
-            var lineNumberPositions = new TreeMap<Integer, Integer>();
-
-            for (var i = 0; i < line.length(); i++) {
-                var c = line.charAt(i);
-
-                if (Character.isDigit(c)) {
-                    lineNumberPositions.put(i, Character.getNumericValue(c));
-                }
-            }
-
-            sum += lineNumberPositions.firstEntry().getValue() * 10 + lineNumberPositions.lastEntry().getValue();
+            var numbers = line.chars().filter(Character::isDigit).map(Character::getNumericValue).toArray();
+            sum += numbers[0] * 10 + numbers[numbers.length - 1];
         }
 
         return String.valueOf(sum);
@@ -58,46 +50,20 @@ public class Day1 implements DayInterface {
 
     @Override
     public String part2Solution(String input) {
-        var digitWords = Map.of(
-            1, "one",
-            2, "two",
-            3, "three",
-            4, "four",
-            5, "five",
-            6, "six",
-            7, "seven",
-            8, "eight",
-            9, "nine"
-        );
-
+        var digitWords = List.of("one", "two", "three", "four", "five", "six", "seven", "eight", "nine");
         var lines = input.trim().split("\n");
         long sum = 0L;
 
         for (var line: lines) {
-            var lineNumberPositions = new TreeMap<Integer, Integer>();
+            var numbers = new LinkedList<Integer>();
 
-            for (var digitWord: digitWords.entrySet()) {
-                var digitPosition = line.indexOf(digitWord.getValue());
-                var lastDigitPosition = line.lastIndexOf(digitWord.getValue());
-
-                if (digitPosition != -1) {
-                    lineNumberPositions.put(digitPosition, digitWord.getKey());
-                }
-
-                if (lastDigitPosition != -1) {
-                    lineNumberPositions.put(lastDigitPosition, digitWord.getKey());
-                }
+            for (int i = 0; i < line.length(); i++) {
+                int index = i;
+                Stream.of(line.charAt(i)).filter(Character::isDigit).forEach(c -> numbers.add(Character.getNumericValue(c)));
+                digitWords.stream().filter(e -> line.startsWith(e, index)).forEach(e -> numbers.add(digitWords.indexOf(e) + 1));
             }
 
-            for (var i = 0; i < line.length(); i++) {
-                var c = line.charAt(i);
-
-                if (Character.isDigit(c)) {
-                    lineNumberPositions.put(i, Character.getNumericValue(c));
-                }
-            }
-
-            sum += lineNumberPositions.firstEntry().getValue() * 10 + lineNumberPositions.lastEntry().getValue();
+            sum += numbers.getFirst() * 10 + numbers.getLast();
         }
 
         return String.valueOf(sum);
