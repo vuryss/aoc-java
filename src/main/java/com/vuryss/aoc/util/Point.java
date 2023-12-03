@@ -1,5 +1,7 @@
 package com.vuryss.aoc.util;
 
+import java.util.List;
+
 public class Point {
     public int x;
     public int y;
@@ -11,6 +13,19 @@ public class Point {
 
     public Point add(Point delta) {
         return new Point(x + delta.x, y + delta.y);
+    }
+
+    public List<Point> surroundingPoints() {
+        return List.of(
+            new Point(x - 1, y - 1),
+            new Point(x, y - 1),
+            new Point(x + 1, y - 1),
+            new Point(x - 1, y),
+            new Point(x + 1, y),
+            new Point(x - 1, y + 1),
+            new Point(x, y + 1),
+            new Point(x + 1, y + 1)
+        );
     }
 
     @Override
