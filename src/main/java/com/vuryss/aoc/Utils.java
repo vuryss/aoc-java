@@ -41,7 +41,7 @@ public class Utils {
         return Integer.parseInt(s.replaceAll("[^\\d-]+", ""));
     }
 
-    public static Integer[] extractIntegersFromString(String s) {
+    public static List<Integer> extractIntegersFromString(String s) {
         var list = new LinkedList<Integer>();
 
         var p = Pattern.compile("-?\\d+");
@@ -51,7 +51,7 @@ public class Utils {
             list.add(Integer.parseInt(m.group()));
         }
 
-        return list.toArray(new Integer[0]);
+        return list;
     }
 
     public static int manhattan(Point a, Point b) {

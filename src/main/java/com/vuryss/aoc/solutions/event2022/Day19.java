@@ -153,12 +153,12 @@ public class Day19 implements DayInterface {
         for (var line: input.trim().split("\n")) {
             var inputNum = Utils.extractIntegersFromString(line);
             blueprints.add(new Blueprint(
-                inputNum[0],
+                inputNum.get(0),
                 Map.of(
-                    Type.ORE, new Cost(inputNum[1], 0, 0, 0),
-                    Type.CLAY, new Cost(inputNum[2], 0, 0, 0),
-                    Type.OBSIDIAN, new Cost(inputNum[3], inputNum[4], 0, 0),
-                    Type.GEODE, new Cost(inputNum[5], 0, inputNum[6], 0)
+                    Type.ORE, new Cost(inputNum.get(1), 0, 0, 0),
+                    Type.CLAY, new Cost(inputNum.get(2), 0, 0, 0),
+                    Type.OBSIDIAN, new Cost(inputNum.get(3), inputNum.get(4), 0, 0),
+                    Type.GEODE, new Cost(inputNum.get(5), 0, inputNum.get(6), 0)
                 )
             ));
         }
