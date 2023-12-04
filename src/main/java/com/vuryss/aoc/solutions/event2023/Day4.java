@@ -81,10 +81,8 @@ public class Day4 implements DayInterface {
                     numberOfCards.getOrDefault(cardNumber + cardOffset, 0) + numberOfWonCards
                 );
             }
-        }
 
-        for (var count: numberOfCards.values()) {
-            sum += count;
+            sum += numberOfCards.get(cardNumber);
         }
 
         return String.valueOf(sum);
