@@ -5,7 +5,6 @@ import com.vuryss.aoc.solutions.DayInterface;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @SuppressWarnings("unused")
 public class Day4 implements DayInterface {
@@ -49,15 +48,11 @@ public class Day4 implements DayInterface {
             var numberList = parts[1].split(" \\| ");
             var winningNumbers = Utils.extractIntegersFromString(numberList[0]);
             var myNumbers = Utils.extractIntegersFromString(numberList[1]);
-            var points = 0;
+            var matchedNumbersCount = myNumbers.stream().filter(winningNumbers::contains).count();
 
-            for (var number: myNumbers) {
-                if (winningNumbers.contains(number)) {
-                    points = points == 0 ? 1 : points * 2;
-                }
+            if (matchedNumbersCount > 0) {
+                sum += (int) Math.pow(2, matchedNumbersCount - 1);
             }
-
-            sum += points;
         }
 
         return String.valueOf(sum);
@@ -77,23 +72,19 @@ public class Day4 implements DayInterface {
             var numberList = parts[1].split(" \\| ");
             var winningNumbers = Utils.extractIntegersFromString(numberList[0]);
             var myNumbers = Utils.extractIntegersFromString(numberList[1]);
-            var matchedNumbers = 0;
+            var matchedNumbersCount = myNumbers.stream().filter(winningNumbers::contains).count();
             var numberOfWonCards = numberOfCards.getOrDefault(cardNumber, 1);
 
-            for (var number: myNumbers) {
-                if (winningNumbers.contains(number)) {
-                    var cardIndex = cardNumber + ++matchedNumbers;
-
-                    numberOfCards.put(
-                        cardIndex,
-                        numberOfCards.getOrDefault(cardIndex, 0) + numberOfWonCards
-                    );
-                }
+            for (var cardOffset = 1; cardOffset <= matchedNumbersCount; cardOffset++) {
+                numberOfCards.put(
+                    cardNumber + cardOffset,
+                    numberOfCards.getOrDefault(cardNumber + cardOffset, 0) + numberOfWonCards
+                );
             }
         }
 
-        for (var entry: numberOfCards.entrySet()) {
-            sum += entry.getValue();
+        for (var count: numberOfCards.values()) {
+            sum += count;
         }
 
         return String.valueOf(sum);
