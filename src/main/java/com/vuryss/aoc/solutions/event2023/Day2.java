@@ -1,7 +1,7 @@
 package com.vuryss.aoc.solutions.event2023;
 
-import com.vuryss.aoc.Utils;
 import com.vuryss.aoc.solutions.DayInterface;
+import com.vuryss.aoc.util.IntUtil;
 
 import java.util.Map;
 
@@ -42,7 +42,7 @@ public class Day2 implements DayInterface {
 
         for (var line: lines) {
             var parts = line.split(": ");
-            var gameId = Utils.getNumberFromString(parts[0]);
+            var gameId = IntUtil.parseUnsignedInteger(parts[0]);
             var colorCounts = calculateMaximumColorOccurrences(parts[1]);
 
             if (colorCounts.red <= 12 && colorCounts.green <= 13 && colorCounts.blue <= 14) {

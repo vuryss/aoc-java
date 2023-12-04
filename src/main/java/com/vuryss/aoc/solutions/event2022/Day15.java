@@ -2,6 +2,7 @@ package com.vuryss.aoc.solutions.event2022;
 
 import com.vuryss.aoc.Utils;
 import com.vuryss.aoc.solutions.DayInterface;
+import com.vuryss.aoc.util.IntUtil;
 import com.vuryss.aoc.util.RangeUtil;
 import org.apache.commons.lang3.Range;
 
@@ -67,8 +68,8 @@ public class Day15 implements DayInterface {
 
         for (var line: inputLines) {
             var parts = line.split(" ");
-            var position = new Point(Utils.getNumberFromString(parts[2]), Utils.getNumberFromString(parts[3]));
-            var beacon = new Point(Utils.getNumberFromString(parts[8]), Utils.getNumberFromString(parts[9]));
+            var position = new Point(IntUtil.parseSignedInteger(parts[2]), IntUtil.parseSignedInteger(parts[3]));
+            var beacon = new Point(IntUtil.parseSignedInteger(parts[8]), IntUtil.parseSignedInteger(parts[9]));
             var sensor = new Sensor(position, Utils.manhattan(position, beacon));
 
             beacons.add(beacon);
@@ -104,8 +105,8 @@ public class Day15 implements DayInterface {
 
         for (var line: inputLines) {
             var parts = line.split(" ");
-            var position = new Point(Utils.getNumberFromString(parts[2]), Utils.getNumberFromString(parts[3]));
-            var beacon = new Point(Utils.getNumberFromString(parts[8]), Utils.getNumberFromString(parts[9]));
+            var position = new Point(IntUtil.parseSignedInteger(parts[2]), IntUtil.parseSignedInteger(parts[3]));
+            var beacon = new Point(IntUtil.parseSignedInteger(parts[8]), IntUtil.parseSignedInteger(parts[9]));
 
             sensors.add(new Sensor(position, Utils.manhattan(position, beacon) + 1));
         }

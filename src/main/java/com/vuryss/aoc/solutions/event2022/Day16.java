@@ -1,7 +1,7 @@
 package com.vuryss.aoc.solutions.event2022;
 
-import com.vuryss.aoc.Utils;
 import com.vuryss.aoc.solutions.DayInterface;
+import com.vuryss.aoc.util.IntUtil;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 
@@ -136,7 +136,7 @@ public class Day16 implements DayInterface {
 
         for (var line: lines) {
             var valveId = line.substring(6, 8);
-            var rate = Utils.getNumberFromString(line);
+            var rate = IntUtil.parseUnsignedInteger(line);
             var nextValves = line.split(" tunnels? leads? to valves? ")[1].split(", ");
             var valve = new Valve(valveId, rate, nextValves, new HashMap<>());
 

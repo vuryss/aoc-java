@@ -4,7 +4,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class Utils {
     public static List<Integer> toIntList(String[] strings) {
@@ -32,23 +31,6 @@ public class Utils {
 
         for (var c: input.toCharArray()) {
             list.add(c);
-        }
-
-        return list;
-    }
-
-    public static int getNumberFromString(String s) {
-        return Integer.parseInt(s.replaceAll("[^\\d-]+", ""));
-    }
-
-    public static List<Integer> extractIntegersFromString(String s) {
-        var list = new LinkedList<Integer>();
-
-        var p = Pattern.compile("-?\\d+");
-        var m = p.matcher(s);
-
-        while (m.find()) {
-            list.add(Integer.parseInt(m.group()));
         }
 
         return list;

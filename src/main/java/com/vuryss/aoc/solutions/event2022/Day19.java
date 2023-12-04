@@ -2,6 +2,7 @@ package com.vuryss.aoc.solutions.event2022;
 
 import com.vuryss.aoc.Utils;
 import com.vuryss.aoc.solutions.DayInterface;
+import com.vuryss.aoc.util.ListUtil;
 
 import java.util.*;
 
@@ -151,7 +152,7 @@ public class Day19 implements DayInterface {
         var blueprints = new ArrayList<Blueprint>();
 
         for (var line: input.trim().split("\n")) {
-            var inputNum = Utils.extractIntegersFromString(line);
+            var inputNum = ListUtil.extractUnsignedIntegers(line);
             blueprints.add(new Blueprint(
                 inputNum.get(0),
                 Map.of(
