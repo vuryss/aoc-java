@@ -1,5 +1,6 @@
 package com.vuryss.aoc.solutions.event2023;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Range;
 import com.vuryss.aoc.solutions.DayInterface;
 import com.vuryss.aoc.util.ListUtil;
@@ -96,19 +97,15 @@ public class Day5 implements DayInterface {
     public String part1Solution(String input) {
         var categories = input.trim().split("\n\n");
         var seeds = ListUtil.extractUnsignedLongs(categories[0]);
-        var categoriesMaps = new ArrayList<List<ValueMap>>();
-
-        for (var i = 1; i < categories.length; i++) {
-            var lines = categories[i].split("\n");
-            var categoryMaps = new ArrayList<ValueMap>();
-
-            for (var j = 1; j < lines.length; j++) {
-                var parts = ListUtil.extractUnsignedLongs(lines[j]);
-                categoryMaps.add(new ValueMap(parts.get(0), parts.get(1), parts.get(2)));
-            }
-
-            categoriesMaps.add(categoryMaps);
-        }
+        var categoriesMaps = Arrays.stream(categories)
+            .skip(1)
+            .map(category -> category.lines()
+                .skip(1)
+                .map(ListUtil::extractUnsignedLongs)
+                .map(parts -> new ValueMap(parts.get(0), parts.get(1), parts.get(2)))
+                .toList()
+            )
+            .toList();
 
         var min = Long.MAX_VALUE;
 
@@ -136,19 +133,15 @@ public class Day5 implements DayInterface {
     public String part2Solution(String input) {
         var categories = input.trim().split("\n\n");
         var seeds = ListUtil.extractUnsignedLongs(categories[0]);
-        var categoriesMaps = new ArrayList<List<ValueMap>>();
-
-        for (var i = 1; i < categories.length; i++) {
-            var lines = categories[i].split("\n");
-            var categoryMaps = new ArrayList<ValueMap>();
-
-            for (var j = 1; j < lines.length; j++) {
-                var parts = ListUtil.extractUnsignedLongs(lines[j]);
-                categoryMaps.add(new ValueMap(parts.get(0), parts.get(1), parts.get(2)));
-            }
-
-            categoriesMaps.add(categoryMaps);
-        }
+        var categoriesMaps = Arrays.stream(categories)
+            .skip(1)
+            .map(category -> category.lines()
+                .skip(1)
+                .map(ListUtil::extractUnsignedLongs)
+                .map(parts -> new ValueMap(parts.get(0), parts.get(1), parts.get(2)))
+                .toList()
+            )
+            .toList();
 
         var min = Long.MAX_VALUE;
 
