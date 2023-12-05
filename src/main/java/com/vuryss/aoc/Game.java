@@ -14,7 +14,7 @@ public class Game {
 
     private void executeWithUserInput(int year, int day) {
         var solution = getEventDaySolution(year, day);
-        var input = new InputResolver().downloadForEventDay(year, day);
+        var input = new InputResolver().getForEventDay(year, day);
 
         System.out.println("\n\n");
 
