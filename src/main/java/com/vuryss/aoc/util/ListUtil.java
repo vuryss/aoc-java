@@ -30,4 +30,17 @@ public class ListUtil {
 
         return list;
     }
+
+    public static List<Long> extractUnsignedLongs(String s) {
+        var list = new ArrayList<Long>();
+
+        var p = Pattern.compile("\\d+");
+        var m = p.matcher(s);
+
+        while (m.find()) {
+            list.add(Long.parseLong(m.group()));
+        }
+
+        return list;
+    }
 }
