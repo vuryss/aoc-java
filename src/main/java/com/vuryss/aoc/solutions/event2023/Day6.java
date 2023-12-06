@@ -34,23 +34,11 @@ public class Day6 implements DayInterface {
     public String part1Solution(String input) {
         var lines = input.trim().split("\n");
         long product = 1L;
-
         var times = ListUtil.extractUnsignedIntegers(lines[0]);
         var records = ListUtil.extractUnsignedIntegers(lines[1]);
 
         for (var i = 0; i < times.size(); i++) {
-            var raceTime = times.get(i);
-            var waysToWinCount = 0;
-
-            for (var time = 1; time < raceTime; time++) {
-                var distance = (raceTime - time) * time;
-
-                if (distance > records.get(i)) {
-                    waysToWinCount++;
-                }
-            }
-
-            product *= waysToWinCount;
+            product *= winningCombinations(times.get(i), records.get(i));
         }
 
         return String.valueOf(product);
@@ -63,18 +51,21 @@ public class Day6 implements DayInterface {
         var records = ListUtil.extractUnsignedIntegers(lines[1]);
         var totalTime = Long.parseLong(Joiner.on("").join(times));
         var totalRecord = Long.parseLong(Joiner.on("").join(records));
-        var waysToWinCount = 0;
 
-        for (var currentTime = 1L; currentTime < totalTime; currentTime++) {
-            var distance = (totalTime - currentTime) * currentTime;
+        return String.valueOf(winningCombinations(totalTime, totalRecord));
+    }
 
-            if (distance > totalRecord) {
-                waysToWinCount++;
-            } else if (distance < totalRecord && waysToWinCount > 0) {
-                break;
-            }
-        }
+    /**
+     * Problem can be solved using a quadratic equation.
+     */
+    private int winningCombinations(long totalTime, long currentRecord) {
+        var a = -1;
+        var b = totalTime;
+        var c = -currentRecord;
+        var sqrtDisc = Math.sqrt(b * b - 4 * a * c);
+        var maxMilliseconds = Math.floor(((-b - sqrtDisc) / (2 * a)) - 0.0001);
+        var minMilliseconds = Math.ceil(((-b + sqrtDisc) / (2 * a)) + 0.0001);
 
-        return String.valueOf(waysToWinCount);
+        return (int) (maxMilliseconds - minMilliseconds + 1);
     }
 }
