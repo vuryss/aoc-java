@@ -115,7 +115,7 @@ public class Day7 implements DayInterface {
         }
 
         public static int getType(String cards) {
-            return Integer.parseInt(
+            return typeValue.get(
                 StringUtil.tally(cards).values().stream()
                     .sorted(Comparator.reverseOrder())
                     .map(String::valueOf)
