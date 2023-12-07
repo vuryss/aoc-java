@@ -1,10 +1,9 @@
 package com.vuryss.aoc.solutions.event2023;
 
-import com.google.common.base.Joiner;
 import com.vuryss.aoc.solutions.DayInterface;
 import com.vuryss.aoc.util.StringUtil;
-
 import java.util.*;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public class Day7 implements DayInterface {
@@ -85,25 +84,26 @@ public class Day7 implements DayInterface {
             "2111", 2,
             "11111", 1
         );
-        final static List<Character> weights1 = List.of('2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A');
-        final static List<Character> weights2 = List.of('J', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'Q', 'K', 'A');
-        static List<Character> replacements = List.of('2', '3', '4', '5', '6', '7', '8', '9', 'T', 'Q', 'K', 'A');
+        final static String weights = "23456789TJQKA";
+        final static String weights2 = "J23456789TQKA";
+        final static String replacements = "23456789TQKA";
 
         public Hand(String cards, boolean adjustForPart2) {
             var value = new StringBuilder();
 
             for (var card: cards.toCharArray()) {
-                value.append(Integer.toString(adjustForPart2 ? weights2.indexOf(card) : weights1.indexOf(card), 16));
+                value.append(Integer.toString(adjustForPart2 ? weights2.indexOf(card) : weights.indexOf(card), 16));
             }
 
             if (adjustForPart2 && cards.indexOf('J') != -1) {
-                var max = replacements.stream()
+                var maxType = replacements.chars()
+                    .mapToObj(r -> (char) r)
                     .map(r -> cards.replace('J', r))
                     .map(Hand::getType)
                     .max(Comparator.comparingInt(a -> a))
-                    .get();
+                    .orElseThrow();
 
-                cardsValue = max.toString() + value;
+                cardsValue = maxType.toString() + value;
                 return;
             }
 
@@ -115,9 +115,12 @@ public class Day7 implements DayInterface {
         }
 
         public static int getType(String cards) {
-            var cardCountsValues = new ArrayList<>(StringUtil.tally(cards).values());
-            cardCountsValues.sort(Comparator.reverseOrder());
-            return typeValue.get(Joiner.on("").join(cardCountsValues));
+            return Integer.parseInt(
+                StringUtil.tally(cards).values().stream()
+                    .sorted(Comparator.reverseOrder())
+                    .map(String::valueOf)
+                    .collect(Collectors.joining())
+            );
         }
     }
 }
