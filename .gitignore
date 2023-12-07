@@ -43,3 +43,4 @@ bin/
 
 .env
 src/main/resources/input/*
+src/main/resources/answer/*

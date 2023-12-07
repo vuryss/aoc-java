@@ -4,6 +4,7 @@ import com.vuryss.aoc.solutions.DayInterface;
 
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class Day2 implements DayInterface {
     private final int ROCK_INDEX = 0;
     private final int PAPER_INDEX = 1;

@@ -5,6 +5,7 @@ import com.vuryss.aoc.util.Point;
 
 import java.util.*;
 
+@SuppressWarnings("unused")
 public class Day23 implements DayInterface {
     enum Direction {
         NORTH, EAST, SOUTH, WEST;

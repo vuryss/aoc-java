@@ -6,6 +6,7 @@ import java.awt.*;
 import java.util.HashSet;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class Day9 implements DayInterface {
     @Override
     public Map<String, String> part1Tests() {

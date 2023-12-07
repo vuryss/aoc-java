@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("unused")
 public class Day13 implements DayInterface {
     @Override
     public Map<String, String> part1Tests() {

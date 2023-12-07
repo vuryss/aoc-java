@@ -5,6 +5,7 @@ import com.vuryss.aoc.util.Point;
 
 import java.util.*;
 
+@SuppressWarnings("unused")
 public class Day24 implements DayInterface {
     List<Point> moves = List.of(
         new Point(0, -1),

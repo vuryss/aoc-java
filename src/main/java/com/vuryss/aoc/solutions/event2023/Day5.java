@@ -1,9 +1,8 @@
 package com.vuryss.aoc.solutions.event2023;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Range;
 import com.vuryss.aoc.solutions.DayInterface;
-import com.vuryss.aoc.util.ListUtil;
+import com.vuryss.aoc.util.StringUtil;
 
 import java.util.*;
 
@@ -96,12 +95,12 @@ public class Day5 implements DayInterface {
     @Override
     public String part1Solution(String input) {
         var categories = input.trim().split("\n\n");
-        var seeds = ListUtil.extractUnsignedLongs(categories[0]);
+        var seeds = StringUtil.longs(categories[0]);
         var categoriesMaps = Arrays.stream(categories)
             .skip(1)
             .map(category -> category.lines()
                 .skip(1)
-                .map(ListUtil::extractUnsignedLongs)
+                .map(StringUtil::longs)
                 .map(parts -> new ValueMap(parts.get(0), parts.get(1), parts.get(2)))
                 .toList()
             )
@@ -132,12 +131,12 @@ public class Day5 implements DayInterface {
     @Override
     public String part2Solution(String input) {
         var categories = input.trim().split("\n\n");
-        var seeds = ListUtil.extractUnsignedLongs(categories[0]);
+        var seeds = StringUtil.longs(categories[0]);
         var categoriesMaps = Arrays.stream(categories)
             .skip(1)
             .map(category -> category.lines()
                 .skip(1)
-                .map(ListUtil::extractUnsignedLongs)
+                .map(StringUtil::longs)
                 .map(parts -> new ValueMap(parts.get(0), parts.get(1), parts.get(2)))
                 .toList()
             )

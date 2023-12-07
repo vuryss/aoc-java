@@ -5,6 +5,7 @@ import com.vuryss.aoc.solutions.DayInterface;
 
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class Day25 implements DayInterface {
     @Override
     public Map<String, String> part1Tests() {
@@ -30,7 +31,7 @@ public class Day25 implements DayInterface {
 
     @Override
     public Map<String, String> part2Tests() {
-        return Map.of("", "");
+        return Map.of("", "Merry Christmas!");
     }
 
     @Override
@@ -119,6 +120,6 @@ public class Day25 implements DayInterface {
 
     @Override
     public String part2Solution(String input) {
-        return "";
+        return "Merry Christmas!";
     }
 }

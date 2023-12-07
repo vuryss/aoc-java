@@ -4,6 +4,7 @@ import com.vuryss.aoc.solutions.DayInterface;
 
 import java.util.*;
 
+@SuppressWarnings("unused")
 public class Day7 implements DayInterface {
     @Override
     public Map<String, String> part1Tests() {

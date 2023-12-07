@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class Day11 implements DayInterface {
     @Override
     public Map<String, String> part1Tests() {

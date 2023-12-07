@@ -5,6 +5,7 @@ import com.vuryss.aoc.solutions.DayInterface;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class Day21 implements DayInterface {
     @Override
     public Map<String, String> part1Tests() {

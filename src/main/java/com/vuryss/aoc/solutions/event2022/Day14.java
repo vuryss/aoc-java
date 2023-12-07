@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class Day14 implements DayInterface {
     private static final Point[] deltas = new Point[]{new Point(0, 1), new Point(-1, 1), new Point(1, 1)};
     @Override

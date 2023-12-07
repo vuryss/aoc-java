@@ -1,11 +1,11 @@
 package com.vuryss.aoc.solutions.event2022;
 
-import com.vuryss.aoc.Utils;
 import com.vuryss.aoc.solutions.DayInterface;
-import com.vuryss.aoc.util.ListUtil;
+import com.vuryss.aoc.util.StringUtil;
 
 import java.util.*;
 
+@SuppressWarnings("unused")
 public class Day19 implements DayInterface {
     @Override
     public Map<String, String> part1Tests() {
@@ -152,7 +152,7 @@ public class Day19 implements DayInterface {
         var blueprints = new ArrayList<Blueprint>();
 
         for (var line: input.trim().split("\n")) {
-            var inputNum = ListUtil.extractUnsignedIntegers(line);
+            var inputNum = StringUtil.ints(line);
             blueprints.add(new Blueprint(
                 inputNum.get(0),
                 Map.of(

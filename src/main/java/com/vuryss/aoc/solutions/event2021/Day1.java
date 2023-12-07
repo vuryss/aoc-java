@@ -1,7 +1,7 @@
 package com.vuryss.aoc.solutions.event2021;
 
 import com.vuryss.aoc.solutions.DayInterface;
-import com.vuryss.aoc.util.ListUtil;
+import com.vuryss.aoc.util.StringUtil;
 import java.util.Map;
 import java.util.stream.IntStream;
 
@@ -47,7 +47,7 @@ public class Day1 implements DayInterface {
 
     @Override
     public String part1Solution(String input) {
-        var n = ListUtil.extractUnsignedIntegers(input);
+        var n = StringUtil.ints(input);
         var count = IntStream.range(1, n.size()).filter(i -> n.get(i) > n.get(i - 1)).count();
 
         return String.valueOf(count);
@@ -55,7 +55,7 @@ public class Day1 implements DayInterface {
 
     @Override
     public String part2Solution(String input) {
-        var n = ListUtil.extractUnsignedIntegers(input);
+        var n = StringUtil.ints(input);
         var count = IntStream.range(3, n.size())
             .filter(i -> n.get(i) + n.get(i - 1) + n.get(i - 2) > n.get(i - 1) + n.get(i - 2) + n.get(i - 3))
             .count();

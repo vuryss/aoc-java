@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class Day5 implements DayInterface {
     @Override
     public Map<String, String> part1Tests() {

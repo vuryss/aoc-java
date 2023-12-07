@@ -4,6 +4,8 @@ import io.github.cdimascio.dotenv.Dotenv;
 import picocli.CommandLine;
 
 import java.time.LocalDate;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 @CommandLine.Command(name = "aoc", mixinStandardHelpOptions = true)
@@ -17,6 +19,9 @@ public class Main implements Callable<Integer> {
     @CommandLine.Option(names = {"-t", "--test"}, description = "Use test data")
     boolean test = false;
 
+    @CommandLine.Option(names = {"-v", "--validate"}, description = "Validate answers of already completed puzzles")
+    boolean validate = false;
+
     public static void main(String[] args) {
         var exitCode = new CommandLine(new Main()).execute(args);
         System.exit(exitCode);
@@ -24,6 +29,19 @@ public class Main implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
+        if (validate) {
+            var years = resolveYears();
+            var days = resolveDays();
+
+            for (var year: years) {
+                for (var day: days) {
+                    new GameValidator(year, day, test);
+                }
+            }
+
+            return 0;
+        }
+
         year = resolveYear();
         day = resolveDay();
 
@@ -32,6 +50,34 @@ public class Main implements Callable<Integer> {
         new Game(year, day, test);
 
         return 0;
+    }
+
+    private List<Integer> resolveYears() {
+        if (year != 0) {
+            return List.of(resolveYear());
+        }
+
+        var years = new LinkedList<Integer>();
+
+        for (var i = 2015; i <= LocalDate.now().getYear(); i++) {
+            years.add(i);
+        }
+
+        return years;
+    }
+
+    private List<Integer> resolveDays() {
+        if (day != 0) {
+            return List.of(resolveDay());
+        }
+
+        var days = new LinkedList<Integer>();
+
+        for (var i = 1; i <= 25; i++) {
+            days.add(i);
+        }
+
+        return days;
     }
 
     private int resolveYear() {

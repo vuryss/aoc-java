@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class Day18 implements DayInterface {
     static Point3D[] cubeSideDeltas = new Point3D[] {
         new Point3D(0, 0, 1),

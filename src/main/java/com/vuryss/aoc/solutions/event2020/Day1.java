@@ -1,7 +1,6 @@
 package com.vuryss.aoc.solutions.event2020;
 
 import com.vuryss.aoc.solutions.DayInterface;
-import com.vuryss.aoc.util.ListUtil;
 import com.vuryss.aoc.util.StringUtil;
 
 import java.util.Map;
@@ -40,7 +39,7 @@ public class Day1 implements DayInterface {
 
     @Override
     public String part1Solution(String input) {
-        var numbers = StringUtil.uniqueIntegers(input);
+        var numbers = StringUtil.uniqueInts(input);
 
         for (var n: numbers) {
             if (numbers.contains(2020 - n)) {
@@ -53,7 +52,7 @@ public class Day1 implements DayInterface {
 
     @Override
     public String part2Solution(String input) {
-        var numbers = StringUtil.uniqueIntegers(input);
+        var numbers = StringUtil.uniqueInts(input);
 
         for (var n1: numbers) {
             for (var n2: numbers) {

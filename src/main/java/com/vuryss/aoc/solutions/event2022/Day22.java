@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-@SuppressWarnings({"DataFlowIssue"})
+@SuppressWarnings({"DataFlowIssue", "unused"})
 public class Day22 implements DayInterface {
     final byte TEST_SIZE = 4;
     final byte INPUT_SIZE = 50;

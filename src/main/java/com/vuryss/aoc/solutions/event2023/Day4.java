@@ -1,9 +1,8 @@
 package com.vuryss.aoc.solutions.event2023;
 
-import com.vuryss.aoc.Utils;
 import com.vuryss.aoc.solutions.DayInterface;
 import com.vuryss.aoc.util.IntUtil;
-import com.vuryss.aoc.util.ListUtil;
+import com.vuryss.aoc.util.StringUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,8 +47,8 @@ public class Day4 implements DayInterface {
         for (var line: lines) {
             var parts = line.split(": ");
             var numberList = parts[1].split(" \\| ");
-            var winningNumbers = ListUtil.extractUnsignedIntegers(numberList[0]);
-            var myNumbers = ListUtil.extractUnsignedIntegers(numberList[1]);
+            var winningNumbers = StringUtil.ints(numberList[0]);
+            var myNumbers = StringUtil.ints(numberList[1]);
             var matchedNumbersCount = myNumbers.stream().filter(winningNumbers::contains).count();
 
             if (matchedNumbersCount > 0) {
@@ -72,8 +71,8 @@ public class Day4 implements DayInterface {
             numberOfCards.put(cardNumber, numberOfCards.getOrDefault(cardNumber, 0) + 1);
 
             var numberList = parts[1].split(" \\| ");
-            var winningNumbers = ListUtil.extractUnsignedIntegers(numberList[0]);
-            var myNumbers = ListUtil.extractUnsignedIntegers(numberList[1]);
+            var winningNumbers = StringUtil.ints(numberList[0]);
+            var myNumbers = StringUtil.ints(numberList[1]);
             var matchedNumbersCount = myNumbers.stream().filter(winningNumbers::contains).count();
             var numberOfWonCards = numberOfCards.getOrDefault(cardNumber, 1);
 

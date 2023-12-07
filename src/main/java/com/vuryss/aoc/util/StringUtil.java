@@ -1,9 +1,6 @@
 package com.vuryss.aoc.util;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class StringUtil {
     public static Map<Character, Integer> tally(String string) {
@@ -16,14 +13,15 @@ public class StringUtil {
         return characterCount;
     }
 
-    public static Set<Integer> uniqueIntegers(String string) {
-        var set = new HashSet<Integer>();
-        var matches = Regex.matchAll("\\d+", string);
+    public static Set<Integer> uniqueInts(String string) {
+        return new HashSet<>(ints(string));
+    }
 
-        for (var match: matches) {
-            set.add(Integer.parseInt(match));
-        }
+    public static List<Integer> ints(String s) {
+        return Regex.matchAll("\\d+", s).stream().map(Integer::parseInt).toList();
+    }
 
-        return set;
+    public static List<Long> longs(String s) {
+        return Regex.matchAll("\\d+", s).stream().map(Long::parseLong).toList();
     }
 }

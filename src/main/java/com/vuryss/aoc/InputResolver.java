@@ -20,11 +20,11 @@ public class InputResolver {
         var cachedInput = getCachedInput(eventYear, eventDay);
 
         if (cachedInput != null) {
-            System.out.println("Using cached puzzle input.");
+            System.out.print("(cached input)");
             return cachedInput;
         }
 
-        System.out.println("Downloading puzzle input from AoC.");
+        System.out.print("(downloading input)");
         return downloadForEventDay(eventYear, eventDay);
     }
 

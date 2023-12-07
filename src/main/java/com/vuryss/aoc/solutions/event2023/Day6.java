@@ -2,7 +2,7 @@ package com.vuryss.aoc.solutions.event2023;
 
 import com.google.common.base.Joiner;
 import com.vuryss.aoc.solutions.DayInterface;
-import com.vuryss.aoc.util.ListUtil;
+import com.vuryss.aoc.util.StringUtil;
 
 import java.util.*;
 
@@ -34,8 +34,8 @@ public class Day6 implements DayInterface {
     public String part1Solution(String input) {
         var lines = input.trim().split("\n");
         long product = 1L;
-        var times = ListUtil.extractUnsignedIntegers(lines[0]);
-        var records = ListUtil.extractUnsignedIntegers(lines[1]);
+        var times = StringUtil.ints(lines[0]);
+        var records = StringUtil.ints(lines[1]);
 
         for (var i = 0; i < times.size(); i++) {
             product *= winningCombinations(times.get(i), records.get(i));
@@ -47,8 +47,8 @@ public class Day6 implements DayInterface {
     @Override
     public String part2Solution(String input) {
         var lines = input.trim().split("\n");
-        var times = ListUtil.extractUnsignedIntegers(lines[0]);
-        var records = ListUtil.extractUnsignedIntegers(lines[1]);
+        var times = StringUtil.ints(lines[0]);
+        var records = StringUtil.ints(lines[1]);
         var totalTime = Long.parseLong(Joiner.on("").join(times));
         var totalRecord = Long.parseLong(Joiner.on("").join(records));
 

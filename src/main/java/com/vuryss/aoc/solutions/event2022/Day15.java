@@ -5,13 +5,13 @@ import com.vuryss.aoc.solutions.DayInterface;
 import com.vuryss.aoc.util.IntUtil;
 import com.vuryss.aoc.util.RangeUtil;
 import org.apache.commons.lang3.Range;
-
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class Day15 implements DayInterface {
     @Override
     public Map<String, String> part1Tests() {
