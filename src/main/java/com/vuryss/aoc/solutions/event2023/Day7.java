@@ -74,7 +74,7 @@ public class Day7 implements DayInterface {
     }
 
     private static class Hand {
-        private final String cardsValue;
+        private final String totalValue;
         private static final Map<String, Integer> typeValue = Map.of(
             "5", 7,
             "41", 6,
@@ -89,32 +89,31 @@ public class Day7 implements DayInterface {
         final static String replacements = "23456789TQKA";
 
         public Hand(String cards, boolean adjustForPart2) {
-            var value = new StringBuilder();
-
-            for (var card: cards.toCharArray()) {
-                value.append(Integer.toString(adjustForPart2 ? weights2.indexOf(card) : weights.indexOf(card), 16));
-            }
+            var cardsValue = cards.chars()
+                .map(c -> adjustForPart2 ? weights2.indexOf(c) : weights.indexOf(c))
+                .mapToObj(Integer::toHexString)
+                .collect(Collectors.joining());
 
             if (adjustForPart2 && cards.indexOf('J') != -1) {
-                var maxType = replacements.chars()
+                var maxTypeValue = replacements.chars()
                     .mapToObj(r -> (char) r)
                     .map(r -> cards.replace('J', r))
-                    .map(Hand::getType)
+                    .map(Hand::getTypeValue)
                     .max(Comparator.comparingInt(a -> a))
                     .orElseThrow();
 
-                cardsValue = maxType.toString() + value;
+                totalValue = maxTypeValue + cardsValue;
                 return;
             }
 
-            cardsValue = getType(cards) + value.toString();
+            totalValue = getTypeValue(cards) + cardsValue;
         }
 
         public static int compare(Hand hand1, Hand hand2) {
-            return hand1.cardsValue.compareTo(hand2.cardsValue);
+            return hand1.totalValue.compareTo(hand2.totalValue);
         }
 
-        public static int getType(String cards) {
+        public static int getTypeValue(String cards) {
             return typeValue.get(
                 StringUtil.tally(cards).values().stream()
                     .sorted(Comparator.reverseOrder())
