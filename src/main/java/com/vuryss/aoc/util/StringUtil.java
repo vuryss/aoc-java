@@ -28,8 +28,8 @@ public class StringUtil {
         return Regex.matchAll("\\d+", s).stream().map(Long::parseLong).toList();
     }
 
+    @SuppressWarnings("deprecation")
     public static String md5(String string) {
-        //noinspection deprecation
         return Hashing.md5().hashString(string, StandardCharsets.UTF_8).toString();
     }
 }
