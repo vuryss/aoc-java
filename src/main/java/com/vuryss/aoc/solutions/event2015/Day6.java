@@ -1,7 +1,6 @@
 package com.vuryss.aoc.solutions.event2015;
 
 import com.vuryss.aoc.solutions.DayInterface;
-import com.vuryss.aoc.util.Point;
 import com.vuryss.aoc.util.Regex;
 import com.vuryss.aoc.util.StringUtil;
 
