@@ -23,6 +23,6 @@ public class Regex {
     }
 
     public static boolean matches(String regex, String input) {
-        return Pattern.compile(regex).matcher(input).matches();
+        return Pattern.compile(regex).matcher(input).find();
     }
 }
