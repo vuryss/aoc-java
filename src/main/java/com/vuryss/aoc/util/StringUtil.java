@@ -1,5 +1,8 @@
 package com.vuryss.aoc.util;
 
+import com.google.common.hash.Hashing;
+
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class StringUtil {
@@ -23,5 +26,10 @@ public class StringUtil {
 
     public static List<Long> longs(String s) {
         return Regex.matchAll("\\d+", s).stream().map(Long::parseLong).toList();
+    }
+
+    public static String md5(String string) {
+        //noinspection deprecation
+        return Hashing.md5().hashString(string, StandardCharsets.UTF_8).toString();
     }
 }
