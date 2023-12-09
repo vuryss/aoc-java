@@ -28,6 +28,10 @@ public class StringUtil {
         return Regex.matchAll("\\d+", s).stream().map(Long::parseLong).toList();
     }
 
+    public static List<Long> slongs(String s) {
+        return Regex.matchAll("\\-?\\d+", s).stream().map(Long::parseLong).toList();
+    }
+
     @SuppressWarnings("deprecation")
     public static String md5(String string) {
         return Hashing.md5().hashString(string, StandardCharsets.UTF_8).toString();
