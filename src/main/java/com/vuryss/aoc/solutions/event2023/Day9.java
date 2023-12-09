@@ -53,15 +53,10 @@ public class Day9 implements DayInterface {
                 coeffs.add(coeff);
             }
 
-            for (var i = 0; i < size / 2; i++) {
+            coeffs.addAll(coeffs.reversed().subList(coeffTrim, coeffs.size()));
+
+            for (var i = 0; i < size; i++) {
                 num += coeffs.get(i + 1) * numbers.removeLast() * n;
-                n *= -1;
-            }
-
-            coeffs = coeffs.reversed();
-
-            for (var i = 0; i < (int) Math.ceil(size / 2.0); i++) {
-                num += coeffs.get(i + coeffTrim) * numbers.removeLast() * n;
                 n *= -1;
             }
 
