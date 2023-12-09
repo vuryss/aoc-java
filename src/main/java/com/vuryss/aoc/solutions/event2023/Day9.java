@@ -31,19 +31,49 @@ public class Day9 implements DayInterface {
         );
     }
 
+    /**
+     * This is a linear solution using pascal's triangle. O(n) per line
+     */
     @Override
     public String part1Solution(String input) {
-        return String.valueOf(
-            Arrays.stream(input.trim().split("\n"))
-                .map(StringUtil::slongs)
-                .map(this::expandedLists)
-                .map(List::reversed)
-                .map(l -> l.stream().reduce(0L, (a, b) -> a + b.getLast(), Long::sum))
-                .mapToLong(Long::longValue)
-                .sum()
-        );
+        var lines = input.trim().split("\n");
+        var sum = 0L;
+
+        for (var line: lines) {
+            var numbers = StringUtil.slongs(line);
+            var size = numbers.size();
+            var coeffTrim = size % 2 == 0 ? 1 : 0;
+            var coeff = 1L;
+            List<Long> coeffs = new ArrayList<>(){{ add(1L); }};
+            var num = 0L;
+            var n = -1;
+
+            for (var i = 1; i <= size / 2; i++) {
+                coeff = coeff * (size - (i - 1)) / i;
+                coeffs.add(coeff);
+            }
+
+            for (var i = 0; i < size / 2; i++) {
+                num += coeffs.get(i + 1) * numbers.removeLast() * n;
+                n *= -1;
+            }
+
+            coeffs = coeffs.reversed();
+
+            for (var i = 0; i < (int) Math.ceil(size / 2.0); i++) {
+                num += coeffs.get(i + coeffTrim) * numbers.removeLast() * n;
+                n *= -1;
+            }
+
+            sum -= num;
+        }
+
+        return String.valueOf(sum);
     }
 
+    /**
+     * This is a O(n^2) per line solution following the instructions from the puzzle.
+     */
     @Override
     public String part2Solution(String input) {
         return String.valueOf(

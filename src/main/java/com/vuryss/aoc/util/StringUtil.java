@@ -4,6 +4,7 @@ import com.google.common.hash.Hashing;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class StringUtil {
     public static Map<Character, Integer> tally(String string) {
@@ -29,7 +30,7 @@ public class StringUtil {
     }
 
     public static List<Long> slongs(String s) {
-        return Regex.matchAll("\\-?\\d+", s).stream().map(Long::parseLong).toList();
+        return Regex.matchAll("\\-?\\d+", s).stream().map(Long::parseLong).collect(Collectors.toList());
     }
 
     @SuppressWarnings("deprecation")
