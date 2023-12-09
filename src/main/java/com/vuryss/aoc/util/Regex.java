@@ -25,4 +25,19 @@ public class Regex {
     public static boolean matches(String regex, String input) {
         return Pattern.compile(regex).matcher(input).find();
     }
+
+    public static List<String> matchGroups(String regex, String input) {
+        var m = Pattern.compile(regex).matcher(input);
+        var l = new ArrayList<String>();
+
+        if (!m.find()) {
+            return null;
+        }
+
+        for (var i = 1; i <= m.groupCount(); i++) {
+            l.add(m.group(i));
+        }
+
+        return l;
+    }
 }
