@@ -49,7 +49,7 @@ public class Day9 implements DayInterface {
             var n = -1;
 
             for (var i = 1; i <= size / 2; i++) {
-                coeff = coeff * (size - (i - 1)) / i;
+                coeff = coeff * (size - i + 1) / i;
                 coeffs.add(coeff);
             }
 
