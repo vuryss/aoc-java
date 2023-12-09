@@ -1,7 +1,6 @@
 package com.vuryss.aoc.solutions.event2015;
 
 import com.vuryss.aoc.solutions.DayInterface;
-import org.apache.commons.text.StringEscapeUtils;
 
 import java.util.Map;
 
