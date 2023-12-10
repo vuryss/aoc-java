@@ -69,7 +69,6 @@ public class Day10 implements DayInterface {
             7-L-JL7||F7|L7F-7F7|
             L.L7LFJ|||||FJL7||LJ
             L7JLJL-JLJLJL--JLJ.L
-
             """,
             "10"
         );
@@ -179,14 +178,11 @@ public class Day10 implements DayInterface {
         CompassDirection sHorizontalConnection = null;
 
         var queue = new LinkedList<Position>();
-        queue.add(new Position(pipeMap.start, 0, new HashSet<>(){{ add(pipeMap.start); }}));
+        queue.add(new Position(pipeMap.start, 0));
 
         while (!queue.isEmpty()) {
             var position = queue.removeFirst();
             var pipe = pipeMap.grid.get(position.point);
-
-            var visited = new HashSet<>(position.visited);
-            visited.add(position.point);
 
             if (stepsToLoopPoint.containsKey(position.point) && stepsToLoopPoint.get(position.point) < position.steps) {
                 continue;
@@ -199,8 +195,8 @@ public class Day10 implements DayInterface {
                 var next = new Point(position.point.x, position.point.y - 1);
                 var nextPipe = pipeMap.grid.get(next);
 
-                if ((nextPipe == Pipe.V || nextPipe == Pipe.SE || nextPipe == Pipe.SW) && !visited.contains(next)) {
-                    queue.add(new Position(next, position.steps + 1, visited));
+                if ((nextPipe == Pipe.V || nextPipe == Pipe.SE || nextPipe == Pipe.SW)) {
+                    queue.add(new Position(next, position.steps + 1));
 
                     if (pipe == Pipe.S) {
                         sVerticalConnection = CompassDirection.N;
@@ -213,8 +209,8 @@ public class Day10 implements DayInterface {
                 var next = new Point(position.point.x, position.point.y + 1);
                 var nextPipe = pipeMap.grid.get(next);
 
-                if ((nextPipe == Pipe.V || nextPipe == Pipe.NE || nextPipe == Pipe.NW) && !visited.contains(next)) {
-                    queue.add(new Position(next, position.steps + 1, visited));
+                if ((nextPipe == Pipe.V || nextPipe == Pipe.NE || nextPipe == Pipe.NW)) {
+                    queue.add(new Position(next, position.steps + 1));
 
                     if (pipe == Pipe.S) {
                         sVerticalConnection = CompassDirection.S;
@@ -227,8 +223,8 @@ public class Day10 implements DayInterface {
                 var next = new Point(position.point.x + 1, position.point.y);
                 var nextPipe = pipeMap.grid.get(next);
 
-                if ((nextPipe == Pipe.H || nextPipe == Pipe.NW || nextPipe == Pipe.SW) && !visited.contains(next)) {
-                    queue.add(new Position(next, position.steps + 1, visited));
+                if ((nextPipe == Pipe.H || nextPipe == Pipe.NW || nextPipe == Pipe.SW)) {
+                    queue.add(new Position(next, position.steps + 1));
 
                     if (pipe == Pipe.S) {
                         sHorizontalConnection = CompassDirection.E;
@@ -241,8 +237,8 @@ public class Day10 implements DayInterface {
                 var next = new Point(position.point.x - 1, position.point.y);
                 var nextPipe = pipeMap.grid.get(next);
 
-                if ((nextPipe == Pipe.H || nextPipe == Pipe.NE || nextPipe == Pipe.SE) && !visited.contains(next)) {
-                    queue.add(new Position(next, position.steps + 1, visited));
+                if ((nextPipe == Pipe.H || nextPipe == Pipe.NE || nextPipe == Pipe.SE)) {
+                    queue.add(new Position(next, position.steps + 1));
 
                     if (pipe == Pipe.S) {
                         sHorizontalConnection = CompassDirection.W;
@@ -269,12 +265,10 @@ public class Day10 implements DayInterface {
     private static class Position {
         public Point point;
         public int steps;
-        public Set<Point> visited;
 
-        public Position(Point point, int steps, Set<Point> visited) {
+        public Position(Point point, int steps) {
             this.point = point;
             this.steps = steps;
-            this.visited = visited;
         }
     }
 }
