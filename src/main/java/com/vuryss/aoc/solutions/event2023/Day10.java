@@ -77,21 +77,22 @@ public class Day10 implements DayInterface {
     @Override
     public String part1Solution(String input) {
         var pipeMap = constructPipeMap(input);
-        var loopDistances = constructLoopDistances(pipeMap);
+        var loopPipes = constructLoopPipes(pipeMap);
 
-        return String.valueOf(loopDistances.values().stream().max(Integer::compareTo).orElseThrow());
+        return String.valueOf(
+            loopPipes.values().stream().map(p -> p.distanceFromStart).max(Integer::compareTo).orElseThrow()
+        );
     }
 
     @Override
     public String part2Solution(String input) {
         var pipeMap = constructPipeMap(input);
-        var loopDistances = constructLoopDistances(pipeMap);
+        var loopPipes = constructLoopPipes(pipeMap);
         var count = 0;
-        var loopPipes = loopDistances.keySet();
 
         for (var y = 1; y < pipeMap.lines - 1; y++) {
             for (var x = 1; x < pipeMap.columns - 1; x++) {
-                if (loopPipes.contains(new Point(x, y))) {
+                if (loopPipes.containsKey(new Point(x, y))) {
                     continue;
                 }
 
@@ -101,29 +102,27 @@ public class Day10 implements DayInterface {
                 CompassDirection pipeCameFrom = null;
 
                 for (var i = x + 1; i < pipeMap.columns; i++) {
-                    var p = new Point(i, y);
+                    var pipe = pipeMap.grid.get(new Point(i, y));
 
-                    if (!loopPipes.contains(p)) {
+                    if (pipe == null || !loopPipes.containsKey(pipe.location)) {
                         continue;
                     }
 
-                    var pipe = pipeMap.grid.get(p);
-
-                    if (pipe == Pipe.V) {
+                    if (pipe.type == PipeType.V) {
                         loopPipeCrossingCount++;
                         continue;
                     }
 
                     // Here we go "inside" the pipe and store which direction it came from
-                    if (pipe == Pipe.NE || pipe == Pipe.SE) {
+                    if (pipe.type == PipeType.NE || pipe.type == PipeType.SE) {
                         insidePipe = true;
-                        pipeCameFrom = pipe == Pipe.NE ? CompassDirection.N : CompassDirection.S;
+                        pipeCameFrom = pipe.type == PipeType.NE ? CompassDirection.N : CompassDirection.S;
                         continue;
                     }
 
                     // If we go outside, and it goes in the same direction, it's not counted as crossing
-                    if (insidePipe && pipe != Pipe.H) {
-                        loopPipeCrossingCount += (pipe.name().startsWith(pipeCameFrom.name()) ? 0 : 1);
+                    if (insidePipe && pipe.type != PipeType.H) {
+                        loopPipeCrossingCount += (pipe.type.name().startsWith(pipeCameFrom.name()) ? 0 : 1);
                         insidePipe = false;
                         pipeCameFrom = null;
                     }
@@ -146,19 +145,20 @@ public class Day10 implements DayInterface {
         for (var y = 0; y < lines.length; y++) {
             for (var x = 0; x < lines[y].length(); x++) {
                 var charAt = lines[y].charAt(x);
+                var point = new Point(x, y);
 
                 if (charAt == '.') {
                     continue;
                 }
 
-                grid.put(new Point(x, y), switch (charAt) {
-                    case 'S' -> Pipe.S;
-                    case '|' -> Pipe.V;
-                    case '-' -> Pipe.H;
-                    case 'F' -> Pipe.SE;
-                    case '7' -> Pipe.SW;
-                    case 'L' -> Pipe.NE;
-                    case 'J' -> Pipe.NW;
+                grid.put(point, switch (charAt) {
+                    case 'S' -> new Pipe(null, point, 0);
+                    case '|' -> new Pipe(PipeType.V, point, null);
+                    case '-' -> new Pipe(PipeType.H, point, null);
+                    case 'F' -> new Pipe(PipeType.SE, point, null);
+                    case '7' -> new Pipe(PipeType.SW, point, null);
+                    case 'L' -> new Pipe(PipeType.NE, point, null);
+                    case 'J' -> new Pipe(PipeType.NW, point, null);
                     default -> throw new RuntimeException("Unknown pipe: " + charAt);
                 });
 
@@ -171,96 +171,79 @@ public class Day10 implements DayInterface {
         return new PipeMap(grid, lines.length, lines[0].length(), start);
     }
 
-    private Map<Point, Integer> constructLoopDistances(PipeMap pipeMap) {
-        var stepsToLoopPoint = new HashMap<Point, Integer>();
-        stepsToLoopPoint.put(pipeMap.start, 0);
-        CompassDirection sVerticalConnection = null;
-        CompassDirection sHorizontalConnection = null;
-
-        var queue = new LinkedList<Position>();
-        queue.add(new Position(pipeMap.start, 0));
+    private HashMap<Point, Pipe> constructLoopPipes(PipeMap pipeMap) {
+        var startPipe = pipeMap.grid.get(pipeMap.start);
+        var queue = new LinkedList<Pipe>(){{ add(startPipe); }};
+        var loopPipes = new HashMap<Point, Pipe>(){{ put(startPipe.location, startPipe); }};
 
         while (!queue.isEmpty()) {
-            var position = queue.removeFirst();
-            var pipe = pipeMap.grid.get(position.point);
+            var pipe = queue.removeFirst();
+            loopPipes.put(pipe.location, pipe);
 
-            if (stepsToLoopPoint.containsKey(position.point) && stepsToLoopPoint.get(position.point) < position.steps) {
-                continue;
-            }
+            for (var cp: pipe.connectionPoints().entrySet()) {
+                var nextPipe = pipeMap.grid.get(cp.getValue());
 
-            stepsToLoopPoint.put(position.point, position.steps);
-
-            // Check if there is north connection
-            if (pipe == Pipe.V || pipe == Pipe.NE || pipe == Pipe.NW || pipe == Pipe.S) {
-                var next = new Point(position.point.x, position.point.y - 1);
-                var nextPipe = pipeMap.grid.get(next);
-
-                if ((nextPipe == Pipe.V || nextPipe == Pipe.SE || nextPipe == Pipe.SW)) {
-                    queue.add(new Position(next, position.steps + 1));
-
-                    if (pipe == Pipe.S) {
-                        sVerticalConnection = CompassDirection.N;
+                if (nextPipe != null && nextPipe.distanceFromStart == null && nextPipe.connectionPoints().containsKey(cp.getKey().opposite())) {
+                    switch (cp.getKey()) {
+                        case N -> { pipe.north = nextPipe; nextPipe.south = pipe; }
+                        case E -> { pipe.east = nextPipe; nextPipe.west = pipe; }
+                        case S -> { pipe.south = nextPipe; nextPipe.north = pipe; }
+                        case W -> { pipe.west = nextPipe; nextPipe.east = pipe; }
                     }
-                }
-            }
-
-            // Check if there is south connection
-            if (pipe == Pipe.V || pipe == Pipe.SE || pipe == Pipe.SW || pipe == Pipe.S) {
-                var next = new Point(position.point.x, position.point.y + 1);
-                var nextPipe = pipeMap.grid.get(next);
-
-                if ((nextPipe == Pipe.V || nextPipe == Pipe.NE || nextPipe == Pipe.NW)) {
-                    queue.add(new Position(next, position.steps + 1));
-
-                    if (pipe == Pipe.S) {
-                        sVerticalConnection = CompassDirection.S;
-                    }
-                }
-            }
-
-            // Check if there is east connection
-            if (pipe == Pipe.H || pipe == Pipe.NE || pipe == Pipe.SE || pipe == Pipe.S) {
-                var next = new Point(position.point.x + 1, position.point.y);
-                var nextPipe = pipeMap.grid.get(next);
-
-                if ((nextPipe == Pipe.H || nextPipe == Pipe.NW || nextPipe == Pipe.SW)) {
-                    queue.add(new Position(next, position.steps + 1));
-
-                    if (pipe == Pipe.S) {
-                        sHorizontalConnection = CompassDirection.E;
-                    }
-                }
-            }
-
-            // Check if there is west connection
-            if (pipe == Pipe.H || pipe == Pipe.NW || pipe == Pipe.SW || pipe == Pipe.S) {
-                var next = new Point(position.point.x - 1, position.point.y);
-                var nextPipe = pipeMap.grid.get(next);
-
-                if ((nextPipe == Pipe.H || nextPipe == Pipe.NE || nextPipe == Pipe.SE)) {
-                    queue.add(new Position(next, position.steps + 1));
-
-                    if (pipe == Pipe.S) {
-                        sHorizontalConnection = CompassDirection.W;
-                    }
+                    nextPipe.distanceFromStart = pipe.distanceFromStart + 1;
+                    queue.add(nextPipe);
                 }
             }
         }
 
-        // Depending on the Start point connections, we can determine the pipe type
-        if (sVerticalConnection != null && sHorizontalConnection != null) {
-            pipeMap.grid.put(pipeMap.start, Pipe.valueOf(sVerticalConnection.name() + sHorizontalConnection.name()));
-        } else if (sHorizontalConnection == null) {
-            pipeMap.grid.put(pipeMap.start, Pipe.V);
-        } else {
-            pipeMap.grid.put(pipeMap.start, Pipe.H);
-        }
+        startPipe.resolveTypeByConnections();
 
-        return stepsToLoopPoint;
+        return loopPipes;
     }
 
     private record PipeMap(HashMap<Point, Pipe> grid, int lines, int columns, Point start) {}
-    enum Pipe { V, H, SE, SW, NE, NW, S }
+    enum PipeType { V, H, SE, SW, NE, NW }
+
+    private static class Pipe {
+        PipeType type;
+        Integer distanceFromStart;
+        Point location;
+        Pipe north = null;
+        Pipe east = null;
+        Pipe south = null;
+        Pipe west = null;
+
+        public Pipe(PipeType type, Point location, Integer distanceFromStart) {
+            this.distanceFromStart = distanceFromStart;
+            this.location = location;
+            this.type = type;
+        }
+
+        public Map<CompassDirection, Point> connectionPoints() {
+            return switch (type) {
+                case V -> Map.of(CompassDirection.S, location.south(), CompassDirection.N, location.north());
+                case H -> Map.of(CompassDirection.E, location.east(), CompassDirection.W, location.west());
+                case SE -> Map.of(CompassDirection.S, location.south(), CompassDirection.E, location.east());
+                case SW -> Map.of(CompassDirection.S, location.south(), CompassDirection.W, location.west());
+                case NE -> Map.of(CompassDirection.N, location.north(), CompassDirection.E, location.east());
+                case NW -> Map.of(CompassDirection.N, location.north(), CompassDirection.W, location.west());
+                case null -> Map.of(
+                    CompassDirection.N, location.north(), CompassDirection.W, location.west(),
+                    CompassDirection.S, location.south(), CompassDirection.E, location.east()
+                );
+            };
+        }
+
+        public void resolveTypeByConnections() {
+            if (type == null) {
+                if (north != null) {
+                    type = south != null ? PipeType.V : (east != null ? PipeType.NE : PipeType.NW);
+                } else {
+                    type = south != null ? (east != null ? PipeType.SE : PipeType.SW) : PipeType.H;
+                }
+            }
+        }
+    }
 
     private static class Position {
         public Point point;
