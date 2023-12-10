@@ -244,14 +244,4 @@ public class Day10 implements DayInterface {
             }
         }
     }
-
-    private static class Position {
-        public Point point;
-        public int steps;
-
-        public Position(Point point, int steps) {
-            this.point = point;
-            this.steps = steps;
-        }
-    }
 }
