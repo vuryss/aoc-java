@@ -28,6 +28,15 @@ public class Point {
         );
     }
 
+    public List<Point> getAdjacentPoints() {
+        return List.of(
+            new Point(x - 1, y),
+            new Point(x + 1, y),
+            new Point(x, y - 1),
+            new Point(x, y + 1)
+        );
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
