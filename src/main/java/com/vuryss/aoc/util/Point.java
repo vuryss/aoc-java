@@ -53,6 +53,10 @@ public class Point {
         return new Point(x - 1, y);
     }
 
+    public static int manhattan(Point a, Point b) {
+        return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
