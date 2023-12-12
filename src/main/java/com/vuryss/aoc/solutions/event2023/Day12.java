@@ -86,41 +86,38 @@ public class Day12 implements DayInterface {
         }
 
         if (line.isEmpty()) {
-            if (damaged.isEmpty() || (damaged.size() == 1 && damaged.getFirst() == 0)) {
-                return 1;
-            }
-
-            return 0;
+            return damaged.isEmpty() || (damaged.size() == 1 && damaged.getFirst() == 0) ? 1 : 0;
         }
 
         var head = line.charAt(0);
         var remainingLine = line.substring(1);
 
-        if (head == '.') {
-            if (inGroup) {
-                if (damaged.getFirst() != 0) {
-                    return 0;
+        switch (head) {
+            case '.' -> {
+                if (inGroup) {
+                    if (damaged.getFirst() != 0) {
+                        return 0;
+                    }
+
+                    return cache(state, combinationsCount(remainingLine, damaged.subList(1, damaged.size()), false));
                 }
 
-                return cache(state, combinationsCount(remainingLine, damaged.subList(1, damaged.size()), false));
+                return cache(state, combinationsCount(remainingLine, damaged, false));
             }
+            case '#' -> {
+                if (!damaged.isEmpty() && damaged.getFirst() > 0) {
+                    var reducedDamaged = new LinkedList<>(damaged){{ set(0, damaged.getFirst() - 1); }};
 
-            return cache(state, combinationsCount(remainingLine, damaged, false));
-        }
-
-        if (head == '#' && !damaged.isEmpty() && damaged.getFirst() > 0) {
-            var damagedWithDecreasedFirstCount = new ArrayList<>(damaged);
-            damagedWithDecreasedFirstCount.set(0, damagedWithDecreasedFirstCount.getFirst() - 1);
-
-            return cache(state, combinationsCount(remainingLine, damagedWithDecreasedFirstCount, true));
-        }
-
-        if (head == '?') {
-            return cache(
-                state,
-                combinationsCount('.' + remainingLine, damaged, inGroup)
-                + combinationsCount('#' + remainingLine, damaged, inGroup)
-            );
+                    return cache(state, combinationsCount(remainingLine, reducedDamaged, true));
+                }
+            }
+            case '?' -> {
+                return cache(
+                    state,
+                    combinationsCount('.' + remainingLine, damaged, inGroup)
+                    + combinationsCount('#' + remainingLine, damaged, inGroup)
+                );
+            }
         }
 
         return 0;
