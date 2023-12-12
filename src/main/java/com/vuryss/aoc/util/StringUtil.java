@@ -22,7 +22,7 @@ public class StringUtil {
     }
 
     public static List<Integer> ints(String s) {
-        return Regex.matchAll("\\d+", s).stream().map(Integer::parseInt).toList();
+        return Regex.matchAll("\\d+", s).stream().map(Integer::parseInt).collect(Collectors.toList());
     }
 
     public static List<Long> longs(String s) {
