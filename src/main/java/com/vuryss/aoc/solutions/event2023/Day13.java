@@ -93,12 +93,8 @@ public class Day13 implements DayInterface {
             for (var i = 0; i < lines.length - 1; i++) {
                 var lDistance = 0;
 
-                for (int j = i, k = i + 1; j >= 0 && k < lines.length; j--, k++) {
+                for (int j = i, k = i + 1; j >= 0 && k < lines.length && lDistance <= allowedErrors; j--, k++) {
                     lDistance += ld.apply(lines[j], lines[k]);
-
-                    if (lDistance > allowedErrors) {
-                        break;
-                    }
                 }
 
                 if (lDistance == allowedErrors) {
@@ -110,12 +106,8 @@ public class Day13 implements DayInterface {
             for (var i = 0; i < columns.size() - 1; i++) {
                 var lDistance = 0;
 
-                for (int j = i, k = i + 1; j >= 0 && k < columns.size(); j--, k++) {
+                for (int j = i, k = i + 1; j >= 0 && k < columns.size() && lDistance <= allowedErrors; j--, k++) {
                     lDistance += ld.apply(columns.get(j), columns.get(k));
-
-                    if (lDistance > allowedErrors) {
-                        break;
-                    }
                 }
 
                 if (lDistance == allowedErrors) {
