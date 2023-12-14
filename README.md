@@ -13,10 +13,11 @@ Copy `.env.dist` file into `.env` file and fill in the value of `session` cookie
 ## Running tests
 `./gradlew run --args="--day=1 --test"`
 
-## Stupid mistakes I did while solving puzzles
+## Stupid mistakes/assumptions I did while solving puzzles
 
 ### Year 2023
 
+- **Day 14:** Repeating cycles do not necessary start from 0
 - **Day 13:** Assume that only 2 lines or 2 columns are not enough for the pattern to be mirrored
 - **Day 12:** Silent int overflow
 - **Day 11:** Off by one error (1 + 1000000 does not equal 1000000 multiplication of the universe)
