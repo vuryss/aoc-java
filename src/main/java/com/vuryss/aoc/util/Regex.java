@@ -35,7 +35,11 @@ public class Regex {
         }
 
         for (var i = 1; i <= m.groupCount(); i++) {
-            l.add(m.group(i));
+            var val = m.group(i);
+
+            if (val != null) {
+                l.add(val);
+            }
         }
 
         return l;
