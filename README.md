@@ -17,6 +17,7 @@ Copy `.env.dist` file into `.env` file and fill in the value of `session` cookie
 
 ### Year 2023
 
+- **Day 15:** Missed one crucial sentence in the puzzle description, but fix was trivial.
 - **Day 14:** Repeating cycles do not necessary start from 0
 - **Day 13:** Assume that only 2 lines or 2 columns are not enough for the pattern to be mirrored
 - **Day 12:** Silent int overflow
