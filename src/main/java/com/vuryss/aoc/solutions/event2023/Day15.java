@@ -58,16 +58,14 @@ public class Day15 implements DayInterface {
 
         nextStep:
         for (var step: steps) {
-            var matches = Objects.requireNonNull(Regex.matchGroups("([a-z]+)([=\\-])(\\d+)?", step));
-            var lensName = matches.getFirst();
-            var sign = matches.get(1).charAt(0);
-            var num = matches.size() == 3 ? Integer.parseInt(matches.getLast()) : null;
+            var matches = Regex.matchNamedGroups("(?<name>[a-z]+)(?<sign>[=\\-])(?<value>\\d+)?", step);
+            var lensName = matches.get("name");
             var boxIndex = lensName.chars().reduce(0, (a, b) -> (a + b) * 17 % 256);
             var box = boxes.get(boxIndex);
 
-            if (sign == '=') {
+            if (matches.get("sign").charAt(0) == '=') {
                 boolean hasLens = false;
-                assert num != null;
+                var num = Integer.parseInt(matches.get("value"));
 
                 for (var lens: box.lenses) {
                     if (lens.name.equals(lensName)) {
