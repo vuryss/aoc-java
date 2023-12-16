@@ -73,4 +73,20 @@ public class Point {
     public String toString() {
         return getClass().getName() + "[x=" + x + ",y=" + y + "]";
     }
+
+    public Point right() {
+        return new Point(x + 1, y);
+    }
+
+    public Point left() {
+        return new Point(x - 1, y);
+    }
+
+    public Point up() {
+        return new Point(x, y - 1);
+    }
+
+    public Point down() {
+        return new Point(x, y + 1);
+    }
 }
