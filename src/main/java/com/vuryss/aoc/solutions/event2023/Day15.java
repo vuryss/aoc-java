@@ -3,10 +3,7 @@ package com.vuryss.aoc.solutions.event2023;
 import com.vuryss.aoc.solutions.DayInterface;
 import com.vuryss.aoc.util.Regex;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public class Day15 implements DayInterface {
@@ -50,64 +47,28 @@ public class Day15 implements DayInterface {
     public String part2Solution(String input) {
         var sum = 0;
         var steps = input.trim().split(",");
-        var boxes = new ArrayList<Box>();
+        var hashmap = new HashMap<Integer, LinkedHashMap<String, Integer>>();
 
-        for (var i = 0; i < 256; i++) {
-            boxes.add(new Box(i));
-        }
-
-        nextStep:
         for (var step: steps) {
             var matches = Regex.matchNamedGroups("(?<name>[a-z]+)(?<sign>[=\\-])(?<value>\\d+)?", step);
             var lensName = matches.get("name");
-            var boxIndex = lensName.chars().reduce(0, (a, b) -> (a + b) * 17 % 256);
-            var box = boxes.get(boxIndex);
+            var hash = lensName.chars().reduce(0, (a, b) -> (a + b) * 17 % 256);
+            var list = hashmap.computeIfAbsent(hash, h -> new LinkedHashMap<>());
 
-            if (matches.get("sign").charAt(0) == '=') {
-                boolean hasLens = false;
-                var num = Integer.parseInt(matches.get("value"));
-
-                for (var lens: box.lenses) {
-                    if (lens.name.equals(lensName)) {
-                        lens.value = num;
-                        continue nextStep;
-                    }
-                }
-
-                box.lenses.add(new Lens(lensName, num));
-                continue;
+            switch (matches.get("sign").charAt(0)) {
+                case '=' -> list.put(lensName, Integer.parseInt(matches.get("value")));
+                case '-' -> list.remove(lensName);
             }
-
-            box.lenses.removeIf(lens -> lens.name.equals(lensName));
         }
 
-        for (var box: boxes) {
+        for (var mapEntry: hashmap.entrySet()) {
             var lensIndex = 1;
 
-            for (var lens: box.lenses) {
-                sum += (1 + box.index) * lensIndex++ * lens.value;
+            for (var lensValue: mapEntry.getValue().values()) {
+                sum += (1 + mapEntry.getKey()) * lensIndex++ * lensValue;
             }
         }
 
         return String.valueOf(sum);
-    }
-
-    private static class Box {
-        public int index;
-        public List<Lens> lenses = new ArrayList<>();
-
-        public Box(int index) {
-            this.index = index;
-        }
-    }
-
-    private static class Lens {
-        public String name;
-        public int value;
-
-        public Lens(String name, int value) {
-            this.name = name;
-            this.value = value;
-        }
     }
 }
