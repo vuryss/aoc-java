@@ -104,12 +104,7 @@ public class Day17 implements DayInterface {
             node.visited.add(Pair.of(player.direction, player.chainSteps));
 
             if (player.chainSteps < maxStraight) {
-                var nextPoint = switch (player.direction) {
-                    case U -> player.position.up();
-                    case D -> player.position.down();
-                    case L -> player.position.left();
-                    case R -> player.position.right();
-                };
+                var nextPoint = player.position.forwardFromDirection(player.direction);
                 var nextNode = grid.get(nextPoint);
 
                 if (nextNode != null && !nextNode.visited.contains(Pair.of(player.direction, player.chainSteps + 1))) {
@@ -118,13 +113,7 @@ public class Day17 implements DayInterface {
             }
 
             if (player.chainSteps >= minStraight) {
-                // Go right
-                var rightPoint = switch (player.direction) {
-                    case U -> player.position.right();
-                    case D -> player.position.left();
-                    case L -> player.position.up();
-                    case R -> player.position.down();
-                };
+                var rightPoint = player.position.rightFromDirection(player.direction);
                 var rightDirection = player.direction.turnRight();
                 var rightNode = grid.get(rightPoint);
 
@@ -132,13 +121,7 @@ public class Day17 implements DayInterface {
                     queue.add(new Player(rightPoint, rightDirection, 1, player.heatLoss + rightNode.heatLoss));
                 }
 
-                // Go left
-                var leftPoint = switch (player.direction) {
-                    case U -> player.position.left();
-                    case D -> player.position.right();
-                    case L -> player.position.down();
-                    case R -> player.position.up();
-                };
+                var leftPoint = player.position.leftFromDirection(player.direction);
                 var leftDirection = player.direction.turnLeft();
                 var leftNode = grid.get(leftPoint);
 

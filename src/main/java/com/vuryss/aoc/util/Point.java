@@ -53,6 +53,49 @@ public class Point {
         return new Point(x - 1, y);
     }
 
+    public Point right() {
+        return new Point(x + 1, y);
+    }
+
+    public Point left() {
+        return new Point(x - 1, y);
+    }
+
+    public Point up() {
+        return new Point(x, y - 1);
+    }
+
+    public Point down() {
+        return new Point(x, y + 1);
+    }
+
+    public Point leftFromDirection(Direction direction) {
+        return switch (direction) {
+            case U -> left();
+            case D -> right();
+            case L -> down();
+            case R -> up();
+        };
+    }
+
+    public Point rightFromDirection(Direction direction) {
+        return switch (direction) {
+            case U -> right();
+            case D -> left();
+            case L -> up();
+            case R -> down();
+        };
+    }
+
+    public Point forwardFromDirection(Direction direction) {
+        return switch (direction) {
+            case U -> up();
+            case D -> down();
+            case L -> left();
+            case R -> right();
+        };
+    }
+
     public static int manhattan(Point a, Point b) {
         return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
     }
@@ -76,21 +119,5 @@ public class Point {
 
     public String toString() {
         return getClass().getName() + "[x=" + x + ",y=" + y + "]";
-    }
-
-    public Point right() {
-        return new Point(x + 1, y);
-    }
-
-    public Point left() {
-        return new Point(x - 1, y);
-    }
-
-    public Point up() {
-        return new Point(x, y - 1);
-    }
-
-    public Point down() {
-        return new Point(x, y + 1);
     }
 }
