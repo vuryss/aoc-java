@@ -57,6 +57,10 @@ public class Point {
         return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
     }
 
+    public int manhattan(Point p) {
+        return Point.manhattan(this, p);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

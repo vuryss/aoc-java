@@ -11,4 +11,31 @@ public enum Direction {
             case D -> U;
         };
     }
+
+    public Direction turnLeft() {
+        return switch (this) {
+            case R -> U;
+            case L -> D;
+            case U -> L;
+            case D -> R;
+        };
+    }
+
+    public Direction turnRight() {
+        return switch (this) {
+            case R -> D;
+            case L -> U;
+            case U -> R;
+            case D -> L;
+        };
+    }
+
+    public String toString() {
+        return switch (this) {
+            case R -> ">";
+            case L -> "<";
+            case U -> "^";
+            case D -> "v";
+        };
+    }
 }
