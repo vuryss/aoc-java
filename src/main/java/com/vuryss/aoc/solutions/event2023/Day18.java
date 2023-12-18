@@ -91,7 +91,6 @@ public class Day18 implements DayInterface {
             var parts = line.split(" ");
             var direction = parts[0];
             var distance = Integer.parseInt(parts[1]);
-            var color = parts[2].substring(1, 8);
 
             switch (direction) {
                 case "R" -> {
@@ -176,9 +175,7 @@ public class Day18 implements DayInterface {
     @Override
     public String part2Solution(String input) {
         var lines = input.trim().split("\n");
-        var grid = new HashMap<Point, Character>();
         var position = new Point2D.Double(0, 0);
-        int minX = 0, maxX = 0, minY = 0, maxY = 0;
         var pointsList = new ArrayList<Point2D.Double>();
         var index = 0;
         var directions = new ArrayList<Direction>();
@@ -204,7 +201,6 @@ public class Day18 implements DayInterface {
             var parts = line.split(" ");
             var color = parts[2].substring(1, 8);
             var distance = Integer.parseInt(color.substring(1, 6), 16);
-
             var direction = directions.get(index);
             var previousDirection = directions.get((((index - 1) % directions.size()) + directions.size()) % directions.size());
             var nextDirection = directions.get((index + 1) % directions.size());
