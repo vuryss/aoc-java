@@ -6,7 +6,7 @@ import com.vuryss.aoc.util.Regex;
 
 import java.util.*;
 
-//@SuppressWarnings("unused")
+@SuppressWarnings("unused")
 public class Day19 implements DayInterface {
     @Override
     public Map<String, String> part1Tests() {
