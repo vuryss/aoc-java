@@ -169,6 +169,7 @@ public class Day20 implements DayInterface {
 
         public void sendPulse(Module source, boolean pulse) {
             queue.put(source, pulse);
+            long l = pulse ? source.sentHighPulses++ : source.sentLowPulses++;
         }
 
         public void loadQueueToInputs() {
@@ -178,37 +179,18 @@ public class Day20 implements DayInterface {
 
         public boolean process(long counter) {
             if (name.equals("button")) {
-                for (var output: outputs) {
-                    output.sendPulse(this, false);
-                    sentLowPulses++;
-                }
-
+                outputs.forEach(output -> output.sendPulse(this, false));
                 return true;
             }
 
             if (inputPulses.isEmpty()) {
                 return false;
-            }
-
-            else if (name.equals("broadcaster")) {
-                for (var output : outputs) {
-                    output.sendPulse(this, false);
-                    sentLowPulses++;
-                }
+            } else if (name.equals("broadcaster")) {
+                outputs.forEach(output -> output.sendPulse(this, false));
             } else if (type != null && type == '%') {
                 for (var incomingPulse: inputPulses.entrySet()) {
                     if (!incomingPulse.getValue()) {
-                        if (state) {
-                            for (var output: outputs) {
-                                output.sendPulse(this, false);
-                                sentLowPulses++;
-                            }
-                        } else {
-                            for (var output: outputs) {
-                                output.sendPulse(this, true);
-                                sentHighPulses++;
-                            }
-                        }
+                        outputs.forEach(output -> output.sendPulse(this, !state));
                         state = !state;
                     }
                 }
@@ -216,29 +198,12 @@ public class Day20 implements DayInterface {
                 for (var incomingPulse: inputPulses.entrySet()) {
                     inputs.put(incomingPulse.getKey(), incomingPulse.getValue());
 
-                    boolean hasLow = false;
+                    boolean hasLow = inputs.entrySet().stream().anyMatch(input -> !input.getValue());
 
-                    for (var input: inputs.entrySet()) {
-                        if (!input.getValue()) {
-                            hasLow = true;
-                            break;
-                        }
-                    }
+                    outputs.forEach(output -> output.sendPulse(this, hasLow));
 
-                    if (hasLow) {
-                        if (this.track) {
-                            Day20.tracker.put(this.name, counter);
-                        }
-
-                        for (var output : outputs) {
-                            output.sendPulse(this, true);
-                            sentHighPulses++;
-                        }
-                    } else {
-                        for (var output : outputs) {
-                            output.sendPulse(this, false);
-                            sentLowPulses++;
-                        }
+                    if (hasLow && this.track) {
+                        Day20.tracker.put(this.name, counter);
                     }
                 }
             }
