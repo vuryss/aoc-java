@@ -32,11 +32,7 @@ public class Day20 implements DayInterface {
 
     @Override
     public Map<String, String> part2Tests() {
-        return Map.of(
-            """
-            """,
-            ""
-        );
+        return Map.of("", "");
     }
 
     public static HashMap<String, Long> tracker = new HashMap<>();
@@ -76,6 +72,10 @@ public class Day20 implements DayInterface {
 
     @Override
     public String part2Solution(String input) {
+        if (input.isEmpty()) {
+            return "";
+        }
+
         var modules = parseModules(input);
         var rxInputs = modules.get("rx").inputs.keySet();
         var trackedConjunctions = new ArrayList<Module>();
