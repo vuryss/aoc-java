@@ -2,6 +2,8 @@ package com.vuryss.aoc.solutions.event2023;
 
 import com.vuryss.aoc.solutions.DayInterface;
 import com.vuryss.aoc.util.Point;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 
 import java.util.*;
 
@@ -90,10 +92,10 @@ public class Day21 implements DayInterface {
         var maxX = lines[0].length();
         var maxY = lines.length;
 
-        var currentPositions = new HashSet<Point>();
+        var currentPositions = new ObjectOpenHashSet<Point>(200000);
         currentPositions.add(start);
 
-        var nextPositions = new HashSet<Point>();
+        var nextPositions = new ObjectArrayList<Point>(200000);
         var lastCycleCount = 0L;
         var lastCountIncrease = 0L;
         var lastDiffIncreasePerCycle = 0L;
@@ -102,8 +104,8 @@ public class Day21 implements DayInterface {
         for (var i = 1; i <= 26501365; i++) {
             for (var point: currentPositions) {
                 for (var nextPoint: point.getAdjacentPoints()) {
-                    var x = (((nextPoint.x % maxX) + maxX) % maxX);
-                    var y = (((nextPoint.y % maxY) + maxY) % maxY);
+                    var x = Math.floorMod(nextPoint.x, maxX);
+                    var y = Math.floorMod(nextPoint.y, maxY);
 
                     if (obstacles.contains(new Point(x, y))) {
                         continue;
@@ -113,17 +115,17 @@ public class Day21 implements DayInterface {
                 }
             }
 
-            currentPositions = nextPositions;
-            nextPositions = new HashSet<>();
+            currentPositions = new ObjectOpenHashSet<>(nextPositions);
+            nextPositions = new ObjectArrayList<>(200000);
 
             if (i % 131 == 65) {
                 var countIncrease = currentPositions.size() - lastCycleCount;
-                var increaseDifference = countIncrease - lastCountIncrease;
-                var increaseDifferenceDifference = increaseDifference - lastDiffIncreasePerCycle;
+                var diffIncreasePerCycle = countIncrease - lastCountIncrease;
+                var increaseDifferenceDifference = diffIncreasePerCycle - lastDiffIncreasePerCycle;
 
                 lastCycleCount = currentPositions.size();
                 lastCountIncrease = countIncrease;
-                lastDiffIncreasePerCycle = increaseDifference;
+                lastDiffIncreasePerCycle = diffIncreasePerCycle;
 
                 if (increaseDifferenceDifference == 0) {
                     step = i;
