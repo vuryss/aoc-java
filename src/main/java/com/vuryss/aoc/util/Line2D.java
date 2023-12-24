@@ -32,13 +32,13 @@ public class Line2D {
         double line1Slope = (double) delta.y / delta.x;
         double line2Slope = (double) line.delta.y / line.delta.x;
 
-        // If slopes are equal, lines are parallel
-        if (line1Slope == line2Slope) {
-            return null;
-        }
-
         double line1b = point.y - line1Slope * point.x;
         double line2b = line.point.y - line2Slope * line.point.x;
+
+        // If slopes are equal, lines are parallel, and if the b values are equal, lines are the same
+        if (line1Slope == line2Slope) {
+            return line1b == line2b ? point : null;
+        }
 
         var intersectionX = Math.round((line2b - line1b) / (line1Slope - line2Slope));
         var intersectionY = Math.round(line1Slope * intersectionX + line1b);
