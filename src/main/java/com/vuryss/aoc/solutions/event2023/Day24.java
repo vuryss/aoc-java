@@ -1,6 +1,8 @@
 package com.vuryss.aoc.solutions.event2023;
 
 import com.vuryss.aoc.solutions.DayInterface;
+import com.vuryss.aoc.util.Line2D;
+import com.vuryss.aoc.util.PointLong;
 import com.vuryss.aoc.util.PointLong3D;
 import com.vuryss.aoc.util.StringUtil;
 
@@ -50,36 +52,34 @@ public class Day24 implements DayInterface {
             for (var j = i + 1; j < hailstones.size(); j++) {
                 var h1 = hailstones.get(i);
                 var h2 = hailstones.get(j);
+                var l1 = new Line2D(new PointLong(h1.position.x, h1.position.y), h1.velocity.x, h1.velocity.y);
+                var l2 = new Line2D(new PointLong(h2.position.x, h2.position.y), h2.velocity.x, h2.velocity.y);
+                var intersection = l1.intersects(l2);
 
-                // Line formula is: y = slope * x + b
-                double h1Slope = (double) h1.velocity.y / h1.velocity.x;
-                double h2Slope = (double) h2.velocity.y / h2.velocity.x;
-                double h1b = h1.position.y - h1Slope * h1.position.x;
-                double h2b = h2.position.y - h2Slope * h2.position.x;
-
-                double intersectionX = (h2b - h1b) / (h1Slope - h2Slope);
-                double intersectionY = h1Slope * intersectionX + h1b;
+                if (intersection == null) {
+                    continue;
+                }
 
                 if (
-                    intersectionX >= min
-                    && intersectionX <= max
-                    && intersectionY >= min
-                    && intersectionY <= max
+                    intersection.x >= min
+                    && intersection.x <= max
+                    && intersection.y >= min
+                    && intersection.y <= max
                     && (
-                        h1.velocity.x >= 0 && intersectionX >= h1.position.x
-                        || h1.velocity.x < 0 && intersectionX < h1.position.x
+                        h1.velocity.x >= 0 && intersection.x >= h1.position.x
+                        || h1.velocity.x < 0 && intersection.x < h1.position.x
                     )
                     && (
-                        h1.velocity.y >= 0 && intersectionY >= h1.position.y
-                        || h1.velocity.y < 0 && intersectionY < h1.position.y
+                        h1.velocity.y >= 0 && intersection.y >= h1.position.y
+                        || h1.velocity.y < 0 && intersection.y < h1.position.y
                     )
                     && (
-                        h2.velocity.x >= 0 && intersectionX >= h2.position.x
-                        || h2.velocity.x < 0 && intersectionX < h2.position.x
+                        h2.velocity.x >= 0 && intersection.x >= h2.position.x
+                        || h2.velocity.x < 0 && intersection.x < h2.position.x
                     )
                     && (
-                        h2.velocity.y >= 0 && intersectionY >= h2.position.y
-                        || h2.velocity.y < 0 && intersectionY < h2.position.y
+                        h2.velocity.y >= 0 && intersection.y >= h2.position.y
+                        || h2.velocity.y < 0 && intersection.y < h2.position.y
                     )
                 ) {
                     count++;
@@ -189,21 +189,18 @@ public class Day24 implements DayInterface {
         var h2v = h2.velocity.sub(new PointLong3D(rockVelocityX, rockVelocityY, rockVelocityZ));
 
         // Find intersection point for just X,Y coordinates as if they were in a 2d space
-        double h1Slope = (double) h1v.y / h1v.x;
-        double h2Slope = (double) h2v.y / h2v.x;
-        double h1b = h1.position.y - h1Slope * h1.position.x;
-        double h2b = h2.position.y - h2Slope * h2.position.x;
-
-        var x = Math.round((h2b - h1b) / (h1Slope - h2Slope));
-        var y = Math.round(h1Slope * x + h1b);
+        var line1 = new Line2D(new PointLong(h1.position.x, h1.position.y), h1v.x, h1v.y);
+        var line2 = new Line2D(new PointLong(h2.position.x, h2.position.y), h2v.x, h2v.y);
+        var intersection = line1.intersects(line2);
+        assert intersection != null;
 
         // Now that we have X, we can calculate the time it takes for the rock to reach that X
-        var time = (x - h1.position.x) / h1v.x;
+        var time = (intersection.x - h1.position.x) / h1v.x;
 
         // Now we can calculate the Z coordinate for that time
         var z = h1.position.z + h1v.z * time;
 
-        return String.valueOf(x + y + z);
+        return String.valueOf(intersection.x + intersection.y + z);
     }
 
     private static class Hailstone {

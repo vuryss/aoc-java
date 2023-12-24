@@ -17,6 +17,10 @@ public class PointLong {
         return new PointLong(x + delta.x, y + delta.y);
     }
 
+    public PointLong sub(PointLong delta) {
+        return new PointLong(x - delta.x, y - delta.y);
+    }
+
     public List<PointLong> surroundingPoints() {
         return List.of(
             new PointLong(x - 1, y - 1),
