@@ -23,6 +23,7 @@ dependencies {
     implementation 'com.google.guava:guava:31.1-jre'
     implementation 'org.jetbrains:annotations:24.1.0'
     implementation 'it.unimi.dsi:fastutil:8.5.12'
+    implementation 'org.jgrapht:jgrapht-core:1.5.2'
 
     annotationProcessor 'info.picocli:picocli-codegen:4.7.5'
 
