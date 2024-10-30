@@ -67,7 +67,7 @@ public class Day7 implements DayInterface {
             var pos1 = avg - i;
             var fuel1 = positions.stream().mapToInt(p -> Math.abs(p - pos1)).map(p -> p * (p + 1) / 2).sum();
             var pos2 = avg + i;
-            var fuel2 = positions.stream().mapToInt(p -> Math.abs(p - pos1)).map(p -> p * (p + 1) / 2).sum();
+            var fuel2 = positions.stream().mapToInt(p -> Math.abs(p - pos2)).map(p -> p * (p + 1) / 2).sum();
 
             if (fuel1 < min) {
                 min = fuel1;
