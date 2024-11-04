@@ -2,6 +2,8 @@ package com.vuryss.aoc.solutions.event2021;
 
 import com.vuryss.aoc.solutions.DayInterface;
 import com.vuryss.aoc.util.Point;
+import com.vuryss.aoc.util.Util;
+
 import java.util.*;
 
 @SuppressWarnings("unused")
@@ -91,17 +93,10 @@ public class Day11 implements DayInterface {
 
     private Map<Point, Octopus> buildGrid(String input) {
         var octopuses = new HashMap<Point, Octopus>();
+        var grid = Util.inputToGrid(input);
 
-        var row = 0;
-        for (var line : input.split("\n")) {
-            var col = 0;
-            for (var c : line.toCharArray()) {
-                var energy = Integer.parseInt(String.valueOf(c));
-                var octopus = new Octopus(energy, new Point(col, row));
-                octopuses.put(new Point(col, row), octopus);
-                col++;
-            }
-            row++;
+        for (var entry : grid.entrySet()) {
+            octopuses.put(entry.getKey(), new Octopus(Character.getNumericValue(entry.getValue()), entry.getKey()));
         }
 
         for (var entry : octopuses.entrySet()) {
