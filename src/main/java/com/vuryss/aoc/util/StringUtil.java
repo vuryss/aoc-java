@@ -37,4 +37,27 @@ public class StringUtil {
     public static String md5(String string) {
         return Hashing.md5().hashString(string, StandardCharsets.UTF_8).toString();
     }
+
+    public static String hex2bin(String string) {
+        var map = new HashMap<Character, String>(){{
+            put('0', "0000");
+            put('1', "0001");
+            put('2', "0010");
+            put('3', "0011");
+            put('4', "0100");
+            put('5', "0101");
+            put('6', "0110");
+            put('7', "0111");
+            put('8', "1000");
+            put('9', "1001");
+            put('A', "1010");
+            put('B', "1011");
+            put('C', "1100");
+            put('D', "1101");
+            put('E', "1110");
+            put('F', "1111");
+        }};
+
+        return string.trim().chars().mapToObj(c -> map.get((char) c)).collect(Collectors.joining());
+    }
 }
