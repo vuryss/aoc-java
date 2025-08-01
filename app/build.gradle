@@ -14,6 +14,7 @@ repositories {
 }
 
 dependencies {
+    // Needed during source compilation
     implementation 'info.picocli:picocli:4.7.6'
     implementation 'io.github.cdimascio:dotenv-java:3.0.0'
     implementation 'org.jsoup:jsoup:1.18.1'
@@ -27,6 +28,7 @@ dependencies {
 
     annotationProcessor 'info.picocli:picocli-codegen:4.7.6'
 
+    // Needed during tests compilation
     testImplementation platform('org.junit:junit-bom:5.10.3')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 }
@@ -35,6 +37,13 @@ test {
     useJUnitPlatform()
 }
 
-compileJava {
-    options.compilerArgs += ["-Aproject=${project.group}/${project.name}"]
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+tasks.named("compileJava", JavaCompile) {
+    it.options.compilerArgs += ["-Aproject=${project.group}/${project.name}"]
+    it.options.compilerArgs += ["-Xlint:-text-blocks"]
 }

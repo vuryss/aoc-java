@@ -77,7 +77,7 @@ public class Day15 implements DayInterface {
             var xDelta = sensor.manhattan - Math.abs(sensor.position.y - targetY);
 
             if (xDelta >= 0) {
-                ranges.add(Range.between(sensor.position.x - xDelta, sensor.position.x + xDelta));
+                ranges.add(Range.of(sensor.position.x - xDelta, sensor.position.x + xDelta));
             }
         }
 

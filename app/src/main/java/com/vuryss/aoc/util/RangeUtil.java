@@ -28,7 +28,7 @@ public class RangeUtil {
     }
 
     public static Range<Integer> merge(Range<Integer> range1, Range<Integer> range2) {
-        return Range.between(
+        return Range.of(
             Math.min(range1.getMinimum(), range2.getMinimum()),
             Math.max(range1.getMaximum(), range2.getMaximum())
         );

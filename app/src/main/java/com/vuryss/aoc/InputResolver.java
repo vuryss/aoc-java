@@ -96,7 +96,10 @@ public class InputResolver {
     }
 
     private String getSessionToken() {
-        var dotenv = Dotenv.load();
+        var dotenv = Dotenv
+                .configure()
+                .directory("./../") // .env file is in the root of the project, not in the app module
+                .load();
         var sessionToken = dotenv.get("SESSION_TOKEN");
 
         if (sessionToken == null || sessionToken.isEmpty()) {

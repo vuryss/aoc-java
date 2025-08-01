@@ -42,5 +42,5 @@ bin/
 .DS_Store
 
 .env
-src/main/resources/input/*
-src/main/resources/answer/*
+app/src/main/resources/input/*
+app/src/main/resources/answer/*
