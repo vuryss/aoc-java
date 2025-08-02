@@ -1,0 +1,25 @@
+[versions]
+guava = "33.4.8-jre"
+commons-lang3 = "3.18.0"
+commons-math3 = "3.6.1"
+commons-text = "1.14.0"
+picocli = "4.7.7"
+dotenv-java = "3.2.0"
+jsoup = "1.21.1"
+jetbrains-annotations = "26.0.2"
+fastutil = "8.5.16"
+jgrapht-core = "1.5.2"
+picocli-codegen = "4.7.7"
+
+[libraries]
+guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
+commons-lang3 = { group = "org.apache.commons", name = "commons-lang3", version.ref = "commons-lang3" }
+commons-math3 = { group = "org.apache.commons", name = "commons-math3", version.ref = "commons-math3" }
+commons-text = { group = "org.apache.commons", name = "commons-text", version.ref = "commons-text" }
+picocli = { group = "info.picocli", name = "picocli", version.ref = "picocli" }
+dotenv-java = { group = "io.github.cdimascio", name = "dotenv-java", version.ref = "dotenv-java" }
+jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
+jetbrains-annotations = { group = "org.jetbrains", name = "annotations", version.ref = "jetbrains-annotations" }
+fastutil = { group = "it.unimi.dsi", name = "fastutil", version.ref = "fastutil" }
+jgrapht-core = { group = "org.jgrapht", name = "jgrapht-core", version.ref = "jgrapht-core" }
+picocli-codegen = { group = "info.picocli", name = "picocli-codegen", version.ref = "picocli-codegen" }
