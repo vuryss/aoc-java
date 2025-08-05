@@ -1,0 +1,17 @@
+plugins {
+    id 'java-platform'
+}
+
+// By default, a java-platform module is only expected to contain constraints blocks. To allow it to consume another
+// platform, the allowDependencies() method must be called within the javaPlatform configuration block.
+javaPlatform {
+    allowDependencies()
+}
+
+// The dependency on the Quarkus BOM is then declared using the api configuration. Using api is crucial here because it
+// ensures that the constraints inherited from the Quarkus BOM are transitively exposed to any project that consumes our
+// custom platform. If implementation were used, the constraints would be confined to the platform module itself and
+// would not be visible to core, cli, or web.
+dependencies {
+    api enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+}

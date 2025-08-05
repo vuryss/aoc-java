@@ -1,21 +1,21 @@
 plugins {
-    id 'application'
+    id 'java-library'
+
+    // Apply the Jandex plugin to generate a META-INF/jandex.idx file.
+    // This index is required by Quarkus for build-time bean discovery.
+    id("org.kordamp.gradle.jandex") version "2.2.0"
 }
 
 group = 'com.vuryss.aoc'
 version = '1.0'
-
-application {
-    mainClass = 'com.vuryss.aoc.Main'
-}
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    // Needed during source compilation and execution
-    implementation libs.picocli
+    implementation(platform(project(":platform")))
+
     implementation libs.dotenv.java
     implementation libs.jsoup
     implementation libs.commons.lang3
@@ -25,18 +25,9 @@ dependencies {
     implementation libs.fastutil
     implementation libs.jgrapht.core
 
-    // Needed during source compilation only
     compileOnly libs.jetbrains.annotations
-
-    annotationProcessor libs.picocli.codegen
-
-    // Needed during tests compilation
-    testImplementation platform('org.junit:junit-bom:5.13.4')
-    testImplementation 'org.junit.jupiter:junit-jupiter'
-}
-
-test {
-    useJUnitPlatform()
+    compileOnly 'io.smallrye.config:smallrye-config'
+    compileOnly 'jakarta.enterprise:jakarta.enterprise.cdi-api'
 }
 
 java {

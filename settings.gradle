@@ -1,3 +1,18 @@
+// https://docs.gradle.org/current/userguide/plugins.html#sec:plugin_management
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+        mavenLocal()
+    }
+    plugins {
+        id "${quarkusPluginId}" version "${quarkusPluginVersion}"
+    }
+}
+
 rootProject.name = 'aoc-java'
 
-include('app')
+include('platform')
+include('core')
+include('cli')
+include 'platform'

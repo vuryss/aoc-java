@@ -34,6 +34,11 @@ bin/
 /dist/
 /nbdist/
 /.nb-gradle/
+nb-configuration.xml
+
+# Vim
+*.swp
+*.swo
 
 ### VS Code ###
 .vscode/
@@ -41,6 +46,18 @@ bin/
 ### Mac OS ###
 .DS_Store
 
+# patch
+*.orig
+*.rej
+
+# Local environment
 .env
-app/src/main/resources/input/*
-app/src/main/resources/answer/*
+
+# Plugin directory
+/.quarkus/cli/plugins/
+# TLS Certificates
+.certs/
+
+# Project-specific
+**/src/main/resources/input/*
+**/src/main/resources/answer/*

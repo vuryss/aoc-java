@@ -1,6 +1,7 @@
 package com.vuryss.aoc;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.io.IOException;
 import java.net.CookieManager;
@@ -15,6 +16,10 @@ import java.time.Duration;
 
 public class InputResolver {
     final Path inputCacheDirectory = Path.of("src/main/resources/input");
+
+    public InputResolver(
+        @ConfigProperty(name = "session.token") String sessionToken
+    ) {}
 
     public String getForEventDay(int eventYear, int eventDay) {
         var cachedInput = getCachedInput(eventYear, eventDay);
