@@ -1,10 +1,8 @@
 package com.vuryss.aoc.client;
 
-import jakarta.enterprise.context.ApplicationScoped;
+import java.util.Map;
 
-@ApplicationScoped
 public interface AdventOfCodeClient {
-    String downloadInput(int year, int day);
-
-    String downloadAnswer(int year, int day, int part);
+    String getPlayerInput(int year, int day);
+    Answers getCorrectAnswers(int eventYear, int eventDay);
 }

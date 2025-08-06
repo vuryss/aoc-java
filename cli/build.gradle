@@ -16,8 +16,8 @@ dependencies {
 
     implementation project(':core')
 
-    implementation 'io.quarkus:quarkus-picocli'
     implementation 'io.quarkus:quarkus-arc'
+    implementation 'io.quarkus:quarkus-picocli'
 
     compileOnly libs.jetbrains.annotations
 

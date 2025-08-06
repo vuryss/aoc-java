@@ -38,4 +38,4 @@ This repo does follow the automation guidelines on the /r/adventofcode community
 
 - Once inputs are downloaded, they are cached locally
 - If you suspect your input is corrupted, you can manually request a fresh copy by deleting the input file in `app/src/main/resources/inputs` and re-running the program.
-- The User-Agent header in com.vuryss.aoc.InputResolver is set to me since I maintain this repo :)
+- The User-Agent header in com.vuryss.aoc.client.AdventOfCodeClientImpl is set to me since I maintain this repo :)
