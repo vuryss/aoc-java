@@ -1,10 +1,10 @@
 package com.vuryss.aoc.solutions.event2021;
 
-import com.vuryss.aoc.solutions.DayInterface;
+import com.vuryss.aoc.solutions.SolutionInterface;
 import java.util.*;
 
 @SuppressWarnings("unused")
-public class Day10 implements DayInterface {
+public class Day10 implements SolutionInterface {
     private final Set<Character> OPENING = Set.of('(', '[', '{', '<');
     private final Map<Character, Character> CLOSING = Map.of('(', ')', '[', ']', '{', '}', '<', '>');
 

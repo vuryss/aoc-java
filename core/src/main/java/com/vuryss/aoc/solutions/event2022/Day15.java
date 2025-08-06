@@ -1,7 +1,7 @@
 package com.vuryss.aoc.solutions.event2022;
 
 import com.vuryss.aoc.Utils;
-import com.vuryss.aoc.solutions.DayInterface;
+import com.vuryss.aoc.solutions.SolutionInterface;
 import com.vuryss.aoc.util.IntUtil;
 import com.vuryss.aoc.util.RangeUtil;
 import org.apache.commons.lang3.Range;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public class Day15 implements DayInterface {
+public class Day15 implements SolutionInterface {
     @Override
     public Map<String, String> part1Tests() {
         return Map.of(

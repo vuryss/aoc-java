@@ -1,6 +1,6 @@
 package com.vuryss.aoc.solutions.event2023;
 
-import com.vuryss.aoc.solutions.DayInterface;
+import com.vuryss.aoc.solutions.SolutionInterface;
 import com.vuryss.aoc.util.Direction;
 import com.vuryss.aoc.util.Point;
 import org.apache.commons.lang3.tuple.Pair;
@@ -8,7 +8,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.util.*;
 
 @SuppressWarnings("unused")
-public class Day17 implements DayInterface {
+public class Day17 implements SolutionInterface {
     @Override
     public Map<String, String> part1Tests() {
         return Map.of(

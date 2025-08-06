@@ -1,7 +1,7 @@
 package com.vuryss.aoc.solutions.event2022;
 
 import com.vuryss.aoc.Utils;
-import com.vuryss.aoc.solutions.DayInterface;
+import com.vuryss.aoc.solutions.SolutionInterface;
 import com.vuryss.aoc.solutions.event2022.day22.Cube;
 import com.vuryss.aoc.solutions.event2022.day22.FlatBoard;
 import org.apache.commons.lang3.StringUtils;
@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Stack;
 
 @SuppressWarnings({"DataFlowIssue", "unused"})
-public class Day22 implements DayInterface {
+public class Day22 implements SolutionInterface {
     final byte TEST_SIZE = 4;
     final byte INPUT_SIZE = 50;
 

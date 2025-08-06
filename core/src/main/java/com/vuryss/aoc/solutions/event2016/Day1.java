@@ -1,6 +1,6 @@
 package com.vuryss.aoc.solutions.event2016;
 
-import com.vuryss.aoc.solutions.DayInterface;
+import com.vuryss.aoc.solutions.SolutionInterface;
 import com.vuryss.aoc.util.CompassDirection;
 import com.vuryss.aoc.util.Point;
 
@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public class Day1 implements DayInterface {
+public class Day1 implements SolutionInterface {
     @Override
     public Map<String, String> part1Tests() {
         return Map.of(

@@ -1,13 +1,13 @@
 package com.vuryss.aoc.solutions.event2015;
 
-import com.vuryss.aoc.solutions.DayInterface;
+import com.vuryss.aoc.solutions.SolutionInterface;
 import com.vuryss.aoc.util.Regex;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
 
 @SuppressWarnings("unused")
-public class Day7 implements DayInterface {
+public class Day7 implements SolutionInterface {
     @Override
     public Map<String, String> part1Tests() {
         return Map.of(

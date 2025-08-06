@@ -1,13 +1,13 @@
 package com.vuryss.aoc.solutions.event2023;
 
-import com.vuryss.aoc.solutions.DayInterface;
+import com.vuryss.aoc.solutions.SolutionInterface;
 import com.vuryss.aoc.util.CompassDirection;
 import com.vuryss.aoc.util.Point;
 
 import java.util.*;
 
 @SuppressWarnings("unused")
-public class Day10 implements DayInterface {
+public class Day10 implements SolutionInterface {
     @Override
     public java.util.Map<String, String> part1Tests() {
         return java.util.Map.of(

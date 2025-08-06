@@ -1,12 +1,12 @@
 package com.vuryss.aoc.solutions.event2022;
 
-import com.vuryss.aoc.solutions.DayInterface;
+import com.vuryss.aoc.solutions.SolutionInterface;
 import com.vuryss.aoc.util.Point;
 
 import java.util.*;
 
 @SuppressWarnings("unused")
-public class Day24 implements DayInterface {
+public class Day24 implements SolutionInterface {
     List<Point> moves = List.of(
         new Point(0, -1),
         new Point(1, 0),

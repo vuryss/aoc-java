@@ -1,6 +1,6 @@
 package com.vuryss.aoc.solutions.event2022;
 
-import com.vuryss.aoc.solutions.DayInterface;
+import com.vuryss.aoc.solutions.SolutionInterface;
 import com.vuryss.aoc.util.IntUtil;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
@@ -8,7 +8,7 @@ import org.apache.commons.lang3.tuple.Triple;
 import java.util.*;
 
 @SuppressWarnings("unused")
-public class Day16 implements DayInterface {
+public class Day16 implements SolutionInterface {
     static int minutes;
     @Override
     public Map<String, String> part1Tests() {

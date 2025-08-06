@@ -1,13 +1,13 @@
 package com.vuryss.aoc.solutions.event2023;
 
 import com.google.common.base.Joiner;
-import com.vuryss.aoc.solutions.DayInterface;
+import com.vuryss.aoc.solutions.SolutionInterface;
 import com.vuryss.aoc.util.StringUtil;
 
 import java.util.*;
 
 @SuppressWarnings("unused")
-public class Day6 implements DayInterface {
+public class Day6 implements SolutionInterface {
     @Override
     public Map<String, String> part1Tests() {
         return Map.of(

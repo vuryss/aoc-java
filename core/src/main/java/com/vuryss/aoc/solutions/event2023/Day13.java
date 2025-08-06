@@ -1,6 +1,6 @@
 package com.vuryss.aoc.solutions.event2023;
 
-import com.vuryss.aoc.solutions.DayInterface;
+import com.vuryss.aoc.solutions.SolutionInterface;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
 import java.util.ArrayList;
@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
-public class Day13 implements DayInterface {
+public class Day13 implements SolutionInterface {
     @Override
     public Map<String, String> part1Tests() {
         return Map.of(

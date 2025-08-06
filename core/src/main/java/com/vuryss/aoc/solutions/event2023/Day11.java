@@ -1,6 +1,6 @@
 package com.vuryss.aoc.solutions.event2023;
 
-import com.vuryss.aoc.solutions.DayInterface;
+import com.vuryss.aoc.solutions.SolutionInterface;
 import com.vuryss.aoc.util.PointLong;
 
 import java.util.*;
@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
 @SuppressWarnings("unused")
-public class Day11 implements DayInterface {
+public class Day11 implements SolutionInterface {
     @Override
     public Map<String, String> part1Tests() {
         return Map.of(

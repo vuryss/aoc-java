@@ -1,11 +1,11 @@
 package com.vuryss.aoc.solutions.event2023;
 
-import com.vuryss.aoc.solutions.DayInterface;
+import com.vuryss.aoc.solutions.SolutionInterface;
 
 import java.util.*;
 import java.util.stream.Stream;
 
-public class Day1 implements DayInterface {
+public class Day1 implements SolutionInterface {
     @Override
     public Map<String, String> part1Tests() {
         return Map.of(

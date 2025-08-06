@@ -1,13 +1,13 @@
 package com.vuryss.aoc.solutions.event2022;
 
-import com.vuryss.aoc.solutions.DayInterface;
+import com.vuryss.aoc.solutions.SolutionInterface;
 
 import java.awt.*;
 import java.util.List;
 import java.util.*;
 
 @SuppressWarnings("unused")
-public class Day12 implements DayInterface {
+public class Day12 implements SolutionInterface {
     private final List<Point> deltas = List.of(new Point(0, 1), new Point(0, -1), new Point(1, 0), new Point(-1, 0));
     @Override
     public Map<String, String> part1Tests() {

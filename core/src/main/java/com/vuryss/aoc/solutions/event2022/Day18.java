@@ -1,6 +1,6 @@
 package com.vuryss.aoc.solutions.event2022;
 
-import com.vuryss.aoc.solutions.DayInterface;
+import com.vuryss.aoc.solutions.SolutionInterface;
 import com.vuryss.aoc.util.Point3D;
 
 import java.util.HashSet;
@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public class Day18 implements DayInterface {
+public class Day18 implements SolutionInterface {
     static Point3D[] cubeSideDeltas = new Point3D[] {
         new Point3D(0, 0, 1),
         new Point3D(0, 0, -1),

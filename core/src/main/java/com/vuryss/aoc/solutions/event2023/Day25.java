@@ -1,6 +1,6 @@
 package com.vuryss.aoc.solutions.event2023;
 
-import com.vuryss.aoc.solutions.DayInterface;
+import com.vuryss.aoc.solutions.SolutionInterface;
 import com.vuryss.aoc.util.Regex;
 import org.jgrapht.alg.StoerWagnerMinimumCut;
 import org.jgrapht.graph.DefaultEdge;
@@ -9,7 +9,7 @@ import org.jgrapht.graph.DefaultUndirectedGraph;
 import java.util.*;
 
 @SuppressWarnings("unused")
-public class Day25 implements DayInterface {
+public class Day25 implements SolutionInterface {
     @Override
     public Map<String, String> part1Tests() {
         return Map.of();

@@ -1,12 +1,12 @@
 package com.vuryss.aoc.solutions.event2022;
 
-import com.vuryss.aoc.solutions.DayInterface;
+import com.vuryss.aoc.solutions.SolutionInterface;
 import com.vuryss.aoc.util.Point;
 
 import java.util.*;
 
 @SuppressWarnings("unused")
-public class Day23 implements DayInterface {
+public class Day23 implements SolutionInterface {
     enum Direction {
         NORTH, EAST, SOUTH, WEST;
 

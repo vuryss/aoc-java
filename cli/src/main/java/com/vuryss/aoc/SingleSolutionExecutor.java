@@ -1,7 +1,7 @@
 package com.vuryss.aoc;
 
 import com.vuryss.aoc.cache.CachedAdventOfCodeClient;
-import com.vuryss.aoc.solutions.DayInterface;
+import com.vuryss.aoc.solutions.SolutionInterface;
 import jakarta.enterprise.context.ApplicationScoped;
 import picocli.CommandLine;
 
@@ -91,7 +91,7 @@ public class SingleSolutionExecutor {
         System.out.println();
     }
 
-    private void executeTestScenarios(int year, int day, DayInterface solution) {
+    private void executeTestScenarios(int year, int day, SolutionInterface solution) {
         System.out.println(CommandLine.Help.Ansi.AUTO.string(String.format(
             "@|bold,blue Executing test scenarios for year %s day %s|@\n",
             year, day

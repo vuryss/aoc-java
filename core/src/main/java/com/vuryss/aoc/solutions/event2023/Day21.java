@@ -1,6 +1,6 @@
 package com.vuryss.aoc.solutions.event2023;
 
-import com.vuryss.aoc.solutions.DayInterface;
+import com.vuryss.aoc.solutions.SolutionInterface;
 import com.vuryss.aoc.util.Point;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -8,7 +8,7 @@ import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import java.util.*;
 
 @SuppressWarnings("unused")
-public class Day21 implements DayInterface {
+public class Day21 implements SolutionInterface {
     @Override
     public Map<String, String> part1Tests() {
         return Map.of();

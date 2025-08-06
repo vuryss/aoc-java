@@ -1,11 +1,11 @@
 package com.vuryss.aoc.solutions.event2022;
 
-import com.vuryss.aoc.solutions.DayInterface;
+import com.vuryss.aoc.solutions.SolutionInterface;
 
 import java.util.Map;
 
 @SuppressWarnings("unused")
-public class Day2 implements DayInterface {
+public class Day2 implements SolutionInterface {
     private final int ROCK_INDEX = 0;
     private final int PAPER_INDEX = 1;
     private final int SCISSORS_INDEX = 2;
