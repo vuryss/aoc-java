@@ -1,11 +1,10 @@
 package com.vuryss.aoc.solutions.event2022;
 
-import com.vuryss.aoc.Utils;
 import com.vuryss.aoc.solutions.SolutionInterface;
 import com.vuryss.aoc.util.IntUtil;
+import com.vuryss.aoc.util.Point;
 import com.vuryss.aoc.util.RangeUtil;
 import org.apache.commons.lang3.Range;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -70,7 +69,7 @@ public class Day15 implements SolutionInterface {
             var parts = line.split(" ");
             var position = new Point(IntUtil.parseSignedInteger(parts[2]), IntUtil.parseSignedInteger(parts[3]));
             var beacon = new Point(IntUtil.parseSignedInteger(parts[8]), IntUtil.parseSignedInteger(parts[9]));
-            var sensor = new Sensor(position, Utils.manhattan(position, beacon));
+            var sensor = new Sensor(position, position.manhattan(beacon));
 
             beacons.add(beacon);
 
@@ -108,7 +107,7 @@ public class Day15 implements SolutionInterface {
             var position = new Point(IntUtil.parseSignedInteger(parts[2]), IntUtil.parseSignedInteger(parts[3]));
             var beacon = new Point(IntUtil.parseSignedInteger(parts[8]), IntUtil.parseSignedInteger(parts[9]));
 
-            sensors.add(new Sensor(position, Utils.manhattan(position, beacon) + 1));
+            sensors.add(new Sensor(position, position.manhattan(beacon) + 1));
         }
 
         for (var sensor: sensors) {
@@ -133,7 +132,7 @@ public class Day15 implements SolutionInterface {
                             continue;
                         }
 
-                        if (Utils.manhattan(point, otherSensor.position) < otherSensor.manhattan) {
+                        if (point.manhattan(otherSensor.position) < otherSensor.manhattan) {
                             continue outer;
                         }
                     }

@@ -30,7 +30,7 @@ public class StringUtil {
     }
 
     public static List<Long> longs(String s) {
-        return Regex.matchAll("\\d+", s).stream().map(Long::parseLong).toList();
+        return Regex.matchAll("\\d+", s).stream().map(Long::parseLong).collect(Collectors.toList());
     }
 
     public static List<Long> slongs(String s) {
@@ -63,5 +63,15 @@ public class StringUtil {
         }};
 
         return string.trim().chars().mapToObj(c -> map.get((char) c)).collect(Collectors.joining());
+    }
+
+    public static LinkedList<Character> toCharacterQueue(String input) {
+        var list = new LinkedList<Character>();
+
+        for (var c: input.toCharArray()) {
+            list.add(c);
+        }
+
+        return list;
     }
 }

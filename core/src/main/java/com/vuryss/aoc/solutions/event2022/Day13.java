@@ -1,7 +1,7 @@
 package com.vuryss.aoc.solutions.event2022;
 
-import com.vuryss.aoc.Utils;
 import com.vuryss.aoc.solutions.SolutionInterface;
+import com.vuryss.aoc.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,8 +82,8 @@ public class Day13 implements SolutionInterface {
 
         for (var inputPart: input.split("\n\n")) {
             var tuple = inputPart.split("\n");
-            var left = parseList(Utils.toCharacterQueue(tuple[0]));
-            var right = parseList(Utils.toCharacterQueue(tuple[1]));
+            var left = parseList(StringUtil.toCharacterQueue(tuple[0]));
+            var right = parseList(StringUtil.toCharacterQueue(tuple[1]));
 
             if (left.isInRightOrderComparedTo(right) == 1) {
                 sum += index;
@@ -101,7 +101,7 @@ public class Day13 implements SolutionInterface {
         var itemList = new ArrayList<Item>();
 
         for (var inputPart: input.split("\n+")) {
-            itemList.add(parseList(Utils.toCharacterQueue(inputPart)));
+            itemList.add(parseList(StringUtil.toCharacterQueue(inputPart)));
         }
 
         itemList.sort((a, b) -> b.isInRightOrderComparedTo(a));

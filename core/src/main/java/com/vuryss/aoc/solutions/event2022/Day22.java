@@ -1,9 +1,9 @@
 package com.vuryss.aoc.solutions.event2022;
 
-import com.vuryss.aoc.Utils;
 import com.vuryss.aoc.solutions.SolutionInterface;
 import com.vuryss.aoc.solutions.event2022.day22.Cube;
 import com.vuryss.aoc.solutions.event2022.day22.FlatBoard;
+import com.vuryss.aoc.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.awt.*;
@@ -98,7 +98,7 @@ public class Day22 implements SolutionInterface {
 
         var position = new Point(flatBoard.rowLeftmost.get(1), 1);
         var facing = Direction.RIGHT;
-        var moves = Utils.toCharacterQueue(parts[1].trim());
+        var moves = StringUtil.toCharacterQueue(parts[1].trim());
 
         flatBoard.setPlayerPosition(position);
 
@@ -267,7 +267,7 @@ public class Day22 implements SolutionInterface {
         var cubeSide = cube.getSide(Cube.Side.FRONT);
         Point cubeGridPoint = new Point(0, 0);
 
-        var moves = Utils.toCharacterQueue(parts[1].trim());
+        var moves = StringUtil.toCharacterQueue(parts[1].trim());
 
         while (!moves.isEmpty()) {
             var move = moves.poll().toString();

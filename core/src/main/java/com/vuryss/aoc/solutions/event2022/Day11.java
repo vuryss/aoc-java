@@ -1,7 +1,7 @@
 package com.vuryss.aoc.solutions.event2022;
 
-import com.vuryss.aoc.Utils;
 import com.vuryss.aoc.solutions.SolutionInterface;
+import com.vuryss.aoc.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,7 +105,7 @@ public class Day11 implements SolutionInterface {
 
         for (var i = 0; i < monkeyInputs.length; i++) {
             var monkeyInputLines = monkeyInputs[i].split("\n");
-            var items = Utils.toLongList(monkeyInputLines[1].trim().split(": ")[1].split(", "));
+            var items = StringUtil.longs(monkeyInputLines[1]);
             var operation = monkeyInputLines[2].trim().split("new = old ")[1];
             var divisible = Integer.parseInt(monkeyInputLines[3].replaceAll("\\D", ""));
             var trueMonkey = Integer.parseInt(monkeyInputLines[4].replaceAll("\\D", ""));

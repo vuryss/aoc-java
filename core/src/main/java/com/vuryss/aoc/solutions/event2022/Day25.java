@@ -1,7 +1,7 @@
 package com.vuryss.aoc.solutions.event2022;
 
-import com.vuryss.aoc.Utils;
 import com.vuryss.aoc.solutions.SolutionInterface;
+import com.vuryss.aoc.util.StringUtil;
 
 import java.util.Map;
 
@@ -77,7 +77,7 @@ public class Day25 implements SolutionInterface {
     }
 
     long snafuToDecimal(String snafu) {
-        var chars = Utils.toCharacterQueue(snafu);
+        var chars = StringUtil.toCharacterQueue(snafu);
         long decimal = 0L;
         byte power = 0;
 
