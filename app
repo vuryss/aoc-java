@@ -11,6 +11,17 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+# Check for.env file and load it if it exists. This makes the variables
+# available to the Java process we are about to start.
+if [ -f.env ]; then
+  # The 'set -a' command marks variables for export.
+  # 'source' executes the.env file in the current shell context.
+  # 'set +a' stops the automatic export.
+  set -a
+  source .env
+  set +a
+fi
+
 # Execute the application's JAR file using Java.
 # Note the path is build/quarkus-app/ for Gradle.
 # All arguments passed to this script ($@) are forwarded to the app.
