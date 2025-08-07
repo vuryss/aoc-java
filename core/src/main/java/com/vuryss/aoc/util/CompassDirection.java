@@ -3,6 +3,16 @@ package com.vuryss.aoc.util;
 public enum CompassDirection {
     N, E, S, W, NE, SE, SW, NW;
 
+    public static CompassDirection fromChar(char c) {
+        return switch (c) {
+            case 'N' -> N;
+            case 'E' -> E;
+            case 'S' -> S;
+            case 'W' -> W;
+            default -> throw new IllegalArgumentException("Invalid direction");
+        };
+    }
+
     public CompassDirection opposite() {
         return switch (this) {
             case N -> S;

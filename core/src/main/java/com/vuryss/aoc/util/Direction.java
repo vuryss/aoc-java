@@ -3,6 +3,16 @@ package com.vuryss.aoc.util;
 public enum Direction {
     R, L, U, D;
 
+    public static Direction fromChar(char c) {
+        return switch (c) {
+            case 'R' -> R;
+            case 'L' -> L;
+            case 'U' -> U;
+            case 'D' -> D;
+            default -> throw new IllegalArgumentException("Invalid direction");
+        };
+    }
+
     public Direction opposite() {
         return switch (this) {
             case R -> L;
