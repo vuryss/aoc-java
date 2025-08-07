@@ -11,13 +11,12 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
-import java.util.Map;
 
 @ApplicationScoped
-public class AdventOfCodeClientImpl implements AdventOfCodeClient {
+public class NativeJavaAdventOfCodeClient implements AdventOfCodeClient {
     private final String sessionToken;
 
-    public AdventOfCodeClientImpl(
+    public NativeJavaAdventOfCodeClient(
         @ConfigProperty(name = "session.token") String sessionToken
     ) {
         this.sessionToken = sessionToken;

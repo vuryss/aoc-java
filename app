@@ -14,4 +14,4 @@ fi
 # Execute the application's JAR file using Java.
 # Note the path is build/quarkus-app/ for Gradle.
 # All arguments passed to this script ($@) are forwarded to the app.
-java -jar cli/build/quarkus-app/quarkus-run.jar "$@"
+java -Dquarkus.log.console.enable=false -jar cli/build/quarkus-app/quarkus-run.jar "$@"

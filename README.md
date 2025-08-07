@@ -4,38 +4,79 @@
 
 Copy `.env.dist` file into `.env` file and fill in the value of `session` cookie after you have authenticated in AoC.  
 
-## Current ongoing event execution
-`./gradlew app:run --args="--day=1"`
+## Examples how to run the CLI
 
-## Custom event - current or previous
-`./gradlew app:run --args="--year=2015 --day=1"`
+### Execute single solution with user input - Event 2023, Day 1
 
-## Running tests
-`./gradlew app:run --args="--day=1 --test"`
+***requires configured AoC access in .env file***
 
-## Stupid mistakes/assumptions I did while solving puzzles
+```bash
+./app -y 2023 -d 1
+```
 
-### Year 2023
+### Execute single solution with test data - Event 2022, Day 13
 
-- **Day 15:** Missed one crucial sentence in the puzzle description, but fix was trivial.
-- **Day 14:** Repeating cycles do not necessary start from 0
-- **Day 13:** Assume that only 2 lines or 2 columns are not enough for the pattern to be mirrored
-- **Day 12:** Silent int overflow
-- **Day 11:** Off by one error (1 + 1000000 does not equal 1000000 multiplication of the universe)
-- **Day 10:** Did not replace the start position with the correct pipe type
-- **Day 9:** Did not fully account for the negative numbers
-- **Day 8:** Looked at which index we reach the end instead of how many steps we need to reach the end
-- **Day 7:** Constructing too many nested if/else for a much simpler logic, missed lots of edge cases
-- **Day 6:** 
-- **Day 5:** 
-- **Day 4:** 
-- **Day 3:** 
-- **Day 2:** 
-- **Day 1:** 
+```bash
+./app -y 2022 -d 13 -t
+```
+
+### Execute single solution and validate answers - Event 2021, Day 12
+
+***requires configured AoC access in .env file***
+
+```bash
+./app -y 2021 -d 12 -v
+```
+
+### Execute single solution - invalidate cache (means download input and answers from AoC) - Event 2020, Day 10
+
+***requires configured AoC access in .env file***
+
+```bash
+./app -y 2020 -d 10 -c
+```
+
+### Execute whole year - Event 2022, with user input
+
+***requires configured AoC access in .env file***
+
+```bash
+./app -y 2022
+```
+
+### Execute whole year - Event 2021, with test data
+
+```bash
+./app -y 2021 -t
+```
+
+### Execute whole year - Event 2020, validate answers
+
+***requires configured AoC access in .env file***
+
+```bash
+./app -y 2020 -v
+```
+
+### Execute whole year - Event 2019, invalidate cache
+
+***requires configured AoC access in .env file***
+
+```bash
+./app -y 2019 -c
+```
+
+### Execute ALL events - with user input
+
+***requires configured AoC access in .env file***
+
+```bash
+./app
+```
 
 ---
 This repo does follow the automation guidelines on the /r/adventofcode community wiki https://www.reddit.com/r/adventofcode/wiki/faqs/automation. Specifically:
 
 - Once inputs are downloaded, they are cached locally
-- If you suspect your input is corrupted, you can manually request a fresh copy by deleting the input file in `app/src/main/resources/inputs` and re-running the program.
-- The User-Agent header in com.vuryss.aoc.client.AdventOfCodeClientImpl is set to me since I maintain this repo :)
+- If you suspect your input is corrupted, you can execute the solution without a cache by adding '-c' flag
+- The User-Agent header in com.vuryss.aoc.client.NativeJavaAdventOfCodeClient is set to me since I maintain this repo :)
