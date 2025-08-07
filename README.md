@@ -74,6 +74,26 @@ Copy `.env.dist` file into `.env` file and fill in the value of `session` cookie
 ./app
 ```
 
+## Debugging guide
+
+Debugging the CLI application can be done by running the `debug` script. It will start the application in dev mode, 
+suspend the JVM, and pass all script arguments to the Quarkus application.
+
+```bash
+./debug -y 2023 -d 1
+```
+
+To attach to the suspended JVM from IntelliJ, create a new Remote JVM Debug configuration and set the port to 5005.
+Like this:
+
+1. Go to Run -> Edit Configurations....
+2. Click the + button and select Remote JVM Debug from the list.
+3. Name the configuration something memorable, such as Attach to Quarkus CLI.
+4. Ensure the Debugger mode is set to Attach to remote JVM.
+5. Set the Host to localhost.
+6. Set the Port to 5005. This is the default debug port that Quarkus uses.
+7. Click Apply and OK.
+
 ---
 This repo does follow the automation guidelines on the /r/adventofcode community wiki https://www.reddit.com/r/adventofcode/wiki/faqs/automation. Specifically:
 
