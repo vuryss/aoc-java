@@ -25,6 +25,19 @@ public class Regex {
         return list;
     }
 
+    public static List<String> matchAllOverlapping(String regex, String input) {
+        var m = Pattern.compile(regex).matcher(input);
+        var list = new ArrayList<String>();
+        var index = 0;
+
+        while (m.find(index)) {
+            list.add(m.group());
+            index = m.start() + 1;
+        }
+
+        return list;
+    }
+
     public static boolean matches(String regex, String input) {
         return Pattern.compile(regex).matcher(input).find();
     }
