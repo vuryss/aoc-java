@@ -25,6 +25,10 @@ dependencies {
     implementation libs.fastutil
     implementation libs.jgrapht.core
 
+    // Jackson
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.19.2'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.19.2'
+
     compileOnly libs.jetbrains.annotations
     compileOnly 'io.smallrye.config:smallrye-config'
     compileOnly 'jakarta.enterprise:jakarta.enterprise.cdi-api'
