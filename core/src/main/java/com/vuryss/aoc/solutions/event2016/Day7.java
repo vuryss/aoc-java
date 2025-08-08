@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
 public class Day7 implements SolutionInterface {
     private static final Pattern SUPERNET_PATTERN = Pattern.compile("(^|])([^\\[]+)(\\[|$)");
     private static final Pattern HYPERNET_PATTERN = Pattern.compile("\\[([^]]+)]");
-    private static final Pattern ABA_PATTERN = Pattern.compile("(\\w)(?!\\1)(\\w)\\1");
 
     @Override
     public Map<String, String> part1Tests() {
