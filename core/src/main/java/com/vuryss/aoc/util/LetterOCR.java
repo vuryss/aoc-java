@@ -6,14 +6,14 @@ import java.util.Map;
 import java.util.Set;
 
 public class LetterOCR {
-    private static final String ALPHABET_4_6_CHARACTERS = "ABCEFGHIJKLOPRSUYZ";
+    private static final String ALPHABET_4_6_CHARACTERS = "ABCEFGHIJKLOPRSUZ";
     private static final String ALPHABET_4_6 = """
-         ##  ###   ##  #### ####  ##  #  # ###    ## #  # #     ##  ###  ###   ### #  # #   # ####\s
-        #  # #  # #  # #    #    #  # #  #  #      # # #  #    #  # #  # #  # #    #  # #   #    #\s
-        #  # ###  #    ###  ###  #    ####  #      # ##   #    #  # #  # #  # #    #  #  # #    # \s
-        #### #  # #    #    #    # ## #  #  #      # # #  #    #  # ###  ###   ##  #  #   #    #  \s
-        #  # #  # #  # #    #    #  # #  #  #   #  # # #  #    #  # #    # #     # #  #   #   #   \s
-        #  # ###   ##  #### #     ### #  # ###   ##  #  # ####  ##  #    #  # ###   ##    #   ####\s
+         ##  ###   ##  #### ####  ##  #  # ###    ## #  # #     ##  ###  ###   ### #  # ####\s
+        #  # #  # #  # #    #    #  # #  #  #      # # #  #    #  # #  # #  # #    #  #    #\s
+        #  # ###  #    ###  ###  #    ####  #      # ##   #    #  # #  # #  # #    #  #   # \s
+        #### #  # #    #    #    # ## #  #  #      # # #  #    #  # ###  ###   ##  #  #  #  \s
+        #  # #  # #  # #    #    #  # #  #  #   #  # # #  #    #  # #    # #     # #  # #   \s
+        #  # ###   ##  #### #     ### #  # ###   ##  #  # ####  ##  #    #  # ###   ##  ####\s
         """;
 
     public static String decode46(HashSet<Point> grid) {
