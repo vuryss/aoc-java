@@ -27,6 +27,7 @@ dependencies {
     implementation libs.jgrapht.core
     implementation libs.jackson
     implementation libs.jackson.datatype.jsr310
+    implementation libs.javapoet
 
     compileOnly libs.jetbrains.annotations
     compileOnly 'io.smallrye.config:smallrye-config'

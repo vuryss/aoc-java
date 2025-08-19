@@ -10,6 +10,7 @@ jetbrains-annotations = "26.0.2"
 fastutil = "8.5.16"
 jgrapht-core = "1.5.2"
 jackson = "2.19.2"
+javapoet = "0.7.0"
 
 [libraries]
 guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
@@ -24,3 +25,4 @@ fastutil = { group = "it.unimi.dsi", name = "fastutil", version.ref = "fastutil"
 jgrapht-core = { group = "org.jgrapht", name = "jgrapht-core", version.ref = "jgrapht-core" }
 jackson = { group = "com.fasterxml.jackson.core", name = "jackson-databind", version.ref = "jackson" }
 jackson-datatype-jsr310 = { group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version.ref = "jackson" }
+javapoet = { group = "com.palantir.javapoet", name = "javapoet", version.ref = "javapoet" }

@@ -3,6 +3,8 @@ package com.vuryss.aoc.client;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.TextNode;
 
 import java.net.CookieManager;
 import java.net.HttpCookie;
@@ -101,5 +103,89 @@ public class NativeJavaAdventOfCodeClient implements AdventOfCodeClient {
         var answer2 = elements.get(1).text();
 
         return new Answers(answer1, answer2);
+    }
+
+    public String getDayDescription(int year, int day) {
+        var sessionCookie = new HttpCookie("session", sessionToken);
+        sessionCookie.setPath("/");
+        sessionCookie.setVersion(0);
+
+        var cookieManager = new CookieManager();
+        cookieManager.getCookieStore().add(URI.create("https://adventofcode.com"), sessionCookie);
+
+        var httpClient = HttpClient.newBuilder()
+            .cookieHandler(cookieManager)
+            .connectTimeout(Duration.ofSeconds(10))
+            .build();
+
+        var request = HttpRequest.newBuilder()
+            .uri(URI.create(String.format("https://adventofcode.com/%s/day/%s", year, day)))
+            .header("User-Agent", "github.com/vuryss/aoc-java by vuryss@gmail.com")
+            .GET()
+            .build();
+
+        HttpResponse<String> response;
+
+        try {
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        httpClient.close();
+
+        var elements = Jsoup.parse(response.body()).select("article.day-desc");
+        var description = new StringBuilder();
+
+        for (var element: elements) {
+            if (!description.isEmpty()) {
+                description.append("\n\n");
+            }
+
+            description.append(convertHtmlToJavadoc(element));
+        }
+
+        return description.toString();
+    }
+
+    private String convertHtmlToJavadoc(Element element) {
+        element.select("h2").forEach(
+            e -> e.replaceWith(new TextNode(wrapTextMaxWidth(e.text())))
+        );
+        element.select("p").forEach(
+            e -> e.replaceWith(new TextNode(wrapTextMaxWidth(e.text())))
+        );
+        element.select("br").forEach(
+            e -> e.replaceWith(new TextNode(wrapTextMaxWidth(e.text())))
+        );
+
+        element.select("li").forEach(li -> li.prepend("@NEW_LINE@- "));
+
+        for (var node: element.childNodes()) {
+            if (node instanceof TextNode && ((TextNode) node).isBlank()) {
+                node.remove();
+            }
+        }
+
+        return element.text().replace("@NEW_LINE@", "\n").trim();
+    }
+
+    private String wrapTextMaxWidth(String text) {
+        var words = text.split(" ");
+        var wrappedText = new StringBuilder();
+        var currentLine = new StringBuilder();
+
+        for (var word: words) {
+            if (currentLine.length() + word.length() + 1 > 117) {
+                wrappedText.append(currentLine.toString().trim()).append("@NEW_LINE@");
+                currentLine.setLength(0);
+            }
+
+            currentLine.append(word).append(" ");
+        }
+
+        wrappedText.append(currentLine);
+
+        return "@NEW_LINE@@NEW_LINE@" + wrappedText.toString().trim();
     }
 }

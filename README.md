@@ -94,6 +94,12 @@ Like this:
 6. Set the Port to 5005. This is the default debug port that Quarkus uses.
 7. Click Apply and OK.
 
+## Generating java solution scaffold for a given year and day
+
+```bash
+./scaffold 2023 1
+```
+
 ---
 This repo does follow the automation guidelines on the /r/adventofcode community wiki https://www.reddit.com/r/adventofcode/wiki/faqs/automation. Specifically:
 

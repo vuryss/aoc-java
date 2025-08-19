@@ -11,6 +11,6 @@ echo "  Passing arguments to application: $*"
 # Execute the Gradle task, passing all script arguments as a single
 # string ("$*") to the --quarkus-args option. The JVM will wait for a
 # debugger to connect on port 5005.
-./gradlew quarkusDev -Dsuspend=y --console=plain --quarkus-args="$*"
+./gradlew quarkusDev -Dsuspend=y --console=plain --quarkus-args="solve $*"
 
 echo "✅ Debug session finished."
