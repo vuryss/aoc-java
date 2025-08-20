@@ -54,7 +54,19 @@ public class NativeJavaAdventOfCodeClient implements AdventOfCodeClient {
 
         httpClient.close();
 
-        return response.body();
+        if (response.statusCode() != 200) {
+            throw new RuntimeException(
+                "Failed to get input (status code: " + response.statusCode() + ") Check your session token and try again."
+            );
+        }
+
+        var responseBody = response.body();
+
+        if (responseBody.contains("Puzzle inputs differ by user.  Please log in to get your puzzle input.")) {
+            throw new RuntimeException("Invalid session token");
+        }
+
+        return responseBody;
     }
 
     public Answers getCorrectAnswers(int eventYear, int eventDay) {
