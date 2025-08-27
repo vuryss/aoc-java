@@ -164,6 +164,9 @@ public class NativeJavaAdventOfCodeClient implements AdventOfCodeClient {
         element.select("h2").forEach(
             e -> e.replaceWith(new TextNode(wrapTextMaxWidth(e.text())))
         );
+        element.select("pre").forEach(
+            e -> e.prepend("@NEW_LINE@")
+        );
         element.select("p").forEach(
             e -> e.replaceWith(new TextNode(wrapTextMaxWidth(e.text())))
         );
