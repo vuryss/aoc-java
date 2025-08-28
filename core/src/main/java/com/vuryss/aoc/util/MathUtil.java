@@ -3,6 +3,7 @@ package com.vuryss.aoc.util;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.math3.util.ArithmeticUtils;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -27,5 +28,27 @@ public class MathUtil {
         var denominator = 2 * a;
 
         return Pair.of((-b + sqrt) / denominator, (-b - sqrt) / denominator);
+    }
+
+    public static List<Long> factors(long n) {
+        if (n < 1) {
+            return List.of();
+        }
+
+        if (n == 1) {
+            return List.of(1L);
+        }
+
+        var factors = new ArrayList<Long>();
+        var sqrt = Math.sqrt(n);
+
+        for (var i = 1L; i <= sqrt; i++) {
+            if (n % i == 0) {
+                factors.add(i);
+                factors.add(n / i);
+            }
+        }
+
+        return factors;
     }
 }
