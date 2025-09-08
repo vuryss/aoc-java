@@ -1,4 +1,4 @@
-package com.vuryss.aoc.cache;
+package com.vuryss.aoc.cli.cache;
 
 import java.io.IOException;
 import java.nio.file.Files;

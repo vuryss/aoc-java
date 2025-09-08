@@ -1,4 +1,4 @@
-package com.vuryss.aoc.cache;
+package com.vuryss.aoc.cli.cache;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import java.io.IOException;

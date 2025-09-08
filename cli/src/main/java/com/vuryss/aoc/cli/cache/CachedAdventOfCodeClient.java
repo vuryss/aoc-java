@@ -1,4 +1,4 @@
-package com.vuryss.aoc.cache;
+package com.vuryss.aoc.cli.cache;
 
 import com.vuryss.aoc.client.AdventOfCodeClient;
 import com.vuryss.aoc.client.Answers;

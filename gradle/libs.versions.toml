@@ -11,6 +11,8 @@ fastutil = "8.5.16"
 jgrapht-core = "1.5.2"
 jackson = "2.19.2"
 javapoet = "0.7.0"
+quarkus-resteasy-problem = "3.21.0"
+nuprocess = "3.0.0"
 
 [libraries]
 guava = { group = "com.google.guava", name = "guava", version.ref = "guava" }
@@ -26,3 +28,5 @@ jgrapht-core = { group = "org.jgrapht", name = "jgrapht-core", version.ref = "jg
 jackson = { group = "com.fasterxml.jackson.core", name = "jackson-databind", version.ref = "jackson" }
 jackson-datatype-jsr310 = { group = "com.fasterxml.jackson.datatype", name = "jackson-datatype-jsr310", version.ref = "jackson" }
 javapoet = { group = "com.palantir.javapoet", name = "javapoet", version.ref = "javapoet" }
+quarkus-resteasy-problem = { group = "io.quarkiverse.resteasy-problem", name = "quarkus-resteasy-problem", version.ref = "quarkus-resteasy-problem" }
+nuprocess = { group = "com.zaxxer", name = "nuprocess", version.ref = "nuprocess" }

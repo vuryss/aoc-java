@@ -1,4 +1,4 @@
-package com.vuryss.aoc;
+package com.vuryss.aoc.cli;
 
 import io.quarkus.picocli.runtime.annotations.TopCommand;
 import picocli.CommandLine;

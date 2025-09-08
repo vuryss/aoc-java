@@ -1,0 +1,76 @@
+plugins {
+    id 'java'
+    id 'io.quarkus'
+}
+
+group = 'com.vuryss.aoc.api'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+tasks.named('quarkusGenerateCode') {
+    dependsOn(project(':cli').tasks.quarkusBuild)
+}
+
+configurations {
+    cliTool {
+        canBeConsumed = false
+        canBeResolved = true
+        canBeDeclared = true
+        description = 'A resolvable configuration to hold the dependency on the CLI tool\'s uber-jar.'
+    }
+}
+
+dependencies {
+    implementation(platform(project(":platform")))
+
+    implementation project(':core')
+
+    implementation 'io.quarkus:quarkus-arc'
+    implementation 'io.quarkus:quarkus-rest-jackson'
+    implementation libs.quarkus.resteasy.problem
+    implementation libs.nuprocess
+
+    cliTool project(path: ':cli', configuration: 'executableElements')
+
+    compileOnly libs.jetbrains.annotations
+
+    testImplementation 'io.quarkus:quarkus-junit5'
+}
+
+test {
+    systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-parameters'
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
+}
+
+// Prepare the CLI uber-jar in a side folder (NOT on the classpath) so Quarkus doesn't scan it
+// It will be copied to $buildDir/cli/cli.jar and referenced from there at runtime
+tasks.register('prepareCliJar', Copy) {
+    from(configurations.cliTool)
+    into layout.buildDirectory.dir('quarkus-app')
+    rename { 'cli.jar' }
+}
+
+tasks.named('build') { dependsOn tasks.named('prepareCliJar') }
+// Also useful during dev mode so the jar is present
+tasks.matching { it.name == 'quarkusDev' }.configureEach { dependsOn tasks.named('prepareCliJar') }

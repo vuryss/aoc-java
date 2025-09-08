@@ -1,6 +1,7 @@
-package com.vuryss.aoc;
+package com.vuryss.aoc.cli;
 
-import com.vuryss.aoc.cache.CachedAdventOfCodeClient;
+import com.vuryss.aoc.SolutionRepository;
+import com.vuryss.aoc.cli.cache.CachedAdventOfCodeClient;
 import jakarta.enterprise.context.ApplicationScoped;
 import picocli.CommandLine;
 

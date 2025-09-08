@@ -12,7 +12,7 @@ pluginManagement {
 
 rootProject.name = 'aoc-java'
 
-include('platform')
-include('core')
-include('cli')
 include 'platform'
+include 'core'
+include 'cli'
+include 'api'

@@ -3,7 +3,7 @@ plugins {
     id 'io.quarkus'
 }
 
-group = 'com.vuryss.aoc'
+group = 'com.vuryss.aoc.cli'
 version = '1.0'
 
 repositories {
@@ -18,6 +18,7 @@ dependencies {
 
     implementation 'io.quarkus:quarkus-arc'
     implementation 'io.quarkus:quarkus-picocli'
+    implementation libs.jackson;
 
     compileOnly libs.jetbrains.annotations
 
@@ -44,4 +45,18 @@ compileJava {
 
 compileTestJava {
     options.encoding = 'UTF-8'
+}
+
+configurations {
+    executableElements {
+        canBeConsumed = true
+        canBeResolved = false
+        description = 'The executable uber-jar produced by the quarkusBuild task.'
+    }
+}
+
+artifacts {
+    executableElements(layout.buildDirectory.file("${project.name}-${project.version}-runner.jar")) {
+        builtBy tasks.named('quarkusBuild')
+    }
 }

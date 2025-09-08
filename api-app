@@ -1,0 +1,5 @@
+#!/bin/bash
+
+source api/.env
+
+./gradlew api:quarkusDev

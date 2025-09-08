@@ -2,107 +2,101 @@
 
 ## Connect your AoC account
 
-Copy `.env.dist` file into `.env` file and fill in the value of `session` cookie after you have authenticated in AoC.  
+Copy `.env.dist` to `.env` and set your Advent of Code session cookie value in `SESSION_TOKEN` (after logging in to AoC). This enables the CLI to download inputs and validate answers. Test runs and stdin mode do not require network access.
 
-## Examples how to run the CLI
+## CLI usage
 
-### Execute single solution with user input - Event 2023, Day 1
+Two scripts are provided at the repository root:
+- `./solve` — runs the CLI normally
+- `./debug` — runs the CLI in Quarkus dev mode with the JVM suspended, waiting for a debugger to attach (port 5005)
 
-***requires configured AoC access in .env file***
+Both scripts accept the same parameters shown below; `debug` only changes how the app starts (for debugging).
 
-```bash
-./app -y 2023 -d 1
-```
-
-### Execute single solution with test data - Event 2022, Day 13
+### Common examples
 
 ```bash
-./app -y 2022 -d 13 -t
+# 1) Run a single day with your AoC input
+./solve -y 2023 -d 1
+
+# 2) Run a single day using built‑in test data (no AoC account needed)
+./solve -y 2022 -d 13 -t
+
+# 3) Run an entire year with your AoC input
+./solve -y 2021
 ```
 
-### Execute single solution and validate answers - Event 2021, Day 12
-
-***requires configured AoC access in .env file***
-
+Tip: You can also provide input via stdin for a single day:
 ```bash
-./app -y 2021 -d 12 -v
+echo "<your input>" | ./solve -y 2020 -d 10 -i
 ```
 
-### Execute single solution - invalidate cache (means download input and answers from AoC) - Event 2020, Day 10
+### Parameters for `solve` and `debug`
 
-***requires configured AoC access in .env file***
+Below are the supported parameters. All are optional; omit `--year` and `--day` to run all released events and all days (1–25).
 
-```bash
-./app -y 2020 -d 10 -c
-```
+- Year (`-y`, `--year`)
+  - Type: integer
+  - Required: no
+  - Default: all released years (2015..current year; excludes current year if it’s not December)
+  - Purpose: Select which event year(s) to run
+  - Example: `./solve -y 2023`
 
-### Execute whole year - Event 2022, with user input
+- Day (`-d`, `--day`)
+  - Type: integer (1..25)
+  - Required: no
+  - Default: all days (1..25)
+  - Purpose: Select which day(s) to run; if year is omitted, runs that day across all released years
+  - Example: `./solve -d 5`
 
-***requires configured AoC access in .env file***
+- Test mode (`-t`, `--test`)
+  - Type: flag (boolean)
+  - Required: no
+  - Default: false
+  - Purpose: Run built-in test cases instead of your AoC input
+  - Example: `./solve -y 2022 -d 13 -t`
 
-```bash
-./app -y 2022
-```
+- Validate (`-v`, `--validate`)
+  - Type: flag (boolean)
+  - Required: no
+  - Default: false
+  - Purpose: Validate answers of already completed puzzles using AoC
+  - Example: `./solve -y 2021 -d 12 -v`
 
-### Execute whole year - Event 2021, with test data
+- Overwrite cache (`-c`, `--overwrite-cache`)
+  - Type: flag (boolean)
+  - Required: no
+  - Default: false
+  - Purpose: Ignore local cache and re-download AoC input and answers
+  - Example: `./solve -y 2019 -c`
 
-```bash
-./app -y 2021 -t
-```
+- Read input from stdin (`-i`, `--input-from-stdin`)
+  - Type: flag (boolean)
+  - Required: no (only valid when a single year and single day are specified)
+  - Default: false
+  - Purpose: Provide puzzle input via stdin; useful for ad-hoc runs or CI
+  - Example: `echo "..." | ./solve -y 2020 -d 10 -i`
 
-### Execute whole year - Event 2020, validate answers
+### Debugging
 
-***requires configured AoC access in .env file***
-
-```bash
-./app -y 2020 -v
-```
-
-### Execute whole year - Event 2019, invalidate cache
-
-***requires configured AoC access in .env file***
-
-```bash
-./app -y 2019 -c
-```
-
-### Execute ALL events - with user input
-
-***requires configured AoC access in .env file***
-
-```bash
-./app
-```
-
-## Debugging guide
-
-Debugging the CLI application can be done by running the `debug` script. It will start the application in dev mode, 
-suspend the JVM, and pass all script arguments to the Quarkus application.
+Use the `./debug` script with the same parameters as `./solve`:
 
 ```bash
 ./debug -y 2023 -d 1
 ```
 
-To attach to the suspended JVM from IntelliJ, create a new Remote JVM Debug configuration and set the port to 5005.
-Like this:
+Then attach your IDE’s Remote JVM Debug to localhost:5005.
 
-1. Go to Run -> Edit Configurations....
-2. Click the + button and select Remote JVM Debug from the list.
-3. Name the configuration something memorable, such as Attach to Quarkus CLI.
-4. Ensure the Debugger mode is set to Attach to remote JVM.
-5. Set the Host to localhost.
-6. Set the Port to 5005. This is the default debug port that Quarkus uses.
-7. Click Apply and OK.
+## Scaffolding a solution
 
-## Generating java solution scaffold for a given year and day
+Generate a solution class skeleton for a specific year and day:
 
 ```bash
 ./scaffold 2023 1
 ```
 
 ---
-This repo does follow the automation guidelines on the /r/adventofcode community wiki https://www.reddit.com/r/adventofcode/wiki/faqs/automation. Specifically:
+This repo follows the automation guidelines on the /r/adventofcode community wiki: https://www.reddit.com/r/adventofcode/wiki/faqs/automation
 
 - Once inputs are downloaded, they are cached locally
-- If you suspect your input is corrupted, you can execute the solution without a cache by adding '-c' flag
-- The User-Agent header in com.vuryss.aoc.client.NativeJavaAdventOfCodeClient is set to me since I maintain this repo :)
+- If you suspect your input is corrupted, you can execute the solution without a cache by adding `-c`
+- The User-Agent header in `com.vuryss.aoc.client.NativeJavaAdventOfCodeClient` is set to the repository maintainer

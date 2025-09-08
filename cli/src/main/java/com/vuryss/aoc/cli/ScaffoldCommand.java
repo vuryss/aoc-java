@@ -1,4 +1,4 @@
-package com.vuryss.aoc;
+package com.vuryss.aoc.cli;
 
 import com.vuryss.aoc.solutions.SolutionScaffolding;
 import picocli.CommandLine;
