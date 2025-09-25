@@ -39,10 +39,20 @@ dependencies {
     compileOnly libs.jetbrains.annotations
 
     testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'io.rest-assured:rest-assured'
 }
 
 test {
     systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+    useJUnitPlatform()
+
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat = 'full'
+        showStackTraces = true
+        showExceptions = true
+        showCauses = true
+    }
 }
 
 java {

@@ -86,6 +86,12 @@ Use the `./debug` script with the same parameters as `./solve`:
 
 Then attach your IDE’s Remote JVM Debug to localhost:5005.
 
+### Running tests on the API
+
+```bash
+./gradlew test
+```
+
 ## Scaffolding a solution
 
 Generate a solution class skeleton for a specific year and day:
