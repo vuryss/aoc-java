@@ -1,0 +1,18 @@
+plugins {
+    id 'com.adarshr.test-logger' version '4.0.0'
+}
+
+subprojects {
+    apply plugin: 'com.adarshr.test-logger'
+
+    testlogger {
+        theme = 'mocha'
+        showExceptions = true
+        showStackTraces = true
+        showCauses = true
+        showPassedStandardStreams = true
+        showFailedStandardStreams = true
+        showSkippedStandardStreams = true
+        slowThreshold = 50
+    }
+}

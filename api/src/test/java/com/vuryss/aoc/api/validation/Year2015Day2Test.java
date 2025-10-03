@@ -12,18 +12,12 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
 
 @QuarkusTest
-class Year2015Day1Test {
+class Year2015Day2Test {
     static Stream<Arguments> validInput() {
         return Stream.of(
-            Arguments.of("(())", new Answer("0", "Santa never enters the basement")),
-            Arguments.of("()()", new Answer("0", "Santa never enters the basement")),
-            Arguments.of("(((", new Answer("3", "Santa never enters the basement")),
-            Arguments.of("(()(()(", new Answer("3", "Santa never enters the basement")),
-            Arguments.of("))))((((", new Answer("0", "1")),
-            Arguments.of("())", new Answer("-1", "3")),
-            Arguments.of("))(", new Answer("-1", "1")),
-            Arguments.of(")))", new Answer("-3", "1")),
-            Arguments.of(")())())", new Answer("-3", "1"))
+            Arguments.of("2x3x4\n1x1x10", new Answer("101", "48")),
+            Arguments.of("2x3x4", new Answer("58", "34")),
+            Arguments.of("1x1x10", new Answer("43", "14"))
         );
     }
 
@@ -34,7 +28,7 @@ class Year2015Day1Test {
             .contentType("text/plain")
             .body(input)
         .when()
-            .post("/solve/2015/1")
+            .post("/solve/2015/2")
         .then()
             .statusCode(equalTo(200))
             .body("part1", equalTo(answer.part1))
@@ -48,10 +42,8 @@ class Year2015Day1Test {
             Arguments.of("\t"),
             Arguments.of("\n"),
             Arguments.of("abc"),
-            Arguments.of("()abc"),
-            Arguments.of("abc()"),
-            Arguments.of("((((()) "),
-            Arguments.of("%((())))))")
+            Arguments.of("2x3x4\n1x1x10\nabc"),
+            Arguments.of("2x3x4\n1x1x10\n2x3x4\n1x1x10\n2x-3x4\n1x1x10\n2x3x4\n1x1x10\n2x3x4\n1x1x10\n2x3x4\n1x1x10\n2x3x4\n1x1x10\n2x3x4\n1x1x10\n2x3x4\n1x1x10\n2x3x4\n1x1x10\n2x3x4\n1x1x10\n2x3x4\n1x1x10\n2x3x4\n1x1x10\n2x3x4\n1x1x10\n2x3x4\n1x1x10")
         );
     }
 
@@ -62,12 +54,12 @@ class Year2015Day1Test {
             .contentType("text/plain")
             .body(input)
         .when()
-            .post("/solve/2015/1")
+            .post("/solve/2015/2")
         .then()
             .statusCode(400)
             .body("status", equalTo(400))
             .body("title", equalTo("Validation failed"))
-            .body("instance", equalTo("/solve/2015/1"))
+            .body("instance", equalTo("/solve/2015/2"))
             .body("violations", hasSize(equalTo(1)))
             .body("violations", hasItem("Invalid input. Please check the documentation for the puzzle."));
     }
