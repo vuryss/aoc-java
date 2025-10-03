@@ -50,6 +50,6 @@ public class Day1 implements SolutionInterface {
             }
         }
 
-        throw new RuntimeException("Santa never enters the basement");
+        return "Santa never enters the basement";
     }
 }

@@ -1,3 +1,6 @@
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 plugins {
     id 'java'
     id 'io.quarkus'
@@ -11,10 +14,6 @@ repositories {
     mavenLocal()
 }
 
-tasks.named('quarkusGenerateCode') {
-    dependsOn(project(':cli').tasks.quarkusBuild)
-}
-
 configurations {
     cliTool {
         canBeConsumed = false
@@ -24,6 +23,23 @@ configurations {
     }
 }
 
+// Prepare the CLI uber-jar in a side folder (NOT on the classpath) so Quarkus doesn't scan it
+// It will be copied to $buildDir/cli/cli.jar and referenced from there at runtime
+tasks.register('prepareCliJar', Copy) {
+    from(configurations.cliTool)
+    into layout.buildDirectory.dir('quarkus-app')
+    rename { 'cli.jar' }
+    outputs.upToDateWhen { task ->
+        def outputFile = new File(task.destinationDir, 'cli.jar')
+        println("Checking if CLI jar exists: ${outputFile.exists()}")
+        return outputFile.exists()
+    }
+}
+
+clean {
+    finalizedBy tasks.named('prepareCliJar')
+}
+
 dependencies {
     implementation(platform(project(":platform")))
 
@@ -31,6 +47,7 @@ dependencies {
 
     implementation 'io.quarkus:quarkus-arc'
     implementation 'io.quarkus:quarkus-rest-jackson'
+    implementation 'io.quarkus:quarkus-hibernate-validator'
     implementation libs.quarkus.resteasy.problem
     implementation libs.nuprocess
 
@@ -44,14 +61,33 @@ dependencies {
 
 test {
     systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+    dependsOn tasks.named('prepareCliJar')
     useJUnitPlatform()
 
     testLogging {
-        events "passed", "skipped", "failed"
-        exceptionFormat = 'full'
-        showStackTraces = true
+        // set options for log level LIFECYCLE
+        events TestLogEvent.FAILED,
+                TestLogEvent.PASSED,
+                TestLogEvent.SKIPPED,
+                TestLogEvent.STANDARD_OUT
+        exceptionFormat = TestExceptionFormat.FULL
         showExceptions = true
         showCauses = true
+        showStackTraces = true
+
+        // set options for log level DEBUG and INFO
+        debug {
+            events TestLogEvent.STARTED,
+                    TestLogEvent.FAILED,
+                    TestLogEvent.PASSED,
+                    TestLogEvent.SKIPPED,
+                    TestLogEvent.STANDARD_ERROR,
+                    TestLogEvent.STANDARD_OUT
+            exceptionFormat = TestExceptionFormat.FULL
+        }
+
+        info.events = debug.events
+        info.exceptionFormat = debug.exceptionFormat
     }
 }
 
@@ -71,14 +107,6 @@ compileJava {
 
 compileTestJava {
     options.encoding = 'UTF-8'
-}
-
-// Prepare the CLI uber-jar in a side folder (NOT on the classpath) so Quarkus doesn't scan it
-// It will be copied to $buildDir/cli/cli.jar and referenced from there at runtime
-tasks.register('prepareCliJar', Copy) {
-    from(configurations.cliTool)
-    into layout.buildDirectory.dir('quarkus-app')
-    rename { 'cli.jar' }
 }
 
 tasks.named('build') { dependsOn tasks.named('prepareCliJar') }

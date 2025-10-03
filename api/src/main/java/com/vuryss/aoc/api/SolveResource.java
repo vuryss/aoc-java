@@ -4,12 +4,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vuryss.aoc.api.process.ProcessExecutor;
+import com.vuryss.aoc.api.validation.AocInputValid;
 import io.smallrye.mutiny.Uni;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import org.hibernate.validator.constraints.Range;
 import org.jboss.resteasy.reactive.RestPath;
+
 import java.time.Duration;
-import java.util.concurrent.*;
 
 @Path("/solve")
 public class SolveResource {
@@ -32,7 +35,12 @@ public class SolveResource {
     @POST
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
-    public Uni<SolutionResult> solve(@RestPath Integer year, @RestPath Integer day, String input) {
+    @AocInputValid
+    public Uni<SolutionResult> solve(
+        @RestPath @NotNull @Range(min = 2015, max = 2025) Integer year,
+        @RestPath @NotNull @Range(min = 1, max = 25) Integer day,
+        @NotNull String input
+    ) {
         var command = solverCommandBuilder.build(year, day, input);
         var executor = new ProcessExecutor();
 
