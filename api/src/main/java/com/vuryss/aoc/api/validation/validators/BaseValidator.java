@@ -25,7 +25,7 @@ public abstract class BaseValidator implements InputValidator {
             throw new ValidationException("Input does not match required pattern");
         }
 
-        manualValidation();
+        manualValidation(input);
     }
 
     protected void minLength(int minLength) {
@@ -40,7 +40,7 @@ public abstract class BaseValidator implements InputValidator {
         this.pattern = pattern;
     }
 
-    protected void manualValidation() {
+    protected void manualValidation(String input) throws ValidationException {
     }
 }
 
