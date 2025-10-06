@@ -7,7 +7,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import java.util.stream.Stream;
 
 @QuarkusTest
-class Year2015Day2Test extends BaseValidatorTest {
+class Year2015Day3Test extends BaseValidatorTest {
     @Override
     protected int getYear() {
         return 2015;
@@ -15,14 +15,17 @@ class Year2015Day2Test extends BaseValidatorTest {
 
     @Override
     protected int getDay() {
-        return 2;
+        return 3;
     }
 
     static Stream<Arguments> validInputData() {
         return Stream.of(
-            Arguments.of("2x3x4\n1x1x10", new Answer("101", "48")),
-            Arguments.of("2x3x4", new Answer("58", "34")),
-            Arguments.of("1x1x10", new Answer("43", "14"))
+            Arguments.of(">", new Answer("2", "2")),
+            Arguments.of("^>v<", new Answer("4", "3")),
+            Arguments.of("^v^v^v^v^v", new Answer("2", "11")),
+            Arguments.of("^v", new Answer("2", "3")),
+            Arguments.of(">>><<<", new Answer("4", "4")),
+            Arguments.of("^>v<^>v<", new Answer("4", "3"))
         );
     }
 
@@ -33,8 +36,13 @@ class Year2015Day2Test extends BaseValidatorTest {
             Arguments.of("\t"),
             Arguments.of("\n"),
             Arguments.of("abc"),
-            Arguments.of("2x3x4\n1x1x10\nabc"),
-            Arguments.of("2x3x4\n1x1x10\n2x3x4\n1x1x10\n2x-3x4\n1x1x10\n2x3x4\n1x1x10\n2x3x4\n1x1x10\n2x3x4\n1x1x10\n2x3x4\n1x1x10\n2x3x4\n1x1x10\n2x3x4\n1x1x10\n2x3x4\n1x1x10\n2x3x4\n1x1x10\n2x3x4\n1x1x10\n2x3x4\n1x1x10\n2x3x4\n1x1x10\n2x3x4\n1x1x10")
+            Arguments.of("^>v<abc"),
+            Arguments.of("123"),
+            Arguments.of("^>v< "),
+            Arguments.of("^>v<\n"),
+            Arguments.of("ABCD"),
+            Arguments.of("^>v<@#$"),
+            Arguments.of("a".repeat(10001)) // Too long
         );
     }
 }
