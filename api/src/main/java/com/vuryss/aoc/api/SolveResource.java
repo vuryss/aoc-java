@@ -48,9 +48,8 @@ public class SolveResource {
             .execute(command, Duration.ofSeconds(5))
             .thenApply(processResult -> {
                 if (processResult.exitCode() != 0) {
-                    return new SolutionResult(
-                        SolutionResult.Status.ERROR,
-                        processResult.stderr()
+                    throw new BadRequestException(
+                        "Cannot execute solution, please verify your input or contact the administrator."
                     );
                 }
 

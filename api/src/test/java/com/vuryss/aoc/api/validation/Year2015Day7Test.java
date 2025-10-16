@@ -2,9 +2,13 @@ package com.vuryss.aoc.api.validation;
 
 import com.vuryss.aoc.api.dto.Answer;
 import io.quarkus.test.junit.QuarkusTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.stream.Stream;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
 
 @QuarkusTest
 class Year2015Day7Test extends BaseValidatorTest {
@@ -62,6 +66,24 @@ class Year2015Day7Test extends BaseValidatorTest {
             Arguments.of("123 -> a\n456 -> "), // Invalid line in multi-line
             Arguments.of("a".repeat(10001)) // Too long
         );
+    }
+
+    @Test
+    public void testErrorHandling() {
+        given()
+            .contentType("text/plain")
+            .body("""
+            aa OR 12 -> bb
+            """)
+        .when()
+            .post("/solve/2015/7")
+        .then()
+            .statusCode(400)
+            .header("Content-Type", "application/problem+json")
+            .body("status", equalTo(400))
+            .body("title", equalTo("Bad Request"))
+            .body("detail", equalTo("Cannot execute solution, please verify your input or contact the administrator."))
+            .body("instance", equalTo("/solve/2015/7"));
     }
 }
 

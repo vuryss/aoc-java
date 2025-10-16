@@ -10,9 +10,11 @@ subprojects {
         showExceptions = true
         showStackTraces = true
         showCauses = true
-        showPassedStandardStreams = true
-        showFailedStandardStreams = true
-        showSkippedStandardStreams = true
         slowThreshold = 50
+
+        showStandardStreams = true
+        showPassedStandardStreams = false
+        showSkippedStandardStreams = false
+        showFailedStandardStreams = true
     }
 }

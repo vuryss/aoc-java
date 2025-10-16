@@ -89,7 +89,7 @@ Then attach your IDE’s Remote JVM Debug to localhost:5005.
 ### Running tests on the API
 
 ```bash
-./gradlew test
+./gradlew test --rerun
 ```
 
 ## Scaffolding a solution
