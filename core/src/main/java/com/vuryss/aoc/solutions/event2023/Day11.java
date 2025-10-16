@@ -48,12 +48,12 @@ public class Day11 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         return String.valueOf(calculateDistancesBetweenGalaxies(input, 2));
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         return String.valueOf(calculateDistancesBetweenGalaxies(input, 1000000));
     }
 

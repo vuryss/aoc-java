@@ -26,7 +26,7 @@ public class Day1 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var sequence = input.trim().split(",\\s?");
         var point = new Point(0, 0);
         var direction = CompassDirection.N;
@@ -43,7 +43,7 @@ public class Day1 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var visitedLocations = new HashSet<Point>();
         var sequence = input.trim().split(",\\s?");
         var point = new Point(0, 0);

@@ -67,7 +67,7 @@ public class Day18 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var cubeDefinitions = input.trim().split("\n");
         var points = new HashSet<Point3D>();
 
@@ -92,7 +92,7 @@ public class Day18 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var cubeDefinitions = input.trim().split("\n");
         var points = new HashSet<Point3D>();
         int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, minZ = Integer.MAX_VALUE;

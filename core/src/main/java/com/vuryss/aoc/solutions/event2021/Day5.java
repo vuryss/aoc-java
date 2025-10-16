@@ -48,7 +48,7 @@ public class Day5 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var lines = input.split("\n");
         var grid = new HashMap<Point, Integer>();
 
@@ -76,7 +76,7 @@ public class Day5 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var lines = input.split("\n");
         var grid = new HashMap<Point, Integer>();
 

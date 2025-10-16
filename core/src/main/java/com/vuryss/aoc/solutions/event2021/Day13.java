@@ -45,7 +45,7 @@ public class Day13 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var grid = new HashSet<Point>();
         var parts = input.trim().split("\n\n");
         var count = 0;
@@ -68,7 +68,7 @@ public class Day13 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var grid = new HashSet<Point>();
         var parts = input.trim().split("\n\n");
         var count = 0;

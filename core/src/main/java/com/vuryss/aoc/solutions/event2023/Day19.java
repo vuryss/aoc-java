@@ -61,7 +61,7 @@ public class Day19 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var inputParts = input.trim().split("\n\n");
         var workflows = parseWorkflows(inputParts[0]);
         var partsList = parseParts(inputParts[1]);
@@ -133,7 +133,7 @@ public class Day19 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var inputParts = input.trim().split("\n\n");
         var sum = 0L;
         var workflows = parseWorkflows(inputParts[0]);

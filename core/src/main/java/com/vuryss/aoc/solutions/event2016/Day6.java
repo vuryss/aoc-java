@@ -60,7 +60,7 @@ public class Day6 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var occurrences = getCharacterOccurrencesPerPosition(input);
 
         return occurrences.values().stream()
@@ -70,7 +70,7 @@ public class Day6 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var occurrences = getCharacterOccurrencesPerPosition(input);
 
         return occurrences.values().stream()

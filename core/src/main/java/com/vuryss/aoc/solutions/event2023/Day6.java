@@ -31,7 +31,7 @@ public class Day6 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var lines = input.trim().split("\n");
         long product = 1L;
         var times = StringUtil.ints(lines[0]);
@@ -45,7 +45,7 @@ public class Day6 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var lines = input.trim().split("\n");
         var times = StringUtil.ints(lines[0]);
         var records = StringUtil.ints(lines[1]);

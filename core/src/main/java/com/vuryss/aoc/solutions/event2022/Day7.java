@@ -71,7 +71,7 @@ public class Day7 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var root = constructFilesystem(input);
         var dirs = getAllDirectories(root);
         var totalSize = 0;
@@ -86,7 +86,7 @@ public class Day7 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var root = constructFilesystem(input);
         var neededSpace = 30000000 - (70000000 - root.getSize());
         var dirs = getAllDirectories(root);

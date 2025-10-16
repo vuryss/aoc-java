@@ -32,14 +32,14 @@ public class Day15 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var ingredients = parseIngredients(input);
 
         return String.valueOf(calculateMaxScore(ingredients, 100, new Ingredients(0, 0, 0, 0, 0), 0));
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var ingredients = parseIngredients(input);
 
         return String.valueOf(calculateMaxScore(ingredients, 100, new Ingredients(0, 0, 0, 0, 0), 500));

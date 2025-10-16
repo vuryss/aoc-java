@@ -23,7 +23,7 @@ public class Day5 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         input = input.trim();
         var index = 0;
         var doorId = new StringBuilder();
@@ -40,7 +40,7 @@ public class Day5 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         input = input.trim();
         var index = 0;
         var chars = new char[8];

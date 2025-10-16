@@ -106,12 +106,12 @@ public class Day12 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         return calculatePaths(input, false);
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         return calculatePaths(input, true);
     }
 

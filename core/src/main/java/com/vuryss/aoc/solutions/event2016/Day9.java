@@ -31,12 +31,12 @@ public class Day9 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         return String.valueOf(calculateDecompressedLength(input.trim(), false));
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         return String.valueOf(calculateDecompressedLength(input.trim(), true));
     }
 

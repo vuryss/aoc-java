@@ -5,11 +5,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vuryss.aoc.api.process.ProcessExecutor;
 import com.vuryss.aoc.api.validation.AocInputValid;
+import io.quarkus.logging.Log;
 import io.smallrye.mutiny.Uni;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.hibernate.validator.constraints.Range;
+import org.jboss.logging.Logger;
 import org.jboss.resteasy.reactive.RestPath;
 
 import java.time.Duration;
@@ -44,10 +46,20 @@ public class SolveResource {
         var command = solverCommandBuilder.build(year, day, input);
         var executor = new ProcessExecutor();
 
+        Log.info("Command: " + String.join(" ", command));
+
         return Uni.createFrom().completionStage(() -> executor
             .execute(command, Duration.ofSeconds(5))
             .thenApply(processResult -> {
                 if (processResult.exitCode() != 0) {
+                    if (3 == processResult.exitCode()) {
+                        Log.info("Process existed with code 3 - memory limit exceeded");
+                    } else {
+                        Log.info("Process execution failed with code " + processResult.exitCode());
+                        Log.info("Stdout: " + processResult.stdout());
+                        Log.info("Stderr: " + processResult.stderr());
+                    }
+
                     throw new BadRequestException(
                         "Cannot execute solution, please verify your input or contact the administrator."
                     );

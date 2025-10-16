@@ -59,7 +59,7 @@ public class Day15 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var inputLines = input.split("\n");
         List<Range<Integer>> ranges = new ArrayList<>();
         var targetY = inputLines.length > 15 ? 2000000 : 10;
@@ -97,7 +97,7 @@ public class Day15 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var inputLines = input.split("\n");
         var sensors = new ArrayList<Sensor>();
         var maxSize = inputLines.length > 15 ? 4000000 : 20;

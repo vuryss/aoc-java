@@ -47,7 +47,7 @@ public class Day21 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var numbers = StringUtil.ints(input);
         var bossItem = new Item(0, numbers.get(1), numbers.get(2));
 
@@ -61,7 +61,7 @@ public class Day21 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var numbers = StringUtil.ints(input);
         var bossItem = new Item(0, numbers.get(1), numbers.get(2));
 

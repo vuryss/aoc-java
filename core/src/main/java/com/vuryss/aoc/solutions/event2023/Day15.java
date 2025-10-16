@@ -32,7 +32,7 @@ public class Day15 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var sum = 0;
         var steps = input.trim().split(",");
 
@@ -44,7 +44,7 @@ public class Day15 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var sum = 0;
         var steps = input.trim().split(",");
         var hashmap = new HashMap<Integer, LinkedHashMap<String, Integer>>();

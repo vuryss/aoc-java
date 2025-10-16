@@ -31,12 +31,12 @@ public class Day17 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         return getMaxRockHeight(input, 2022);
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         return getMaxRockHeight(input, 1_000_000_000_000L);
     }
 

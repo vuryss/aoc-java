@@ -46,7 +46,7 @@ public class Day1 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var n = StringUtil.ints(input);
         var count = IntStream.range(1, n.size()).filter(i -> n.get(i) > n.get(i - 1)).count();
 
@@ -54,7 +54,7 @@ public class Day1 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var n = StringUtil.ints(input);
         var count = IntStream.range(3, n.size())
             .filter(i -> n.get(i) + n.get(i - 1) + n.get(i - 2) > n.get(i - 1) + n.get(i - 2) + n.get(i - 3))

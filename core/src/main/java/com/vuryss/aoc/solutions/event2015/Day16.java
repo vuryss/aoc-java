@@ -48,7 +48,7 @@ public class Day16 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var aunts = parseAunts(input);
 
         for (var aunt: aunts.entrySet()) {
@@ -61,7 +61,7 @@ public class Day16 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var aunts = parseAunts(input);
 
         for (var aunt: aunts.entrySet()) {

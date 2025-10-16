@@ -26,7 +26,7 @@ public class Day23 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var computer = new Computer();
         var instructions = parseInstructions(input);
 
@@ -36,7 +36,7 @@ public class Day23 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var computer = new Computer();
         var instructions = parseInstructions(input);
 

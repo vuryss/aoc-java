@@ -38,7 +38,7 @@ public class Day7 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         return String.valueOf(
             Arrays.stream(input.trim().split("\n"))
                 .filter(this::supportsTLS)
@@ -47,7 +47,7 @@ public class Day7 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         return String.valueOf(
             Arrays.stream(input.trim().split("\n"))
                 .filter(this::supportsSSL)

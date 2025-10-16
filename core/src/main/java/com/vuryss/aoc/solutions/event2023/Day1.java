@@ -36,7 +36,7 @@ public class Day1 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var lines = input.trim().split("\n");
         int sum = 0;
 
@@ -49,7 +49,7 @@ public class Day1 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var digitWords = List.of("one", "two", "three", "four", "five", "six", "seven", "eight", "nine");
         var lines = input.trim().split("\n");
         long sum = 0L;

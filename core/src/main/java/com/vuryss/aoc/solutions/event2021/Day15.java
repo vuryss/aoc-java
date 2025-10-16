@@ -45,7 +45,7 @@ public class Day15 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var grid = new HashMap<Point, Integer>();
         var y = 0;
         var maxY = input.split("\n").length - 1;
@@ -90,7 +90,7 @@ public class Day15 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var grid = new HashMap<Point, Integer>();
         var y = 0;
         var maxY = input.split("\n").length;

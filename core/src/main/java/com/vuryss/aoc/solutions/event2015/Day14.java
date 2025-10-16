@@ -31,9 +31,9 @@ public class Day14 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var reindeerMap = parseReindeer(input);
-        var seconds = reindeerMap.size() > 2 ? 2503 : 1000;
+        var seconds = isTest ? 1000 : 2503;
         var maxDistance = 0;
 
         for (var reindeer: reindeerMap.values()) {
@@ -47,9 +47,9 @@ public class Day14 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var reindeerMap = parseReindeer(input);
-        var seconds = reindeerMap.size() > 2 ? 2503 : 1000;
+        var seconds = isTest ? 1000 : 2503;
 
         for (var i = 0; i < seconds; i++) {
             for (var reindeer: reindeerMap.values()) {

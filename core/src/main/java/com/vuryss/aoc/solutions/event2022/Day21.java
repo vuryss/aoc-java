@@ -56,14 +56,14 @@ public class Day21 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var entities = constructEntities(input, false);
 
         return String.valueOf(entities.get("root").result());
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var entities = constructEntities(input, true);
         var root = (Group) entities.get("root");
         Entity groupWithUnknown;

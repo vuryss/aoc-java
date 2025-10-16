@@ -75,7 +75,7 @@ public class Day10 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var pipeMap = constructPipeMap(input);
         var loopPipes = constructLoopPipes(pipeMap);
 
@@ -85,7 +85,7 @@ public class Day10 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var pipeMap = constructPipeMap(input);
         var loopPipes = constructLoopPipes(pipeMap);
         var count = 0;

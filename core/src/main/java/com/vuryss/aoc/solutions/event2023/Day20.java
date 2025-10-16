@@ -38,7 +38,7 @@ public class Day20 implements SolutionInterface {
     public static HashMap<String, Long> tracker = new HashMap<>();
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var modules = parseModules(input);
         var sumLow = 0L;
         var sumHigh = 0L;
@@ -71,7 +71,7 @@ public class Day20 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         if (input.isEmpty()) {
             return "";
         }

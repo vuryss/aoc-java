@@ -41,17 +41,17 @@ public class Day17 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var containers = StringUtil.ints(input.trim());
-        var liters = containers.size() > 5 ? 150 : 25;
+        var liters = isTest ? 25 : 150;
 
         return String.valueOf(calculateCombinations(containers, liters).size());
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var containers = StringUtil.ints(input.trim());
-        var liters = containers.size() > 5 ? 150 : 25;
+        var liters = isTest ? 25 : 150;
         var combinations = calculateCombinations(containers, liters);
         var minContainers = combinations.stream().mapToInt(List::size).min().orElseThrow();
         var minCombinations = combinations.stream().filter(c -> c.size() == minContainers).count();

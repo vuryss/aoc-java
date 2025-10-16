@@ -54,7 +54,7 @@ public class Day8 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var parts = input.trim().split("\n\n");
         var moves = parts[0].trim();
         var nodes = parseNodes(parts[1]);
@@ -71,7 +71,7 @@ public class Day8 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var parts = input.trim().split("\n\n");
         var moves = parts[0].trim();
         var nodes = parseNodes(parts[1]);

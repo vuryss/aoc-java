@@ -63,12 +63,12 @@ public class Day2 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         return solve(input, keypad1, new Point(1, 1));
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         return solve(input, keypad2, new Point(0, 2));
     }
 

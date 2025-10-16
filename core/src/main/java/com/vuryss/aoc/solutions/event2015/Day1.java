@@ -31,14 +31,14 @@ public class Day1 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var charCount = StringUtil.tally(input);
 
         return String.valueOf(charCount.getOrDefault('(', 0) - charCount.getOrDefault(')', 0));
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var chars = input.trim().toCharArray();
         var floor = 0;
 

@@ -19,7 +19,7 @@ public class NativeJavaAdventOfCodeClient implements AdventOfCodeClient {
     private final String sessionToken;
 
     public NativeJavaAdventOfCodeClient(
-        @ConfigProperty(name = "session.token") String sessionToken
+        @ConfigProperty(name = "session.token", defaultValue = "NONE") String sessionToken
     ) {
         this.sessionToken = sessionToken;
     }

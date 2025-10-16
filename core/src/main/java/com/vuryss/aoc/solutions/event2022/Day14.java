@@ -34,7 +34,7 @@ public class Day14 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var grid = createCave(input);
         var maxY = grid.stream().mapToInt(a -> a.y).max().getAsInt();
         var totalSands = 0;
@@ -69,7 +69,7 @@ public class Day14 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var grid = createCave(input);
         var maxY = grid.stream().mapToInt(a -> a.y).max().getAsInt() + 1;
         var startPoint = new Point(500, 0);

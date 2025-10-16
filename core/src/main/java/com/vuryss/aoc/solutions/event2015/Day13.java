@@ -50,7 +50,7 @@ public class Day13 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var people = parsePeople(input);
         var maxHappiness = calculateMaxHappiness(people);
 
@@ -58,7 +58,7 @@ public class Day13 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var people = parsePeople(input);
         var me = new Person("me");
 

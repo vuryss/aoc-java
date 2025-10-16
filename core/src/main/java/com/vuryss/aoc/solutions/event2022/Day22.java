@@ -75,7 +75,7 @@ public class Day22 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var parts = input.split("\n\n");
         var flatBoard = new FlatBoard();
         var lineIndex = 1;
@@ -132,7 +132,7 @@ public class Day22 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var parts = input.split("\n\n");
         var grid = new HashMap<Point, Character>();
         Point start = null;

@@ -36,7 +36,7 @@ public class Day7 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var lines = input.trim().split("\n");
         long sum = 0L;
         var handsScores = new TreeMap<Hand, Integer>(Hand::compare);
@@ -55,7 +55,7 @@ public class Day7 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var lines = input.trim().split("\n");
         long sum = 0L;
         var handsScores = new TreeMap<Hand, Integer>(Hand::compare);

@@ -29,12 +29,12 @@ public class Day6 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         return String.valueOf(reproduceLanternfish(input, 80));
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         return String.valueOf(reproduceLanternfish(input, 256));
     }
 

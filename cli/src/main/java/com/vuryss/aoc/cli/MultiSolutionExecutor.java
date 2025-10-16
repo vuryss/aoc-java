@@ -36,11 +36,11 @@ public class MultiSolutionExecutor {
                     var part2Success = true;
 
                     for (var testSet : solution.get().part1Tests().entrySet()) {
-                        part1Success &= solution.get().part1Solution(testSet.getKey()).equals(testSet.getValue());
+                        part1Success &= solution.get().part1Solution(testSet.getKey(), true).equals(testSet.getValue());
                     }
 
                     for (var testSet : solution.get().part2Tests().entrySet()) {
-                        part2Success &= solution.get().part2Solution(testSet.getKey()).equals(testSet.getValue());
+                        part2Success &= solution.get().part2Solution(testSet.getKey(), true).equals(testSet.getValue());
                     }
 
                     System.out.println(CommandLine.Help.Ansi.AUTO.string(String.format(
@@ -60,11 +60,11 @@ public class MultiSolutionExecutor {
                 if (validate) {
                     var answers = cachedAdventOfCodeClient.getCorrectAnswers(year, day, overwriteCache);
                     var part1ExecutionStart = System.nanoTime();
-                    var part1Result = solution.get().part1Solution(input);
+                    var part1Result = solution.get().part1Solution(input, false);
                     var part1ExecutionTime = System.nanoTime() - part1ExecutionStart;
                     var part1Success = part1Result.equals(answers.part1());
                     var part2ExecutionStart = System.nanoTime();
-                    var part2Result = solution.get().part2Solution(input);
+                    var part2Result = solution.get().part2Solution(input, false);
                     var part2ExecutionTime = System.nanoTime() - part2ExecutionStart;
                     var part2Success = part2Result.equals(answers.part2());
 
@@ -85,10 +85,10 @@ public class MultiSolutionExecutor {
                 }
 
                 var part1ExecutionStart = System.nanoTime();
-                var part1Result = solution.get().part1Solution(input);
+                var part1Result = solution.get().part1Solution(input, false);
                 var part1ExecutionTime = System.nanoTime() - part1ExecutionStart;
                 var part2ExecutionStart = System.nanoTime();
-                var part2Result = solution.get().part2Solution(input);
+                var part2Result = solution.get().part2Solution(input, false);
                 var part2ExecutionTime = System.nanoTime() - part2ExecutionStart;
 
                 System.out.println(CommandLine.Help.Ansi.AUTO.string(String.format(

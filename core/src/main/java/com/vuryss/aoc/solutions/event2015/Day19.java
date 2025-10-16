@@ -58,7 +58,7 @@ public class Day19 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var parts = input.trim().split("\n\n");
         var replacements = new HashMap<String, List<String>>();
         var molecule = parts[1];
@@ -83,7 +83,7 @@ public class Day19 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var parts = input.trim().split("\n\n");
         var comparator = Comparator.comparingInt(String::length).reversed().thenComparing(Comparator.naturalOrder());
         var reverseReplacements = new TreeMap<String, String>(comparator);

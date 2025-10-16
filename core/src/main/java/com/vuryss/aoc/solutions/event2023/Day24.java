@@ -30,7 +30,7 @@ public class Day24 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var lines = input.trim().split("\n");
         var hailstones = new ArrayList<Hailstone>();
 
@@ -91,7 +91,7 @@ public class Day24 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var lines = input.trim().split("\n");
         var hailstones = new ArrayList<Hailstone>();
 

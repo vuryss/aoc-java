@@ -35,7 +35,7 @@ public class Day9 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var grid = buildGrid(input);
         var sum = 0;
 
@@ -54,7 +54,7 @@ public class Day9 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var grid = buildGrid(input);
         var basinSizes = new PriorityQueue<Integer>(Comparator.reverseOrder());
 

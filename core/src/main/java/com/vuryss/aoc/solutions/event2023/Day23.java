@@ -73,7 +73,7 @@ public class Day23 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var grid = Util.inputToGrid(input, Set.of('#'));
         var startPoint = grid.keySet().stream().min(Comparator.comparingInt(p -> p.y)).orElseThrow();
         var endPoint = grid.keySet().stream().max(Comparator.comparingInt(p -> p.y)).orElseThrow();
@@ -106,7 +106,7 @@ public class Day23 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var grid = Util.inputToGrid(input, Set.of('#'));
         var startPoint = grid.keySet().stream().min(Comparator.comparingInt(p -> p.y)).orElseThrow();
         var endPoint = grid.keySet().stream().max(Comparator.comparingInt(p -> p.y)).orElseThrow();

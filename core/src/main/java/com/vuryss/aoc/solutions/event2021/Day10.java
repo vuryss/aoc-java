@@ -47,7 +47,7 @@ public class Day10 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var lines = input.split("\n");
         var illegalCharsCount = new HashMap<Character, Integer>();
 
@@ -86,7 +86,7 @@ public class Day10 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var lines = input.split("\n");
         var scores = new ArrayList<Long>();
 

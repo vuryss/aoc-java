@@ -28,7 +28,7 @@ public class Day3 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var chars = input.trim().toCharArray();
         var map = new HashMap<Point, Integer>();
         var position = new Point(0, 0);
@@ -49,7 +49,7 @@ public class Day3 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var chars = input.trim().toCharArray();
         var map = new HashMap<Point, Integer>();
         var santaPosition = new Reference<>(new Point(0, 0));

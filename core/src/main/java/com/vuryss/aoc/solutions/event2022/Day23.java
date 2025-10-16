@@ -66,7 +66,7 @@ public class Day23 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var elves = parseElvesLocations(input);
 
         organizeElves(elves, 10);
@@ -86,7 +86,7 @@ public class Day23 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var elves = parseElvesLocations(input);
         var round = organizeElves(elves, null);
 

@@ -24,7 +24,7 @@ public class Day4 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var n = 0;
 
         while (true) {
@@ -39,7 +39,7 @@ public class Day4 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var n = 0;
 
         while (true) {

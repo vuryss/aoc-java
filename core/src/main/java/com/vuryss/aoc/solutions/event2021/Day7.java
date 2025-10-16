@@ -28,7 +28,7 @@ public class Day7 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var positions = StringUtil.ints(input);
         var sum = positions.stream().mapToInt(i -> i).sum();
         var avg = sum / positions.size();
@@ -55,7 +55,7 @@ public class Day7 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var positions = StringUtil.ints(input);
         var sum = positions.stream().mapToInt(i -> i).sum();
         var avg = sum / positions.size();

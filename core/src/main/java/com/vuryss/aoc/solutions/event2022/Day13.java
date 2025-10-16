@@ -76,7 +76,7 @@ public class Day13 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var index = 1;
         var sum = 0;
 
@@ -96,7 +96,7 @@ public class Day13 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         input += "\n[[2]]\n[[6]]";
         var itemList = new ArrayList<Item>();
 

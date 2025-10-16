@@ -35,7 +35,7 @@ public class Day9 implements SolutionInterface {
      * This is a linear solution using pascal's triangle. O(n) per line
      */
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var lines = input.trim().split("\n");
         var sum = 0L;
 
@@ -70,7 +70,7 @@ public class Day9 implements SolutionInterface {
      * This is a O(n^2) per line solution following the instructions from the puzzle.
      */
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         return String.valueOf(
             Arrays.stream(input.trim().split("\n"))
                 .map(StringUtil::slongs)

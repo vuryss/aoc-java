@@ -30,7 +30,7 @@ public class Day19 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var blueprints = getBlueprints(input);
 
         var qualityLevel = 0;
@@ -43,7 +43,7 @@ public class Day19 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var blueprints = getBlueprints(input);
 
         if (blueprints.size() > 2) {

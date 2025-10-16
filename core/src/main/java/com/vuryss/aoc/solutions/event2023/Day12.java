@@ -42,7 +42,7 @@ public class Day12 implements SolutionInterface {
     private final HashMap<Triple<String, List<Integer>, Boolean>, Long> memory = new HashMap<>();
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var lines = input.trim().split("\n");
         var sum = 0L;
 
@@ -58,7 +58,7 @@ public class Day12 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var lines = input.trim().split("\n");
         var sum = 0L;
 

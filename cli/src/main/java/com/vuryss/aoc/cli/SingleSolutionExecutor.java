@@ -48,14 +48,14 @@ public class SingleSolutionExecutor {
             var answers = cachedAdventOfCodeClient.getCorrectAnswers(year, day, overwriteCache);
 
             var part1ExecutionStart = System.nanoTime();
-            var part1Result = solution.get().part1Solution(input);
+            var part1Result = solution.get().part1Solution(input, false);
             var part1ExecutionTime = System.nanoTime() - part1ExecutionStart;
             var part1Success = part1Result.equals(answers.part1());
 
             this.output.part1(part1Result, part1ExecutionTime / 1_000_000.0, part1Success);
 
             var part2ExecutionStart = System.nanoTime();
-            var part2Result = solution.get().part2Solution(input);
+            var part2Result = solution.get().part2Solution(input, false);
             var part2ExecutionTime = System.nanoTime() - part2ExecutionStart;
             var part2Success = part2Result.equals(answers.part2());
 
@@ -67,13 +67,13 @@ public class SingleSolutionExecutor {
         this.output.note(String.format("Executing solution for year %s day %s", year, day));
 
         var part1ExecutionStart = System.nanoTime();
-        var part1Result = solution.get().part1Solution(input);
+        var part1Result = solution.get().part1Solution(input, false);
         var part1ExecutionTime = System.nanoTime() - part1ExecutionStart;
 
         this.output.part1(part1Result, part1ExecutionTime / 1_000_000.0);
 
         var part2ExecutionStart = System.nanoTime();
-        var part2Result = solution.get().part2Solution(input);
+        var part2Result = solution.get().part2Solution(input, false);
         var part2ExecutionTime = System.nanoTime() - part2ExecutionStart;
 
         this.output.part2(part2Result, part2ExecutionTime / 1_000_000.0);
@@ -83,13 +83,13 @@ public class SingleSolutionExecutor {
         this.output.note(String.format("Executing test scenarios for year %s day %s", year, day));
 
         for (var testSet : solution.part1Tests().entrySet()) {
-            var solutionResult = solution.part1Solution(testSet.getKey());
+            var solutionResult = solution.part1Solution(testSet.getKey(), true);
             var success = solutionResult.equals(testSet.getValue());
             this.output.testPart1(solutionResult, testSet.getValue(), success);
         }
 
         for (var testSet : solution.part2Tests().entrySet()) {
-            var solutionResult = solution.part2Solution(testSet.getKey());
+            var solutionResult = solution.part2Solution(testSet.getKey(), true);
             var success = solutionResult.equals(testSet.getValue());
             this.output.testPart2(solutionResult, testSet.getValue(), success);
         }

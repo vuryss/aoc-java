@@ -40,12 +40,12 @@ public class Day6 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         return getFirstBatchOfUniqueCharactersLastPosition(input, 4);
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         return getFirstBatchOfUniqueCharactersLastPosition(input, 14);
     }
 

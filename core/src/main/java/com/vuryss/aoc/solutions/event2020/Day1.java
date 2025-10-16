@@ -38,7 +38,7 @@ public class Day1 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var numbers = StringUtil.uniqueInts(input);
 
         for (var n: numbers) {
@@ -51,7 +51,7 @@ public class Day1 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var numbers = StringUtil.uniqueInts(input);
 
         for (var n1: numbers) {

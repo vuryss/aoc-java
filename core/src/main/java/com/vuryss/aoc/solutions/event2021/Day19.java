@@ -299,7 +299,7 @@ public class Day19 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var scanners = processScanners(input);
         var uniquePoints = new HashSet<Point3D>();
 
@@ -313,7 +313,7 @@ public class Day19 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var scanners = processScanners(input);
         var max = 0L;
 

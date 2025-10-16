@@ -66,7 +66,7 @@ public class Day4 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var parts = input.split("\n\n");
         var numbers = StringUtil.ints(parts[0]);
         var boards = parseBoards(input);
@@ -85,7 +85,7 @@ public class Day4 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var parts = input.split("\n\n");
         var numbers = StringUtil.ints(parts[0]);
         var boards = parseBoards(input);

@@ -22,7 +22,7 @@ public class Day11 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var password = input.trim();
 
         part1Password = findNextValidPassword(password);
@@ -31,7 +31,7 @@ public class Day11 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         return findNextValidPassword(part1Password);
     }
 

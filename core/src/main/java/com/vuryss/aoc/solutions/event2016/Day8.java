@@ -27,7 +27,7 @@ public class Day8 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var screen = buildScreen(input);
         var count = 0;
 
@@ -43,7 +43,7 @@ public class Day8 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var screen = buildScreen(input);
         var points = new HashSet<Point>();
 

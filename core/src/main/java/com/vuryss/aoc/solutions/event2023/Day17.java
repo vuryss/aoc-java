@@ -62,12 +62,12 @@ public class Day17 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         return String.valueOf(solve(input, 1, 3));
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         return String.valueOf(solve(input, 4, 10));
     }
 

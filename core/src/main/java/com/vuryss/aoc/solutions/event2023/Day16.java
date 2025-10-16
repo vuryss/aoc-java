@@ -50,7 +50,7 @@ public class Day16 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var lines = input.trim().split("\n");
         var grid = constructGrid(lines);
 
@@ -58,7 +58,7 @@ public class Day16 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var lines = input.trim().split("\n");
         var grid = constructGrid(lines);
         var maxX = lines[0].length() - 1;

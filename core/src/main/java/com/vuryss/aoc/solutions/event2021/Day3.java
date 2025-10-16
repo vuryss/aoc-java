@@ -49,7 +49,7 @@ public class Day3 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var lines = input.split("\n");
         var gamma = new StringBuilder();
 
@@ -72,7 +72,7 @@ public class Day3 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var lines = input.split("\n");
         var oxygenList = List.of(lines);
         var co2List = List.of(lines);

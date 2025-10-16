@@ -56,7 +56,7 @@ public class Day1 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var elfInputs = input.trim().split("\n\n");
         long max = 0L;
 
@@ -69,7 +69,7 @@ public class Day1 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var elfInputs = input.trim().split("\n\n");
         var elfCalories = new ArrayList<Long>();
 

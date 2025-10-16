@@ -23,9 +23,9 @@ public class Day10 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         input = input.trim();
-        var iterations = input.length() < 8 ? 1 : 40;
+        var iterations = isTest ? 1 : 40;
 
         for (var i = 0; i < iterations; i++) {
             input = lookAndSay(input);
@@ -35,7 +35,7 @@ public class Day10 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         input = input.trim();
         var iterations = 50;
 

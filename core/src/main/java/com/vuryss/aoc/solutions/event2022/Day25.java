@@ -35,7 +35,7 @@ public class Day25 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var snafuNumbers = input.trim().split("\n");
         long decimalSum = 0;
 
@@ -119,7 +119,7 @@ public class Day25 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         return "Merry Christmas!";
     }
 }

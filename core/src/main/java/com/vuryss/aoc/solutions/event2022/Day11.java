@@ -82,7 +82,7 @@ public class Day11 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var monkeys = initializeMonkeys(input);
 
         executeRounds(monkeys, 20, true);
@@ -91,7 +91,7 @@ public class Day11 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var monkeys = initializeMonkeys(input);
 
         executeRounds(monkeys, 10_000, false);

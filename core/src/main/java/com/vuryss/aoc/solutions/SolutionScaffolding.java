@@ -43,6 +43,7 @@ public class SolutionScaffolding {
             .addModifiers(Modifier.PUBLIC)
             .returns(String.class)
             .addParameter(String.class, "input")
+            .addParameter(boolean.class, "isTest")
             .addStatement("return \"\"")
             .build();
 
@@ -51,6 +52,7 @@ public class SolutionScaffolding {
             .addModifiers(Modifier.PUBLIC)
             .returns(String.class)
             .addParameter(String.class, "input")
+            .addParameter(boolean.class, "isTest")
             .addStatement("return \"\"")
             .build();
 

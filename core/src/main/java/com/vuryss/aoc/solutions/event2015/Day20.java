@@ -20,7 +20,7 @@ public class Day20 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var target = Integer.parseInt(input.trim());
         var maxElf = target / 10;
         var houses = new int[maxElf + 1];
@@ -41,7 +41,7 @@ public class Day20 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var target = Integer.parseInt(input.trim());
         var maxElf = target / 11;
         var houses = new int[maxElf + 1];

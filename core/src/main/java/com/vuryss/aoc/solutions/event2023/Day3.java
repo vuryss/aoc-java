@@ -46,7 +46,7 @@ public class Day3 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var lines = input.trim().split("\n");
         long sum = 0L;
         Set<Point> symbol = new HashSet<>();
@@ -102,7 +102,7 @@ public class Day3 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var lines = input.trim().split("\n");
         long sum = 0L;
         Map<Point, List<Integer>> starNumbers = new HashMap<>();

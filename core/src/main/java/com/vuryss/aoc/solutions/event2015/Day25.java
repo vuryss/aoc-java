@@ -21,7 +21,7 @@ public class Day25 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var numbers = StringUtil.ints(input);
         var targetRow = numbers.get(0);
         var targetColumn = numbers.get(1);
@@ -43,7 +43,7 @@ public class Day25 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         return "Merry Christmas!";
     }
 }

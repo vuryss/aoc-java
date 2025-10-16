@@ -20,7 +20,7 @@ public class Day21 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var lines = input.trim().split("\n");
         var obstacles = new HashSet<Point>();
         var start = new Point(0, 0);
@@ -70,7 +70,7 @@ public class Day21 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var lines = input.trim().split("\n");
         var obstacles = new HashSet<Point>();
         var start = new Point(0, 0);

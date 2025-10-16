@@ -38,14 +38,14 @@ public class Day12 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var numbers = StringUtil.sints(input);
 
         return String.valueOf(numbers.stream().mapToInt(Integer::intValue).sum());
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode;
 

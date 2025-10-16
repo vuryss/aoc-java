@@ -47,7 +47,7 @@ public class Day18 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var lines = input.lines().collect(Collectors.toList());
         var number = new SnailfishNumber(lines.removeFirst());
 
@@ -59,7 +59,7 @@ public class Day18 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var numbers = input.lines().map(SnailfishNumber::new).toList();
         var maxMagnitude = 0;
 

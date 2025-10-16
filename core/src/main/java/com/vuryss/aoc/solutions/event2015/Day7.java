@@ -55,14 +55,14 @@ public class Day7 implements SolutionInterface {
     }};
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         return String.valueOf(
             assembleWires(input).get("a").getValue()
         );
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var wires = assembleWires(input);
         var aValue = wires.get("a").getValue();
 

@@ -43,9 +43,9 @@ public class Day18 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var grid = Util.inputToGrid(input.trim());
-        var steps = grid.size() == 10000 ? 100 : 4;
+        var steps = isTest ? 4 : 100;
 
         grid = simulateGameOfLife(grid, steps, false);
 
@@ -53,9 +53,9 @@ public class Day18 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var grid = Util.inputToGrid(input.trim());
-        var steps = grid.size() == 10000 ? 100 : 5;
+        var steps = isTest ? 5 : 100;
 
         grid = simulateGameOfLife(grid, steps, true);
 

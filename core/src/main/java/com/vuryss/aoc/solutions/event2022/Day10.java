@@ -318,7 +318,7 @@ public class Day10 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var lines = input.split("\n");
         var x = 1;
         var cycle = 1;
@@ -343,7 +343,7 @@ public class Day10 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var lines = input.split("\n");
         var x = 1;
         var cycle = 0;

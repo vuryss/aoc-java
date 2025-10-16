@@ -51,7 +51,7 @@ public class Day2 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var rounds = input.trim().split("\n");
         var score = 0;
 
@@ -64,7 +64,7 @@ public class Day2 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var rounds = input.trim().split("\n");
         var score = 0;
 

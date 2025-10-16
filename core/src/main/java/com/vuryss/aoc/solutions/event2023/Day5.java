@@ -93,7 +93,7 @@ public class Day5 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var categories = input.trim().split("\n\n");
         var seeds = StringUtil.longs(categories[0]);
         var categoriesMaps = Arrays.stream(categories)
@@ -129,7 +129,7 @@ public class Day5 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var categories = input.trim().split("\n\n");
         var seeds = StringUtil.longs(categories[0]);
         var categoriesMaps = Arrays.stream(categories)

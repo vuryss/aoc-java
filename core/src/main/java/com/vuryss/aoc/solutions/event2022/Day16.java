@@ -49,7 +49,7 @@ public class Day16 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var valves = constructValves(input);
         Day16.minutes = 30;
 
@@ -57,7 +57,7 @@ public class Day16 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var valves = constructValves(input);
         Day16.minutes = 26;
 

@@ -27,7 +27,7 @@ public class Day17 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var target = StringUtil.sints(input);
         var targetMinY = Math.min(target.get(2), target.get(3));
         var maxVelocityY = Math.abs(targetMinY) - 1;
@@ -36,7 +36,7 @@ public class Day17 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         var target = StringUtil.sints(input);
         var xVelocitySteps = new HashMap<Integer, Set<Integer>>();
         var yVelocitySteps = new HashMap<Integer, Set<Integer>>();

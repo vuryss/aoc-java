@@ -21,7 +21,7 @@ public class Day25 implements SolutionInterface {
     }
 
     @Override
-    public String part1Solution(String input) {
+    public String part1Solution(String input, boolean isTest) {
         var lines = input.trim().split("\n");
         var graph = new DefaultUndirectedGraph<String, DefaultEdge>(DefaultEdge.class);
 
@@ -43,7 +43,7 @@ public class Day25 implements SolutionInterface {
     }
 
     @Override
-    public String part2Solution(String input) {
+    public String part2Solution(String input, boolean isTest) {
         return "Merry Christmas!";
     }
 }
