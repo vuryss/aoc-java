@@ -29,4 +29,9 @@ public class CustomValidationProblemPostProcessor implements ProblemPostProcesso
 
         return problem;
     }
+
+    @Override
+    public int priority() {
+        return 128;
+    }
 }

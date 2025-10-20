@@ -11,7 +11,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import org.hibernate.validator.constraints.Range;
-import org.jboss.logging.Logger;
 import org.jboss.resteasy.reactive.RestPath;
 
 import java.time.Duration;

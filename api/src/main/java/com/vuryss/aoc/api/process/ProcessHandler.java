@@ -2,9 +2,11 @@ package com.vuryss.aoc.api.process;
 
 import com.zaxxer.nuprocess.NuAbstractProcessHandler;
 import com.zaxxer.nuprocess.NuProcess;
+import io.quarkus.logging.Log;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.util.Comparator;
 import java.util.concurrent.CompletableFuture;
 
 public class ProcessHandler extends NuAbstractProcessHandler {
@@ -65,8 +67,21 @@ public class ProcessHandler extends NuAbstractProcessHandler {
     }
 
     public void killProcess() {
-        if (process != null) {
-            process.destroy(true);
+        if (process == null) {
+            return;
         }
+
+        ProcessHandle.of(process.getPID()).ifPresent(parent -> {
+            parent
+                .descendants()
+                .sorted(Comparator.comparingLong(ProcessHandle::pid).reversed())
+                .forEach(processHandle -> {
+                    Log.info("Killing child process with PID: " + processHandle.pid());
+                    processHandle.destroyForcibly();
+                });
+
+            Log.info("Killing parent process with PID: " + parent.pid());
+            parent.destroyForcibly();
+        });
     }
 }

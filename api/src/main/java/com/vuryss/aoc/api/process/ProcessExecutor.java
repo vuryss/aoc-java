@@ -1,6 +1,7 @@
 package com.vuryss.aoc.api.process;
 
 import com.zaxxer.nuprocess.NuProcessBuilder;
+import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.time.Duration;
@@ -23,15 +24,12 @@ public class ProcessExecutor {
             .orTimeout(timeout.toMillis(), TimeUnit.MILLISECONDS)
             .whenComplete((result, exception) -> {
                 if (exception instanceof TimeoutException) {
+                    Log.info("Process execution completed with a timeout, killing process tree...");
                     handler.killProcess();
                 }
             })
-            .exceptionallyCompose(exception -> {
-                if (exception instanceof TimeoutException) {
-                    return CompletableFuture.failedFuture(new ProcessExecutionException("Process timed out!"));
-                }
-
-                return CompletableFuture.failedFuture(new ProcessExecutionException(exception.getMessage()));
-            });
+            .exceptionallyCompose(
+                exception -> CompletableFuture.failedFuture(new ProcessExecutionException(exception.getMessage()))
+            );
     }
 }
