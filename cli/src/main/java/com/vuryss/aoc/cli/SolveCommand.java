@@ -2,6 +2,7 @@ package com.vuryss.aoc.cli;
 
 import com.vuryss.aoc.cli.output.JsonOutput;
 import com.vuryss.aoc.cli.output.PrettyPrintOutput;
+import com.vuryss.aoc.config.AoCConfig;
 import org.jetbrains.annotations.NotNull;
 import picocli.CommandLine;
 
@@ -91,11 +92,13 @@ public class SolveCommand implements Runnable {
     }
 
     private List<Integer> resolveDays() {
-        var availableDays = IntStream.rangeClosed(1, 25).boxed().toList();
+        var currentYear = year != 0 ? year : LocalDate.now().getYear();
+        var maxDay = AoCConfig.getMaxChallengesForYear(currentYear);
+        var availableDays = IntStream.rangeClosed(1, maxDay).boxed().toList();
 
         if (day != 0) {
-            if (!availableDays.contains(day)) {
-                throw new CliException("Invalid day given, must be between 1 and 25");
+            if (!AoCConfig.isValidDayForYear(currentYear, day)) {
+                throw new CliException(String.format("Invalid day given for year %d, must be between 1 and %d", currentYear, maxDay));
             }
 
             return List.of(day);

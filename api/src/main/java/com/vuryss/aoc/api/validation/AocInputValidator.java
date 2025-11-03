@@ -1,5 +1,6 @@
 package com.vuryss.aoc.api.validation;
 
+import com.vuryss.aoc.config.AoCConfig;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -20,6 +21,31 @@ public class AocInputValidator implements ConstraintValidator<AocInputValid, Obj
         var year = (Integer) params[0];
         var day = (Integer) params[1];
         var value = (String) params[2];
+
+        if (!AoCConfig.isValidDayForYear(year, day)) {
+            String maxDayText;
+            try {
+                maxDayText = String.valueOf(AoCConfig.getMaxChallengesForYear(year));
+            } catch (IllegalArgumentException e) {
+                maxDayText = "not configured";
+            }
+
+            if (context != null) {
+                context.disableDefaultConstraintViolation();
+                context
+                    .buildConstraintViolationWithTemplate(
+                        String.format(
+                            "Invalid day %d for year %d. Maximum day for year %d is %s",
+                            day,
+                            year,
+                            year,
+                            maxDayText
+                        )
+                    )
+                    .addConstraintViolation();
+            }
+            return false;
+        }
 
         var validator = getValidatorFor(year, day);
 

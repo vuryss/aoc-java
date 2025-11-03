@@ -32,14 +32,14 @@ public class SolveResource {
         return "Hello World";
     }
 
-    @Path("/{year:20[12][0-9]}/{day:[1-9]|1[0-9]|2[0-5]}")
+    @Path("/{year:20[12][0-9]}/{day:[1-9]|[1-9][0-9]}")
     @POST
     @Consumes(MediaType.TEXT_PLAIN)
     @Produces(MediaType.APPLICATION_JSON)
     @AocInputValid
     public Uni<SolutionResult> solve(
-        @RestPath @NotNull @Range(min = 2015, max = 2025) Integer year,
-        @RestPath @NotNull @Range(min = 1, max = 25) Integer day,
+        @RestPath @NotNull @Range(min = 2015, max = 2030) Integer year,
+        @RestPath @NotNull @Range(min = 1, max = 31) Integer day,
         @NotNull String input
     ) {
         var command = solverCommandBuilder.build(year, day, input);
