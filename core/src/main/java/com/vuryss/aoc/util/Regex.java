@@ -15,11 +15,40 @@ public class Regex {
     }
 
     public static List<String> matchAll(String regex, String input) {
-        var m = Pattern.compile(regex).matcher(input);
+        var p = Pattern.compile(regex);
+
+        return matchAll(p, input);
+    }
+
+    public static List<String> matchAll(Pattern pattern, String input) {
+        var m = pattern.matcher(input);
         var list = new ArrayList<String>();
 
         while (m.find()) {
             list.add(m.group());
+        }
+
+        return list;
+    }
+
+    public static List<List<String>> matchAllGroups(String regex, String input) {
+        var p = Pattern.compile(regex);
+
+        return matchAllGroups(p, input);
+    }
+
+    public static List<List<String>> matchAllGroups(Pattern pattern, String input) {
+        var m = pattern.matcher(input);
+        var list = new ArrayList<List<String>>();
+
+        while (m.find()) {
+            var groupList = new ArrayList<String>();
+
+            for (var i = 1; i <= m.groupCount(); i++) {
+                groupList.add(m.group(i));
+            }
+
+            list.add(groupList);
         }
 
         return list;
