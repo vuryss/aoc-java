@@ -145,6 +145,7 @@ public class Day11 implements SolutionInterface {
 
             // Go downstairs only if there are items left to move up there
             if (state.elevatorFloor > state.minFloor) {
+                // Try moving 1 item down
                 for (var item: currentFloor) {
                     var newCurrentFloor = new HashSet<>(currentFloor) {{ remove(item); }};
 
@@ -170,7 +171,39 @@ public class Day11 implements SolutionInterface {
 
                     if (!visited.contains(newState.hash())) {
                         queue.add(newState);
-                        break;
+                    }
+                }
+
+                // Try moving 2 items down
+                for (var item : currentFloor) {
+                    for (var otherItem : currentFloor) {
+                        if (otherItem == item) {
+                            continue;
+                        }
+
+                        var newCurrentFloor = new HashSet<>(currentFloor) {{ remove(item); remove(otherItem); }};
+
+                        if (!isSafe(newCurrentFloor)) {
+                            continue;
+                        }
+
+                        var newPreviousFloor = new HashSet<>(state.floors.get(state.elevatorFloor - 1)) {{ add(item); add(otherItem); }};
+
+                        if (isSafe(newPreviousFloor)) {
+                            var newState = new State(
+                                state.steps + 1,
+                                state.elevatorFloor - 1,
+                                new ArrayList<>(state.floors) {{
+                                    set(state.elevatorFloor, newCurrentFloor);
+                                    set(state.elevatorFloor - 1, newPreviousFloor);
+                                }},
+                                state.minFloor
+                            );
+
+                            if (!visited.contains(newState.hash())) {
+                                queue.add(newState);
+                            }
+                        }
                     }
                 }
             }
@@ -205,7 +238,16 @@ public class Day11 implements SolutionInterface {
             this.steps = steps;
             this.elevatorFloor = elevatorFloor;
             this.floors = floors;
-            this.minFloor = floors.get(minFloor).isEmpty() ? minFloor + 1 : minFloor;
+            this.minFloor = calculateMinFloor(floors);
+        }
+
+        private static int calculateMinFloor(ArrayList<Set<Item>> floors) {
+            for (int i = 0; i < floors.size(); i++) {
+                if (!floors.get(i).isEmpty()) {
+                    return i;
+                }
+            }
+            return 3; // All items are on floor 4 (index 3)
         }
 
         public String hash() {
