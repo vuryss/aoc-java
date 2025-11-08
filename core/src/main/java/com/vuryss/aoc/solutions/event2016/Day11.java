@@ -1,6 +1,7 @@
 package com.vuryss.aoc.solutions.event2016;
 
 import com.vuryss.aoc.solutions.SolutionInterface;
+import com.vuryss.aoc.util.Combinatorics;
 import com.vuryss.aoc.util.Regex;
 
 import java.util.*;
@@ -10,7 +11,7 @@ import java.util.regex.Pattern;
 public class Day11 implements SolutionInterface {
     private final static Pattern GENERATOR_PATTERN = Pattern.compile("(\\w+) generator");
     private final static Pattern MICROCHIP_PATTERN = Pattern.compile("(\\w+)-compatible microchip");
-    private final ItemRepository itemRepository = new ItemRepository();
+    private final HashMap<String, Integer> itemBit = new HashMap<>();
 
     @Override
     public Map<String, String> part1Tests() {
@@ -32,30 +33,30 @@ public class Day11 implements SolutionInterface {
 
     @Override
     public String part1Solution(String input, boolean isTest) {
-        itemRepository.items.clear();
+        itemBit.clear();
         var floors = parseInput(input);
-        itemRepository.link();
 
         return solve(floors);
     }
 
     @Override
     public String part2Solution(String input, boolean isTest) {
-        itemRepository.items.clear();
+        itemBit.clear();
         var floors = parseInput(input);
         var firstFloor = floors.getFirst();
-        firstFloor.add(itemRepository.add(Type.GENERATOR, "elerium"));
-        firstFloor.add(itemRepository.add(Type.MICROCHIP, "elerium"));
-        firstFloor.add(itemRepository.add(Type.GENERATOR, "dilithium"));
-        firstFloor.add(itemRepository.add(Type.MICROCHIP, "dilithium"));
-        itemRepository.link();
+        var elerium = itemBit("elerium");
+        var dilithium = itemBit("dilithium");
+        floors.set(
+            0,
+            new Floor(firstFloor.microchips | elerium | dilithium, firstFloor.generators | elerium | dilithium)
+        );
 
         return solve(floors);
     }
 
-    private String solve(ArrayList<Set<Item>> floors) {
+    private String solve(ArrayList<Floor> floors) {
         var elevatorFloor = 0;
-        var totalItems = floors.stream().mapToInt(Set::size).sum();
+        var totalItems = itemBit.size() * 2;
 
         var queue = new PriorityQueue<>(Comparator.comparingInt(State::steps));
         queue.add(new State(0, elevatorFloor, floors, 0));
@@ -76,86 +77,87 @@ public class Day11 implements SolutionInterface {
             }
 
             var currentFloor = state.floors.get(state.elevatorFloor);
-            var up2 = false;
+            var currentObjects = currentFloor.objects();
 
-            if (state.elevatorFloor < 3) {
-                upLoop:
-                for (var item : currentFloor) {
-                    for (var otherItem : currentFloor) {
-                        if (otherItem == item) {
-                            continue;
-                        }
+            for (var twoItems : Combinatorics.combinations(currentObjects, 2)) {
+                var newCurrentFloor = new Floor(currentFloor.all ^ twoItems.get(0) ^ twoItems.get(1));
 
-                        var newCurrentFloor = new HashSet<>(currentFloor) {{ remove(item); remove(otherItem); }};
+                if (!newCurrentFloor.isSafe()) {
+                    continue;
+                }
 
-                        if (!isSafe(newCurrentFloor)) {
-                            continue;
-                        }
+                if (state.elevatorFloor < 3) {
+                    var newNextFloor = new Floor(state.floors.get(state.elevatorFloor + 1).all | twoItems.get(0) | twoItems.get(1));
 
-                        var newNextFloor = new HashSet<>(state.floors.get(state.elevatorFloor + 1)) {{ add(item); add(otherItem); }};
+                    if (newNextFloor.isSafe()) {
+                        var newState = new State(
+                            state.steps + 1,
+                            state.elevatorFloor + 1,
+                            new ArrayList<>(state.floors) {{
+                                set(state.elevatorFloor, newCurrentFloor);
+                                set(state.elevatorFloor + 1, newNextFloor);
+                            }},
+                            state.minFloor
+                        );
 
-                        if (isSafe(newNextFloor)) {
-                            var newState = new State(
-                                state.steps + 1,
-                                state.elevatorFloor + 1,
-                                new ArrayList<>(state.floors) {{
-                                    set(state.elevatorFloor, newCurrentFloor);
-                                    set(state.elevatorFloor + 1, newNextFloor);
-                                }},
-                                state.minFloor
-                            );
-
-                            if (!visited.contains(newState.hash())) {
-                                queue.add(newState);
-                                up2 = true;
-                                continue upLoop;
-                            }
+                        if (!visited.contains(newState.hash())) {
+                            queue.add(newState);
                         }
                     }
+                }
 
-                    // Up with 1 item only if we did not go up with 2 items
-                    if (up2) {
-                        continue;
-                    }
+                if (state.elevatorFloor > state.minFloor) {
+                    var newPreviousFloor = new Floor(state.floors.get(state.elevatorFloor - 1).all | twoItems.get(0) | twoItems.get(1));
 
-                    var newCurrentFloor = new HashSet<>(currentFloor) {{ remove(item); }};
+                    if (newPreviousFloor.isSafe()) {
+                        var newState = new State(
+                            state.steps + 1,
+                            state.elevatorFloor - 1,
+                            new ArrayList<>(state.floors) {{
+                                set(state.elevatorFloor, newCurrentFloor);
+                                set(state.elevatorFloor - 1, newPreviousFloor);
+                            }},
+                            state.minFloor
+                        );
 
-                    if (isSafe(newCurrentFloor)) {
-                        var newNextFloor = new HashSet<>(state.floors.get(state.elevatorFloor + 1)) {{ add(item); }};
-
-                        if (isSafe(newNextFloor)) {
-                            var newState = new State(
-                                state.steps + 1,
-                                state.elevatorFloor + 1,
-                                new ArrayList<>(state.floors) {{
-                                    set(state.elevatorFloor, newCurrentFloor);
-                                    set(state.elevatorFloor + 1, newNextFloor);
-                                }},
-                                state.minFloor
-                            );
-
-                            if (!visited.contains(newState.hash())) {
-                                queue.add(newState);
-                                break;
-                            }
+                        if (!visited.contains(newState.hash())) {
+                            queue.add(newState);
                         }
                     }
                 }
             }
 
-            // Go downstairs only if there are items left to move up there
-            if (state.elevatorFloor > state.minFloor) {
-                // Try moving 1 item down
-                for (var item: currentFloor) {
-                    var newCurrentFloor = new HashSet<>(currentFloor) {{ remove(item); }};
+            for (var item : currentObjects) {
+                var newCurrentFloor = new Floor(currentFloor.all ^ item);
 
-                    if (!isSafe(newCurrentFloor)) {
-                        continue;
+                if (!newCurrentFloor.isSafe()) {
+                    continue;
+                }
+
+                if (state.elevatorFloor < 3) {
+                    var newNextFloor = new Floor(state.floors.get(state.elevatorFloor + 1).all | item);
+
+                    if (newNextFloor.isSafe()) {
+                        var newState = new State(
+                            state.steps + 1,
+                            state.elevatorFloor + 1,
+                            new ArrayList<>(state.floors) {{
+                                set(state.elevatorFloor, newCurrentFloor);
+                                set(state.elevatorFloor + 1, newNextFloor);
+                            }},
+                            state.minFloor
+                        );
+
+                        if (!visited.contains(newState.hash())) {
+                            queue.add(newState);
+                        }
                     }
+                }
 
-                    var newPreviousFloor = new HashSet<>(state.floors.get(state.elevatorFloor - 1)) {{ add(item); }};
+                if (state.elevatorFloor > state.minFloor) {
+                    var newPreviousFloor = new Floor(state.floors.get(state.elevatorFloor - 1).all | item);
 
-                    if (!isSafe(newPreviousFloor)) {
+                    if (!newPreviousFloor.isSafe()) {
                         continue;
                     }
 
@@ -173,133 +175,84 @@ public class Day11 implements SolutionInterface {
                         queue.add(newState);
                     }
                 }
-
-                // Try moving 2 items down
-                for (var item : currentFloor) {
-                    for (var otherItem : currentFloor) {
-                        if (otherItem == item) {
-                            continue;
-                        }
-
-                        var newCurrentFloor = new HashSet<>(currentFloor) {{ remove(item); remove(otherItem); }};
-
-                        if (!isSafe(newCurrentFloor)) {
-                            continue;
-                        }
-
-                        var newPreviousFloor = new HashSet<>(state.floors.get(state.elevatorFloor - 1)) {{ add(item); add(otherItem); }};
-
-                        if (isSafe(newPreviousFloor)) {
-                            var newState = new State(
-                                state.steps + 1,
-                                state.elevatorFloor - 1,
-                                new ArrayList<>(state.floors) {{
-                                    set(state.elevatorFloor, newCurrentFloor);
-                                    set(state.elevatorFloor - 1, newPreviousFloor);
-                                }},
-                                state.minFloor
-                            );
-
-                            if (!visited.contains(newState.hash())) {
-                                queue.add(newState);
-                            }
-                        }
-                    }
-                }
             }
         }
 
         return "-no solution found-";
     }
 
-    private ArrayList<Set<Item>> parseInput(String input) {
+    private ArrayList<Floor> parseInput(String input) {
         var lines = input.trim().split("\n");
-        var floors = new ArrayList<Set<Item>>();
+        var floors = new ArrayList<Floor>();
 
         for (var line: lines) {
-            var items = new HashSet<Item>();
-            Regex.matchAllGroups(GENERATOR_PATTERN, line)
-                .forEach(generator -> items.add(itemRepository.add(Type.GENERATOR, generator.getFirst())));
-            Regex.matchAllGroups(MICROCHIP_PATTERN, line)
-                .forEach(microchip -> items.add(itemRepository.add(Type.MICROCHIP, microchip.getFirst())));
-            floors.add(items);
+            var microchips = Regex.matchAllGroups(MICROCHIP_PATTERN, line).stream()
+                    .mapToInt(matches -> itemBit(matches.getFirst()))
+                    .reduce(0, (a, b) -> a | b);
+            var generators = Regex.matchAllGroups(GENERATOR_PATTERN, line).stream()
+                    .mapToInt(matches -> itemBit(matches.getFirst()))
+                    .reduce(0, (a, b) -> a | b);
+            floors.add(new Floor(microchips, generators));
         }
 
         return floors;
     }
 
-    private boolean isSafe(Set<Item> items) {
-        return items.stream().noneMatch(item -> item.type == Type.GENERATOR)
-            || items.stream().noneMatch(item -> item.type == Type.MICROCHIP && !items.contains(item.relatedItem));
+    private int itemBit(String name) {
+        return itemBit.computeIfAbsent(name, k -> (int) Math.pow(2, itemBit.size()));
     }
 
-    private record State(int steps, int elevatorFloor, ArrayList<Set<Item>> floors, int minFloor) {
-        State(int steps, int elevatorFloor, ArrayList<Set<Item>> floors, int minFloor) {
+    private record Floor(int microchips, int generators, long all) {
+        Floor(int microchips, int generators) {
+            this(microchips, generators, (long) microchips << 20 | generators);
+        }
+
+        Floor(long items) {
+            this((int) (items >> 20), (int) (items & 0xFFFFF), items);
+        }
+
+        public int size() {
+            return Long.bitCount(all);
+        }
+
+        public boolean isSafe() {
+            return generators == 0 || (microchips & generators) == microchips;
+        }
+
+        public ArrayList<Long> objects() {
+            var list = new ArrayList<Long>();
+            var itemsCopy = all;
+
+            while (itemsCopy != 0) {
+                var bit = Long.highestOneBit(itemsCopy);
+                itemsCopy ^= bit;
+                list.add(bit);
+            }
+
+            return list;
+        }
+    }
+
+    private record State(int steps, int elevatorFloor, ArrayList<Floor> floors, int minFloor) {
+        State(int steps, int elevatorFloor, ArrayList<Floor> floors, int minFloor) {
             this.steps = steps;
             this.elevatorFloor = elevatorFloor;
             this.floors = floors;
-            this.minFloor = calculateMinFloor(floors);
-        }
-
-        private static int calculateMinFloor(ArrayList<Set<Item>> floors) {
-            for (int i = 0; i < floors.size(); i++) {
-                if (!floors.get(i).isEmpty()) {
-                    return i;
-                }
-            }
-            return 3; // All items are on floor 4 (index 3)
+            this.minFloor = floors.get(minFloor).all == 0 ? minFloor + 1 : minFloor;
         }
 
         public String hash() {
             var hash = new StringBuilder("E").append(elevatorFloor);
 
             for (int i = 0; i < floors.size(); i++) {
-                int mCount = 0, gCount = 0;
-                for (var item : floors.get(i)) {
-                    if (item.type == Type.MICROCHIP) mCount++;
-                    else gCount++;
-                }
-                hash.append("F").append(i).append("M").append(mCount).append("G").append(gCount);
+                var floor = floors.get(i);
+
+                hash.append("F").append(i)
+                    .append("M").append(Integer.bitCount(floor.microchips))
+                    .append("G").append(Integer.bitCount(floor.generators));
             }
 
             return hash.toString();
-        }
-    }
-
-    private enum Type { GENERATOR, MICROCHIP }
-
-    private static class Item {
-        public Type type;
-        public String name;
-        public Item relatedItem;
-
-        public Item(Type type, String name) {
-            this.type = type;
-            this.name = name;
-        }
-    }
-
-    private static class ItemRepository {
-        private final ArrayList<Item> items = new ArrayList<>();
-
-        public Item add(Type type, String name) {
-            var item = new Item(type, name);
-            items.add(item);
-            return item;
-        }
-
-        public void link() {
-            items.forEach(item -> {
-                if (item.relatedItem == null) {
-                    items.stream()
-                        .filter(other -> item.name.equals(other.name) && item.type != other.type)
-                        .findFirst()
-                        .ifPresent(other -> {
-                            item.relatedItem = other;
-                            other.relatedItem = item;
-                        });
-                }
-            });
         }
     }
 }
