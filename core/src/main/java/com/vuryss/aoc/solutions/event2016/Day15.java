@@ -1,6 +1,7 @@
 package com.vuryss.aoc.solutions.event2016;
 
 import com.vuryss.aoc.solutions.SolutionInterface;
+import com.vuryss.aoc.util.Algorithm;
 import com.vuryss.aoc.util.StringUtil;
 
 import java.lang.Override;
@@ -39,9 +40,8 @@ public class Day15 implements SolutionInterface {
 
     private ArrayList<Disk> parseDisks(String input) {
         var disks = new ArrayList<Disk>();
-        var lines = input.trim().split("\n");
 
-        for (var line: lines) {
+        for (var line: input.trim().split("\n")) {
             var numbers = StringUtil.ints(line);
             disks.add(new Disk(numbers.get(1), numbers.get(3)));
         }
@@ -51,26 +51,29 @@ public class Day15 implements SolutionInterface {
 
     private String solve(String input, boolean addDisk) {
         var disks = parseDisks(input);
-        var time = -1;
 
         if (addDisk) {
             disks.add(new Disk(11, 0));
         }
 
-        advanceTime:
-        while (true) {
-            time++;
+        var moduli = disks.stream().mapToLong(d -> d.positions).toArray();
+        var remainders = disks.stream().mapToLong(d -> (d.positions - d.position - disks.indexOf(d) - 1) % d.positions).toArray();
 
-            for (var i = 0; i < disks.size(); i++) {
-                var disk = disks.get(i);
+        return String.valueOf(Algorithm.chineseRemainderTheorem(remainders, moduli));
 
-                if ((disk.position + time + i + 1) % disk.positions != 0) {
-                    continue advanceTime;
-                }
-            }
-
-            return String.valueOf(time);
-        }
+        // Brute force solution (works also very fast)
+//        advanceTime:
+//        for (var time = 0; true; time++) {
+//            for (var i = 0; i < disks.size(); i++) {
+//                var disk = disks.get(i);
+//
+//                if ((disk.position + time + i + 1) % disk.positions != 0) {
+//                    continue advanceTime;
+//                }
+//            }
+//
+//            return String.valueOf(time);
+//        }
     }
 
     private record Disk(int positions, int position) {}

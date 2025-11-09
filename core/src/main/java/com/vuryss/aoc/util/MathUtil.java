@@ -3,6 +3,7 @@ package com.vuryss.aoc.util;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.math3.util.ArithmeticUtils;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -50,5 +51,9 @@ public class MathUtil {
         }
 
         return factors;
+    }
+
+    public static long modInverseCoprime(long a, long b) {
+        return BigInteger.valueOf(a).modInverse(BigInteger.valueOf(b)).longValue();
     }
 }

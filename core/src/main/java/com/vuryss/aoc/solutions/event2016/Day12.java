@@ -1,7 +1,7 @@
 package com.vuryss.aoc.solutions.event2016;
 
 import com.vuryss.aoc.solutions.SolutionInterface;
-import com.vuryss.aoc.util.Util;
+import com.vuryss.aoc.util.Algorithm;
 
 import java.lang.Override;
 import java.lang.String;
@@ -117,7 +117,7 @@ public class Day12 implements SolutionInterface {
 
             // First loop optimization
             if (index == 9) {
-                registers[0] = Util.fib(registers[3] + 2);
+                registers[0] = Algorithm.fib(registers[3] + 2);
                 index = 16;
                 continue;
             }
