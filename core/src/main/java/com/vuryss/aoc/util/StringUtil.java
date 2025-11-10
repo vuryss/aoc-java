@@ -44,7 +44,15 @@ public class StringUtil {
     }
 
     public static List<String> chunk(String string, int size) {
-        return Splitter.fixedLength(size).splitToList(string);
+        int len = string.length();
+        int full = len / size;
+        List<String> out = new ArrayList<>(full);
+
+        for (int i = 0; i < len; i += size) {
+            out.add(string.substring(i, i + size));
+        }
+
+        return out;
     }
 
     public static String hex2bin(String string) {
