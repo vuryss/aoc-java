@@ -1,5 +1,6 @@
 package com.vuryss.aoc.util;
 
+import com.google.common.base.Splitter;
 import com.google.common.hash.Hashing;
 
 import java.nio.charset.StandardCharsets;
@@ -40,6 +41,10 @@ public class StringUtil {
     @SuppressWarnings("deprecation")
     public static String md5(String string) {
         return Hashing.md5().hashString(string, StandardCharsets.UTF_8).toString();
+    }
+
+    public static List<String> chunk(String string, int size) {
+        return Splitter.fixedLength(size).splitToList(string);
     }
 
     public static String hex2bin(String string) {
