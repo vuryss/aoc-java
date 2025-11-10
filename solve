@@ -1,5 +1,17 @@
 #!/bin/bash
 
+# Parse command line arguments to check for --profile flag
+PROFILE_ARGS=""
+APP_ARGS=()
+
+for arg in "$@"; do
+    if [ "$arg" = "--profile" ]; then
+        PROFILE_ARGS="-XX:StartFlightRecording=duration=60s,filename=profile.jfr"
+    else
+        APP_ARGS+=("$arg")
+    fi
+done
+
 # Build the project quietly using Gradle.
 # --quiet suppresses most build output.
 # -x test skips the test task.
@@ -24,5 +36,5 @@ fi
 
 # Execute the application's JAR file using Java.
 # Note the path is build/quarkus-app/ for Gradle.
-# All arguments passed to this script ($@) are forwarded to the app.
-java -Dquarkus.log.console.enable=false -jar cli/build/cli-1.0-runner.jar solve "$@"
+# All arguments (except --profile) are forwarded to the app.
+java $PROFILE_ARGS -Dquarkus.log.console.enable=false -jar cli/build/cli-1.0-runner.jar solve "${APP_ARGS[@]}"
