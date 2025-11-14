@@ -78,7 +78,7 @@ public class Day2 implements SolutionInterface {
 
         for (var line: lines) {
             for (var c: line.toCharArray()) {
-                var newPosition = position.forwardFromDirection(Direction.fromChar(c));
+                var newPosition = position.goInDirection(Direction.fromChar(c));
 
                 if (keypad.containsKey(newPosition)) {
                     position = newPosition;

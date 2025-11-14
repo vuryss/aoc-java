@@ -104,7 +104,7 @@ public class Day17 implements SolutionInterface {
             node.visited.add(Pair.of(player.direction, player.chainSteps));
 
             if (player.chainSteps < maxStraight) {
-                var nextPoint = player.position.forwardFromDirection(player.direction);
+                var nextPoint = player.position.goInDirection(player.direction);
                 var nextNode = grid.get(nextPoint);
 
                 if (nextNode != null && !nextNode.visited.contains(Pair.of(player.direction, player.chainSteps + 1))) {

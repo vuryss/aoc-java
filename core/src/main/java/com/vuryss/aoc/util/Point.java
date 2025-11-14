@@ -100,10 +100,11 @@ public class Point {
         };
     }
 
-    public Point forwardFromDirection(Direction direction) {
-        return forwardFromDirection(direction, 1);
+    public Point goInDirection(Direction direction) {
+        return goInDirection(direction, 1);
     }
-    public Point forwardFromDirection(Direction direction, int distance) {
+
+    public Point goInDirection(Direction direction, int distance) {
         return switch (direction) {
             case U -> up(distance);
             case D -> down(distance);

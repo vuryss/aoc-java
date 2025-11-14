@@ -40,6 +40,15 @@ public enum Direction {
         };
     }
 
+    public String getChar() {
+        return switch (this) {
+            case R -> "R";
+            case L -> "L";
+            case U -> "U";
+            case D -> "D";
+        };
+    }
+
     public String toString() {
         return switch (this) {
             case R -> ">";
