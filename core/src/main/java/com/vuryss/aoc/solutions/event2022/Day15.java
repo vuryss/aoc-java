@@ -7,7 +7,6 @@ import com.vuryss.aoc.util.RangeUtil;
 import org.apache.commons.lang3.Range;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
@@ -61,7 +60,7 @@ public class Day15 implements SolutionInterface {
     @Override
     public String part1Solution(String input, boolean isTest) {
         var inputLines = input.split("\n");
-        List<Range<Integer>> ranges = new ArrayList<>();
+        ArrayList<Range<Integer>> ranges = new ArrayList<>();
         var targetY = inputLines.length > 15 ? 2000000 : 10;
         var beacons = new HashSet<Point>();
 
@@ -80,7 +79,7 @@ public class Day15 implements SolutionInterface {
             }
         }
 
-        RangeUtil.mergeOverlapping(ranges);
+        ranges = RangeUtil.mergeOverlapping(ranges);
 
         var total = 0;
 

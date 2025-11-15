@@ -2,35 +2,45 @@ package com.vuryss.aoc.util;
 
 import org.apache.commons.lang3.Range;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class RangeUtil {
-    public static void mergeOverlapping(List<Range<Integer>> ranges) {
-        var numberOfRanges = 0;
+    public static <T extends Comparable<? super T>> ArrayList<Range<T>> mergeOverlapping(List<Range<T>> ranges) {
+        if (ranges.isEmpty()) {
+            return new ArrayList<>();
+        }
 
-        while (numberOfRanges != ranges.size()) {
-            numberOfRanges = ranges.size();
+        ArrayList<Range<T>> sortedRanges = new ArrayList<>(ranges);
 
-            for (var i = 0; i < ranges.size() - 1; i++) {
-                var range1 = ranges.get(i);
+        // Sort ranges by their minimum values - O(n log n)
+        sortedRanges.sort(Comparator.comparing(Range::getMinimum));
 
-                for (var j = i + 1; j < ranges.size(); j++) {
-                    var range2 = ranges.get(j);
+        // Merge in a single pass - O(n)
+        ArrayList<Range<T>> merged = new ArrayList<>();
+        Range<T> current = sortedRanges.getFirst();
 
-                    if (range1.isOverlappedBy(range2)) {
-                        ranges.remove(range1);
-                        ranges.remove(range2);
-                        ranges.add(RangeUtil.merge(range1, range2));
-                    }
-                }
+        for (int i = 1; i < sortedRanges.size(); i++) {
+            Range<T> next = sortedRanges.get(i);
+
+            if (current.isOverlappedBy(next)) {
+                current = merge(current, next);
+            } else {
+                merged.add(current);
+                current = next;
             }
         }
+
+        merged.add(current);
+
+        return merged;
     }
 
-    public static Range<Integer> merge(Range<Integer> range1, Range<Integer> range2) {
-        return Range.of(
-            Math.min(range1.getMinimum(), range2.getMinimum()),
-            Math.max(range1.getMaximum(), range2.getMaximum())
-        );
+    public static <T extends Comparable<? super T>> Range<T> merge(Range<T> r1, Range<T> r2) {
+        T min = r1.getMinimum().compareTo(r2.getMinimum()) <= 0 ? r1.getMinimum() : r2.getMinimum();
+        T max = r1.getMaximum().compareTo(r2.getMaximum()) >= 0 ? r1.getMaximum() : r2.getMaximum();
+
+        return Range.of(min, max);
     }
 }
