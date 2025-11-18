@@ -85,19 +85,30 @@ public class Day12 implements SolutionInterface {
 
     @Override
     public String part1Solution(String input, boolean isTest) {
-        var instructions = parseInstructions(input);
-        long[] registers = new long[4];
+        var prototypeComputer = new PrototypeComputer(input);
 
-        return String.valueOf(calculateRegisterA(registers, instructions));
+        prototypeComputer.execute();
+
+        return String.valueOf(prototypeComputer.getRegisterA());
+        //var instructions = parseInstructions(input);
+        //long[] registers = new long[4];
+        //
+        //return String.valueOf(calculateRegisterA(registers, instructions));
     }
 
     @Override
     public String part2Solution(String input, boolean isTest) {
-        var instructions = parseInstructions(input);
-        long[] registers = new long[4];
-        registers[2] = 1;
+        var prototypeComputer = new PrototypeComputer(input, 0, 0, 1, 0);
 
-        return String.valueOf(calculateRegisterA(registers, instructions));
+        prototypeComputer.execute();
+
+        return String.valueOf(prototypeComputer.getRegisterA());
+
+        //var instructions = parseInstructions(input);
+        //long[] registers = new long[4];
+        //registers[2] = 1;
+        //
+        //return String.valueOf(calculateRegisterA(registers, instructions));
     }
 
     private List<Instruction> parseInstructions(String input) {
