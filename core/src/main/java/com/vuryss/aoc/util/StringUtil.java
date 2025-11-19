@@ -23,11 +23,11 @@ public class StringUtil {
     }
 
     public static List<Integer> ints(String s) {
-        return Regex.matchAll("\\d+", s).stream().map(Integer::parseInt).collect(Collectors.toList());
+        return Regex.matchAll("\\d+", s).stream().map(Integer::parseInt).collect(Collectors.toCollection(ArrayList::new));
     }
 
     public static List<Integer> sints(String s) {
-        return Regex.matchAll("\\-?\\d+", s).stream().map(Integer::parseInt).collect(Collectors.toList());
+        return Regex.matchAll("\\-?\\d+", s).stream().map(Integer::parseInt).collect(Collectors.toCollection(ArrayList::new));
     }
 
     public static List<Long> longs(String s) {
