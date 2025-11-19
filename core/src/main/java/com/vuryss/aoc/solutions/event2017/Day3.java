@@ -67,7 +67,7 @@ public class Day3 implements SolutionInterface {
                 position = position.goInDirection(direction);
             } else {
                 direction = direction.turnLeft();
-                position = position.goInDirection(direction);
+                position = left;
             }
 
             var value = 0;
