@@ -26,7 +26,15 @@ public class Day8 implements SolutionInterface {
 
     @Override
     public Map<String, String> part2Tests() {
-        return Map.of();
+        return Map.of(
+            """
+            b inc 5 if a > 1
+            a inc 1 if b < 5
+            c dec -10 if a >= 1
+            c inc -20 if c == 10
+            """,
+            "10"
+        );
     }
 
     @Override
