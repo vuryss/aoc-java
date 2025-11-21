@@ -50,49 +50,6 @@ public class Day10 implements SolutionInterface {
 
     @Override
     public String part2Solution(String input, boolean isTest) {
-        var lengths = new ArrayList<Integer>();
-
-        for (var ch: input.trim().toCharArray()) {
-            lengths.add((int) ch);
-        }
-
-        lengths.addAll(List.of(17, 31, 73, 47, 23));
-
-        var list = new ArrayList<>(
-            isTest ? List.of(0, 1, 2, 3, 4) : IntStream.range(0, 256).boxed().collect(Collectors.toList())
-        );
-        var position = 0;
-        var skipSize = 0;
-
-        for (var round = 0; round < 64; round++) {
-            for (var length: lengths) {
-                Collections.reverse(list.subList(0, length));
-                Collections.rotate(list, -length - skipSize);
-                position += length + skipSize;
-                skipSize++;
-            }
-        }
-
-        Collections.rotate(list, position % list.size());
-
-        var denseHash = new ArrayList<Integer>();
-
-        for (var i = 0; i < 16; i++) {
-            var xor = 0;
-
-            for (var j = 0; j < 16; j++) {
-                xor ^= list.get(i * 16 + j);
-            }
-
-            denseHash.add(xor);
-        }
-
-        var hex = new StringBuilder();
-
-        for (var i = 0; i < 16; i++) {
-            hex.append(String.format("%02x", denseHash.get(i)));
-        }
-
-        return hex.toString();
+        return new KnotHash(input).hexForm();
     }
 }

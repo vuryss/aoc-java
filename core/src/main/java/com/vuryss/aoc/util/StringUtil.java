@@ -73,6 +73,12 @@ public class StringUtil {
             put('D', "1101");
             put('E', "1110");
             put('F', "1111");
+            put('a', "1010");
+            put('b', "1011");
+            put('c', "1100");
+            put('d', "1101");
+            put('e', "1110");
+            put('f', "1111");
         }};
 
         return string.trim().chars().mapToObj(c -> map.get((char) c)).collect(Collectors.joining());
