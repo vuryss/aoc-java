@@ -8,6 +8,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class StringUtil {
+    private static final String[] HEX_TO_BIN = {
+        "0000", "0001", "0010", "0011", "0100", "0101", "0110", "0111",
+        "1000", "1001", "1010", "1011", "1100", "1101", "1110", "1111"
+    };
+
     public static Map<Character, Integer> tally(String string) {
         var characterCount = new HashMap<Character, Integer>();
 
@@ -56,32 +61,13 @@ public class StringUtil {
     }
 
     public static String hex2bin(String string) {
-        var map = new HashMap<Character, String>(){{
-            put('0', "0000");
-            put('1', "0001");
-            put('2', "0010");
-            put('3', "0011");
-            put('4', "0100");
-            put('5', "0101");
-            put('6', "0110");
-            put('7', "0111");
-            put('8', "1000");
-            put('9', "1001");
-            put('A', "1010");
-            put('B', "1011");
-            put('C', "1100");
-            put('D', "1101");
-            put('E', "1110");
-            put('F', "1111");
-            put('a', "1010");
-            put('b', "1011");
-            put('c', "1100");
-            put('d', "1101");
-            put('e', "1110");
-            put('f', "1111");
-        }};
+        var bin = new StringBuilder();
 
-        return string.trim().chars().mapToObj(c -> map.get((char) c)).collect(Collectors.joining());
+        for (var c: string.toCharArray()) {
+            bin.append(HEX_TO_BIN[Character.digit(c, 16)]);
+        }
+
+        return bin.toString();
     }
 
     public static LinkedList<Character> toCharacterQueue(String input) {
