@@ -5,9 +5,7 @@ import com.vuryss.aoc.solutions.SolutionInterface;
 import java.lang.Override;
 import java.lang.String;
 import java.lang.SuppressWarnings;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 @SuppressWarnings("unused")
@@ -38,54 +36,29 @@ public class Day16 implements SolutionInterface {
     public String part2Solution(String input, boolean isTest) {
         var programs = "abcdefghijklmnop".toCharArray();
         var moves = parseMoves(input);
-        var programPositionsCycle = new HashMap<Character, ArrayList<Integer>>();
-        var foundProgramPositionCycle = new HashSet<Character>();
-
-        for (var program: programs) {
-            programPositionsCycle.put(program, new ArrayList<>());
-        }
-
-        for (var pos = 0; pos < programs.length; pos++) {
-            programPositionsCycle.get(programs[pos]).add(pos);
-        }
+        var states = new HashMap<String, Integer>();
+        states.put(new String(programs), 0);
 
         for (var i = 0; i < 1_000_000_000; i++) {
             runDance(programs, moves);
 
-            for (var pos = 0; pos < programs.length; pos++) {
-                if (!foundProgramPositionCycle.contains(programs[pos])) {
-                    programPositionsCycle.get(programs[pos]).add(pos);
-                }
-            }
-
-            if (i > 1 && i % 2 == 0) {
-                int middle = (i + 2) / 2;
-
-                // Check for each character if we have a loop of positions
-                for (var ch: programs) {
-                    var positions = programPositionsCycle.get(ch);
-
-                    if (
-                        !foundProgramPositionCycle.contains(ch)
-                        && positions.subList(0, middle).equals(positions.subList(middle, i + 2))
-                    ) {
-                        foundProgramPositionCycle.add(ch);
-                        programPositionsCycle.get(ch).subList(middle, i + 2).clear();
-                    }
-                }
-            }
-
-            if (foundProgramPositionCycle.size() == programs.length) {
+            if (states.containsKey(new String(programs))) {
                 break;
             }
+
+            states.put(new String(programs), i + 1);
         }
 
-        for (var es: programPositionsCycle.entrySet()) {
-            var charCycleIndex = 1_000_000_000 % es.getValue().size();
-            programs[es.getValue().get(charCycleIndex)] = es.getKey();
+        var cycleLength = states.size();
+        var targetIndex = 1_000_000_000 % cycleLength;
+
+        for (var es: states.entrySet()) {
+            if (es.getValue() == targetIndex) {
+                return es.getKey();
+            }
         }
 
-        return new String(programs);
+        return "-not found-";
     }
 
     private Move[] parseMoves(String input) {
