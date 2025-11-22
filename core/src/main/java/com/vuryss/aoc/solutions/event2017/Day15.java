@@ -28,7 +28,13 @@ public class Day15 implements SolutionInterface {
 
     @Override
     public Map<String, String> part2Tests() {
-        return Map.of();
+        return Map.of(
+            """
+            Generator A starts with 65
+            Generator B starts with 8921
+            """,
+            "309"
+        );
     }
 
     @Override
