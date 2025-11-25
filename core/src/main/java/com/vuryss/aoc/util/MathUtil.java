@@ -1,6 +1,5 @@
 package com.vuryss.aoc.util;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.math3.util.ArithmeticUtils;
 
 import java.math.BigInteger;
@@ -9,6 +8,8 @@ import java.util.Collection;
 import java.util.List;
 
 public class MathUtil {
+    public record QuadraticRoots(double one, double two) {}
+
     public static long lcm(List<Long> numbers) {
         long result = numbers.getFirst();
 
@@ -23,12 +24,17 @@ public class MathUtil {
         return lcm(List.copyOf(numbers));
     }
 
-    public static Pair<Double, Double> quadratic(double a, double b, double c) {
-        var discriminant = b * b - 4 * a * c;
-        var sqrt = Math.sqrt(Math.abs(discriminant));
+    public static QuadraticRoots quadratic(double a, double b, double c) {
+        var discriminant = Math.fma(b, b, - 4 * a * c);
+
+        if (discriminant < 0) {
+            return null;
+        }
+
+        var sqrt = Math.sqrt(discriminant);
         var denominator = 2 * a;
 
-        return Pair.of((-b + sqrt) / denominator, (-b - sqrt) / denominator);
+        return new QuadraticRoots((-b + sqrt) / denominator, (-b - sqrt) / denominator);
     }
 
     public static List<Long> factors(long n) {

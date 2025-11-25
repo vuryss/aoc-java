@@ -1,6 +1,5 @@
 package com.vuryss.aoc.util;
 
-import com.google.common.base.Splitter;
 import com.google.common.hash.Hashing;
 
 import java.nio.charset.StandardCharsets;
