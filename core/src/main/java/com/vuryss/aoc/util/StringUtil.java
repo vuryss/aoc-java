@@ -47,13 +47,13 @@ public class StringUtil {
         return Hashing.md5().hashString(string, StandardCharsets.UTF_8).toString();
     }
 
-    public static List<String> chunk(String string, int size) {
+    public static String[] chunk(String string, int size) {
         int len = string.length();
         int full = len / size;
-        List<String> out = new ArrayList<>(full);
+        String[] out = new String[full];
 
         for (int i = 0; i < len; i += size) {
-            out.add(string.substring(i, i + size));
+            out[i / size] = string.substring(i, Math.min(len, i + size));
         }
 
         return out;
