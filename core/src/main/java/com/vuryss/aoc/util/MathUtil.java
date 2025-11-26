@@ -62,4 +62,28 @@ public class MathUtil {
     public static long modInverseCoprime(long a, long b) {
         return BigInteger.valueOf(a).modInverse(BigInteger.valueOf(b)).longValue();
     }
+
+    public static boolean isPrime(int n) {
+        if (n <= 1) return false;
+        if (n <= 3) return true;
+        if ((n & 1) == 0 || n % 3 == 0) return false;
+
+        // Check 5, 7, 11, 13, 17, 19...
+        for (int i = 5; i * i <= n; i += 6) {
+            if (n % i == 0 || n % (i + 2) == 0) return false;
+        }
+        return true;
+    }
+
+    public static boolean isPrime(long n) {
+        if (n <= 1) return false;
+        if (n <= 3) return true;
+        if ((n & 1) == 0 || n % 3 == 0) return false;
+
+        // Check 5, 7, 11, 13, 17, 19...
+        for (long i = 5; i * i <= n; i += 6) {
+            if (n % i == 0 || n % (i + 2) == 0) return false;
+        }
+        return true;
+    }
 }
