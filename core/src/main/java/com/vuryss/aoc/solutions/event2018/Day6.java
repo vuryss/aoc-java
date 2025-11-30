@@ -98,6 +98,7 @@ public class Day6 implements SolutionInterface {
         var points = parsePoints(input);
         var boundingBox = GridUtil.getBoundingBox(points);
         var count = 0;
+        int maxDistance = isTest ? 32 : 10000;
 
         for (var x = boundingBox.minX; x <= boundingBox.maxX; x++) {
             for (var y = boundingBox.minY; y <= boundingBox.maxY; y++) {
@@ -107,12 +108,12 @@ public class Day6 implements SolutionInterface {
                 for (var p: points) {
                     totalDistance += point.manhattan(p);
 
-                    if (totalDistance >= 10000) {
+                    if (totalDistance >= maxDistance) {
                         break;
                     }
                 }
 
-                if (totalDistance < 10000) {
+                if (totalDistance < maxDistance) {
                     count++;
                 }
             }
