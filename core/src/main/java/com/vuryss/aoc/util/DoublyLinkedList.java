@@ -7,6 +7,8 @@ public class DoublyLinkedList<T> {
 
     public DoublyLinkedList(T value) {
         this.value = value;
+        this.next = this;
+        this.previous = this;
     }
 
     public DoublyLinkedList(T value, DoublyLinkedList<T> next, DoublyLinkedList<T> previous) {
@@ -26,11 +28,29 @@ public class DoublyLinkedList<T> {
         return newNode;
     }
 
+    public DoublyLinkedList<T> removePrevious() {
+        var prev = this.previous;
+        prev.previous.next = this;
+        this.previous = prev.previous;
+
+        return prev;
+    }
+
     public DoublyLinkedList<T> forward(int steps) {
         var node = this;
 
         while (steps-- > 0) {
             node = node.next;
+        }
+
+        return node;
+    }
+
+    public DoublyLinkedList<T> backward(int steps) {
+        var node = this;
+
+        while (steps-- > 0) {
+            node = node.previous;
         }
 
         return node;
