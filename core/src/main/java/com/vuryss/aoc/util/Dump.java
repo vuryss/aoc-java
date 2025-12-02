@@ -55,6 +55,17 @@ public final class Dump {
         }
     }
 
-    // Private constructor to prevent instantiation.
-    private Dump() {}
+    public static void dumpGrid(int[][] grid, int padding) {
+        var minx = 0;
+        var maxx = grid.length;
+        var miny = 0;
+        var maxy = grid[0].length;
+
+        for (var y = miny; y < maxy; y++) {
+            for (var x = minx; x < maxx; x++) {
+                System.out.print(String.format("%" + padding + "d", grid[x][y]));
+            }
+            System.out.println();
+        }
+    }
 }
