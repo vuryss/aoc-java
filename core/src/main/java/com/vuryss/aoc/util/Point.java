@@ -134,6 +134,10 @@ public class Point {
         return 31 * x + y;
     }
 
+    public long sortingKeyTopLeft() {
+        return (long) y << 32 | x;
+    }
+
     public String toString() {
         return getClass().getName() + "[x=" + x + ",y=" + y + "]";
     }

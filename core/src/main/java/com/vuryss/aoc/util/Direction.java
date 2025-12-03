@@ -13,6 +13,16 @@ public enum Direction {
         };
     }
 
+    public static Direction fromArrowChar(char c) {
+        return switch (c) {
+            case '>' -> R;
+            case '<' -> L;
+            case '^' -> U;
+            case 'v' -> D;
+            default -> throw new IllegalArgumentException("Invalid direction");
+        };
+    }
+
     public Direction opposite() {
         return switch (this) {
             case R -> L;
