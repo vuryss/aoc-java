@@ -47,6 +47,16 @@ public class StringUtil {
         return Hashing.md5().hashString(string, StandardCharsets.UTF_8).toString();
     }
 
+    public static int[] toDigitArray(String string) {
+        int[] digits = new int[string.length()];
+
+        for (int i = 0; i < string.length(); i++) {
+            digits[i] = string.charAt(i) - '0';
+        }
+
+        return digits;
+    }
+
     public static String[] chunk(String string, int size) {
         int len = string.length();
         int full = len / size;
