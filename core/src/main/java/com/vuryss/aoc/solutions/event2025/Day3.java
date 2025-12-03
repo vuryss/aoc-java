@@ -73,10 +73,6 @@ public class Day3 implements SolutionInterface {
                     n = batteries[i] - '0';
                     position = i + 1;
                 }
-
-                if (n == 9) {
-                    break;
-                }
             }
 
             maxBatteryCombination[foundBatteries++] = (char) (n + '0');
