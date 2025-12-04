@@ -28,6 +28,16 @@ public class Point {
         );
     }
 
+    // Top, Left, Right, Bottom to keep order line then column
+    public Point[] adjacentTopLeftOrder() {
+        return new Point[] {
+            new Point(x, y - 1),
+            new Point(x - 1, y),
+            new Point(x + 1, y),
+            new Point(x, y + 1)
+        };
+    }
+
     public List<Point> getAdjacentPoints() {
         return List.of(
             new Point(x - 1, y),

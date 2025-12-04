@@ -11,7 +11,7 @@ import java.util.*;
 
 @SuppressWarnings("unused")
 public class Day15 implements SolutionInterface {
-    private static final Comparator<Point> readingOrder = Comparator.comparingLong(Point::sortingKeyTopLeft);
+    private static final Comparator<State> readingOrder = Comparator.comparingLong(a -> a.position.sortingKeyTopLeft());
     private static final Comparator<Unit> lowerHealthThenReadingOrder = Comparator
         .<Unit>comparingInt(u -> u.health)
         .thenComparingLong(u -> u.position.sortingKeyTopLeft());
@@ -236,7 +236,7 @@ public class Day15 implements SolutionInterface {
                         continue;
                     }
 
-                    unit.moveToClosestTarget(grid, units);
+                    unit.moveToClosestTarget(grid);
 
                     attackTarget = unit.findTargetToDirectlyAttack(units);
 
@@ -306,86 +306,49 @@ public class Day15 implements SolutionInterface {
             }
         }
 
-        public void moveToClosestTarget(char[][] grid, Unit[] units) {
-            // Find all targets reachable in the fewest steps
-            var closestTargets = new ArrayList<Unit>(units.length);
-            int minDistance = Integer.MAX_VALUE;
-            LinkedList<StateSearch>  queue = new LinkedList<>() {{ add(new StateSearch(position, 0)); }};
+        public void moveToClosestTarget(char[][] grid) {
+            var candidates = new ArrayList<State>();
+            LinkedList<State> queue = new LinkedList<>() {{ add(new State(position, null, 0)); }};
             boolean[][] visited = new boolean[grid.length][grid[0].length];
+            int minimumDistance = Integer.MAX_VALUE;
 
             while (!queue.isEmpty()) {
                 var state = queue.poll();
                 var point = state.position;
-                var steps = state.steps;
+                var first = state.first;
 
-                if (steps > minDistance || visited[point.y][point.x]) {
+                if (state.distance > minimumDistance) {
+                    break;
+                }
+
+                if (visited[point.y][point.x]) {
                     continue;
                 }
 
                 visited[point.y][point.x] = true;
 
-                for (var adjacentPoint: point.getAdjacentPoints()) {
+                for (var adjacentPoint : point.adjacentTopLeftOrder()) {
                     if (visited[adjacentPoint.y][adjacentPoint.x]) {
                         continue;
                     }
 
                     if (grid[adjacentPoint.y][adjacentPoint.x] == '.') {
-                        queue.add(new StateSearch(adjacentPoint, steps + 1));
+                        queue.add(new State(adjacentPoint, first == null ? adjacentPoint : first, state.distance + 1));
                     } else if (grid[adjacentPoint.y][adjacentPoint.x] == type.opposite().symbol) {
-                        minDistance = steps;
-
-                        for (var unit: units) {
-                            if (unit.position.equals(adjacentPoint)) {
-                                closestTargets.add(unit);
-                                break;
-                            }
-                        }
+                        minimumDistance = state.distance;
+                        candidates.add(state);
                     }
                 }
             }
 
-            if (minDistance == Integer.MAX_VALUE) {
+            if (candidates.isEmpty()) {
                 return;
             }
 
-            closestTargets.sort(null);
-            Unit closestTarget = closestTargets.getFirst();
+            candidates.sort(readingOrder);
 
-            // Now we have the closest, we need to find the next step, one of the adjacent points
-            HashSet<Point> adjacentPoints = new HashSet<>(position.getAdjacentPoints());
-            ArrayList<Point> validPoints = new ArrayList<>();
-            queue = new LinkedList<>() {{ add(new StateSearch(closestTarget.position, 0)); }};
-            visited = new boolean[grid.length][grid[0].length];
-
-            while (!queue.isEmpty()) {
-                var state = queue.poll();
-                var point = state.position;
-
-                if (state.steps > minDistance || visited[point.y][point.x]) {
-                    continue;
-                }
-
-                visited[point.y][point.x] = true;
-
-                if (adjacentPoints.contains(point)) {
-                    validPoints.add(point);
-                    continue;
-                }
-
-                for (var adjacentPoint: point.getAdjacentPoints()) {
-                    if (visited[adjacentPoint.y][adjacentPoint.x]) {
-                        continue;
-                    }
-
-                    if (grid[adjacentPoint.y][adjacentPoint.x] == '.') {
-                        queue.add(new StateSearch(adjacentPoint, state.steps + 1));
-                    }
-                }
-            }
-
-            validPoints.sort(readingOrder);
             grid[position.y][position.x] = '.';
-            position = validPoints.getFirst();
+            position = candidates.getFirst().first;
             grid[position.y][position.x] = type.symbol;
         }
 
@@ -405,6 +368,6 @@ public class Day15 implements SolutionInterface {
         }
     }
 
-    private record StateSearch(Point position, int steps) {}
+    private record State(Point position, Point first, int distance) {}
     private record Input(char[][] grid, Unit[] units) {}
 }
