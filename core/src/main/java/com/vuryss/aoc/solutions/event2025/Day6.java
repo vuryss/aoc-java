@@ -49,28 +49,11 @@ public class Day6 implements SolutionInterface {
                 var operations = line.split("\\s+");
 
                 for (var i = 0; i < operations.length; i++) {
-                    var operationNumbers = lists.get(i);
-                    var operation = operations[i];
+                    var operationNumbers = lists.get(i).stream().mapToLong(Integer::longValue);
 
-                    if (operation.equals("*")) {
-                        long result = 1;
-
-                        for (var number: operationNumbers) {
-                            result *= number;
-                        }
-
-                        sum += result;
-                        operationNumbers.clear();
-                    } else if (operation.equals("+")) {
-                        long result = 0;
-
-                        for (var number: operationNumbers) {
-                            result += number;
-                        }
-
-                        sum += result;
-                        operationNumbers.clear();
-                    }
+                    sum += operations[i].equals("+")
+                        ? operationNumbers.sum()
+                        : operationNumbers.reduce(1, (a, b) -> a * b);
                 }
             }
 
@@ -95,42 +78,26 @@ public class Day6 implements SolutionInterface {
         var consumedPosition = 0;
 
         for (int columnSize: columnsSize) {
-            var numbers = new ArrayList<Integer>();
+            var numbers = new long[columnSize];
             char columnOperation = ' ';
 
             for (var j = columnSize - 1; j >= 0; j--) {
                 var charPosition = consumedPosition + j;
-                var n = new StringBuilder();
+                long n = 0;
 
-                for (var line : lines) {
-                    if (line[consumedPosition] == '*' || line[consumedPosition] == '+') {
-                        columnOperation = line[consumedPosition];
-                        break;
+                for (var i = 0; i < lines.length - 1; i++) {
+                    if (lines[i][charPosition] != ' ') {
+                        n = n * 10 + (lines[i][charPosition] - '0');
                     }
-
-                    if (line.length <= charPosition) {
-                        continue;
-                    }
-
-                    if (line[charPosition] == ' ') {
-                        continue;
-                    }
-
-                    n.append(line[charPosition]);
                 }
 
-                if (!n.toString().isEmpty()) {
-                    numbers.add(Integer.parseInt(n.toString()));
-                }
+                numbers[j] = n;
             }
 
+            sum += lines[lines.length - 1][consumedPosition] == '+'
+                ? Arrays.stream(numbers).sum()
+                : Arrays.stream(numbers).reduce(1, (a, b) -> a * b);
             consumedPosition += columnSize + 1;
-
-            if (columnOperation == '+') {
-                sum += numbers.stream().mapToLong(Integer::intValue).sum();
-            } else {
-                sum += numbers.stream().mapToLong(Integer::intValue).reduce(1, (a, b) -> a * b);
-            }
         }
 
         return String.valueOf(sum);
