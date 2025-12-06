@@ -1,6 +1,7 @@
 package com.vuryss.aoc.solutions.event2025;
 
 import com.vuryss.aoc.solutions.SolutionInterface;
+import com.vuryss.aoc.util.Regex;
 import com.vuryss.aoc.util.StringUtil;
 
 import java.lang.Override;
@@ -43,28 +44,27 @@ public class Day6 implements SolutionInterface {
     public String part1Solution(String input, boolean isTest) {
         long sum = 0;
         var lists = new ArrayList<List<Integer>>();
+        var lines = input.split("\n");
+        var operations = Regex.matchAll("\\S", lines[lines.length - 1]);
 
-        for (var line: input.trim().split("\n")) {
-            if (line.contains("*")) {
-                var operations = line.split("\\s+");
+        for (var i = 0; i < lines.length - 1; i++) {
+            var numbers = StringUtil.ints(lines[i]);
 
-                for (var i = 0; i < operations.length; i++) {
-                    var operationNumbers = lists.get(i).stream().mapToLong(Integer::longValue);
-
-                    sum += operations[i].equals("+")
-                        ? operationNumbers.sum()
-                        : operationNumbers.reduce(1, (a, b) -> a * b);
-                }
-            }
-
-            var numbers = StringUtil.ints(line);
-
-            for (var i = 0; i < numbers.size(); i++) {
-                if (i >= lists.size()) {
+            for (var j = 0; j < numbers.size(); j++) {
+                if (j >= lists.size()) {
                     lists.add(new ArrayList<>());
                 }
-                lists.get(i).add(numbers.get(i));
+
+                lists.get(j).add(numbers.get(j));
             }
+        }
+
+        for (var i = 0; i < operations.size(); i++) {
+            var operationNumbers = lists.get(i).stream().mapToLong(Integer::longValue);
+
+            sum += operations.get(i).equals("+")
+                ? operationNumbers.sum()
+                : operationNumbers.reduce(1, (a, b) -> a * b);
         }
 
         return String.valueOf(sum);
