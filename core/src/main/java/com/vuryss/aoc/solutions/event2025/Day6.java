@@ -104,25 +104,9 @@ public class Day6 implements SolutionInterface {
     }
 
     private int[] getColumnSize(char[] operationsLine) {
-        int[] columnSize = new int[1500];
-        int totalNumbers = 0;
-        byte tempColumnSize = 0;
+        var columnSize = Arrays.stream(new String(operationsLine).split("\\S")).mapToInt(String::length).toArray();
+        columnSize[columnSize.length - 1]++;
 
-        for (char c : operationsLine) {
-            if (c == '*' || c == '+') {
-                if (totalNumbers >= 1) {
-                    columnSize[totalNumbers - 1] = tempColumnSize - 1;
-                }
-
-                totalNumbers++;
-                tempColumnSize = 0;
-            }
-
-            tempColumnSize++;
-        }
-
-        columnSize[totalNumbers - 1] = tempColumnSize;
-
-        return Arrays.copyOf(columnSize, totalNumbers);
+        return Arrays.copyOfRange(columnSize, 1, columnSize.length);
     }
 }
