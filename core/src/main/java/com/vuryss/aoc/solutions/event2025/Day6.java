@@ -74,39 +74,27 @@ public class Day6 implements SolutionInterface {
     public String part2Solution(String input, boolean isTest) {
         long sum = 0;
         var lines = Arrays.stream(input.split("\n")).map(String::toCharArray).toArray(char[][]::new);
-        int[] columnsSize = getColumnSize(lines[lines.length - 1]);
-        var consumedPosition = 0;
+        long[] numbers = new long[] { 0, 0, 0, 0, 0 };
+        byte i = 0;
 
-        for (int columnSize: columnsSize) {
-            var numbers = new long[columnSize];
-            char columnOperation = ' ';
-
-            for (var j = columnSize - 1; j >= 0; j--) {
-                var charPosition = consumedPosition + j;
-                long n = 0;
-
-                for (var i = 0; i < lines.length - 1; i++) {
-                    if (lines[i][charPosition] != ' ') {
-                        n = n * 10 + (lines[i][charPosition] - '0');
-                    }
+        for (var x = lines[0].length - 1; x >= 0; x--, i++) {
+            for (var y = 0; y < lines.length - 1; y++) {
+                if (lines[y][x] != ' ') {
+                    numbers[i] = numbers[i] * 10 + (lines[y][x] - '0');
                 }
-
-                numbers[j] = n;
             }
 
-            sum += lines[lines.length - 1][consumedPosition] == '+'
-                ? Arrays.stream(numbers).sum()
-                : Arrays.stream(numbers).reduce(1, (a, b) -> a * b);
-            consumedPosition += columnSize + 1;
+            char operation = lines[lines.length - 1][x];
+
+            if (operation == '+' || operation == '*') {
+                var ns = Arrays.stream(numbers).filter(n -> n != 0);
+                sum += operation == '+' ? ns.sum() : ns.reduce(1, (a, b) -> a * b);
+                numbers = new long[] { 0, 0, 0, 0, 0 };
+                i = -1;
+                x--;
+            }
         }
 
         return String.valueOf(sum);
-    }
-
-    private int[] getColumnSize(char[] operationsLine) {
-        var columnSize = Arrays.stream(new String(operationsLine).split("\\S")).mapToInt(String::length).toArray();
-        columnSize[columnSize.length - 1]++;
-
-        return Arrays.copyOfRange(columnSize, 1, columnSize.length);
     }
 }
