@@ -79,16 +79,14 @@ public class Day7 implements SolutionInterface {
 
         for (var y = 1; y < grid.length; y++) {
             for (var x = 0; x < grid[y].length; x++) {
-                if (!hasBeam[y-1][x]) {
-                    continue;
-                }
-
-                if (grid[y][x] == '^') {
-                    hasBeam[y][x - 1] = true;
-                    hasBeam[y][x + 1] = true;
-                    count++;
-                } else {
-                    hasBeam[y][x] = true;
+                if (hasBeam[y-1][x]) {
+                    if (grid[y][x] == '^') {
+                        hasBeam[y][x - 1] = true;
+                        hasBeam[y][x + 1] = true;
+                        count++;
+                    } else {
+                        hasBeam[y][x] = true;
+                    }
                 }
             }
         }
@@ -104,7 +102,6 @@ public class Day7 implements SolutionInterface {
 
         outer:
         for (var y = 0; y < grid.length; y++) {
-            Arrays.fill(counts[y], 0);
             for (var x = 0; x < grid[y].length; x++) {
                 if (grid[y][x] == 'S') {
                     counts[y][x] = 1;
