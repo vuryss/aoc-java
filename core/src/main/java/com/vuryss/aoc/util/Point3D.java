@@ -52,4 +52,8 @@ public class Point3D implements Cloneable {
     public long manhattanDistance(Point3D point) {
         return Math.abs(x - point.x) + Math.abs(y - point.y) + Math.abs(z - point.z);
     }
+
+    public double euclideanDistance(Point3D point) {
+        return Math.sqrt(Math.pow(x - point.x, 2) + Math.pow(y - point.y, 2) + Math.pow(z - point.z, 2));
+    }
 }
