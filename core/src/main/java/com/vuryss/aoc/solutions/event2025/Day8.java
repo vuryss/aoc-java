@@ -73,100 +73,84 @@ public class Day8 implements SolutionInterface {
     @Override
     public String part1Solution(String input, boolean isTest) {
         var lines = input.trim().split("\n");
-        var junctions = new ArrayList<Point3D>();
+        var junctions = new ArrayList<JunctionBox>();
         var connections = isTest ? 10 : 1000;
 
         for (var line: lines) {
-            var coordinates = StringUtil.sints(line);
-            junctions.add(new Point3D(coordinates.get(0), coordinates.get(1), coordinates.get(2)));
+            var coordinates = StringUtil.ints(line);
+            junctions.add(new JunctionBox(new Point3D(coordinates.get(0), coordinates.get(1), coordinates.get(2))));
         }
 
         var combinations = Combinatorics.combinations(junctions, 2);
-        combinations.sort(Comparator.comparingDouble(pair -> pair.getFirst().euclideanDistance(pair.get(1))));
-
-        var circuits = new ArrayList<Set<Point3D>>();
+        combinations.sort(Comparator.comparingDouble(
+            pair -> pair.getFirst().position.euclideanDistance(pair.get(1).position)
+        ));
 
         for (var i = 0; i < connections; i++) {
             var junction1 = combinations.get(i).get(0);
             var junction2 = combinations.get(i).get(1);
-            boolean found = false;
-            Set<Point3D> foundCircuit = null;
 
-            for (var circuit: circuits) {
-                if (circuit.contains(junction1) || circuit.contains(junction2)) {
-                    if (found) {
-                        foundCircuit.addAll(circuit);
-                        circuits.remove(circuit);
-                        break;
-                    }
+            if (junction1.circuit != junction2.circuit) {
+                junction1.circuit.addAll(junction2.circuit);
 
-                    circuit.add(junction1);
-                    circuit.add(junction2);
-                    found = true;
-                    foundCircuit = circuit;
+                for (var junction: junction2.circuit) {
+                    junction.circuit = junction1.circuit;
                 }
             }
-
-            if (!found) {
-                circuits.add(new HashSet<>(List.of(junction1, junction2)));
-            }
         }
 
-        long product = 1;
-        var largestCircuits = circuits.stream().sorted(Comparator.<Set>comparingInt(Set::size).reversed()).limit(3).toList();
-
-        for (var circuit: largestCircuits) {
-            product *= circuit.size();
-        }
-
-        return String.valueOf(product);
+        return junctions.stream()
+            .map(j -> j.circuit)
+            .distinct()
+            .map(Set::size)
+            .sorted(Comparator.reverseOrder())
+            .limit(3)
+            .reduce(1, (a, b) -> a * b) + "";
     }
 
     @Override
     public String part2Solution(String input, boolean isTest) {
         var lines = input.trim().split("\n");
-        var junctions = new ArrayList<Point3D>();
+        var junctions = new ArrayList<JunctionBox>();
 
         for (var line: lines) {
             var coordinates = StringUtil.sints(line);
-            junctions.add(new Point3D(coordinates.get(0), coordinates.get(1), coordinates.get(2)));
+            junctions.add(new JunctionBox(new Point3D(coordinates.get(0), coordinates.get(1), coordinates.get(2))));
         }
 
         var combinations = Combinatorics.combinations(junctions, 2);
-        combinations.sort(Comparator.comparingDouble(pair -> pair.getFirst().euclideanDistance(pair.get(1))));
-
-        var circuits = new ArrayList<Set<Point3D>>();
+        combinations.sort(Comparator.comparingDouble(
+            pair -> pair.getFirst().position.euclideanDistance(pair.get(1).position)
+        ));
 
         for (var combination: combinations) {
             var junction1 = combination.get(0);
             var junction2 = combination.get(1);
-            boolean found = false;
-            Set<Point3D> foundCircuit = null;
 
-            for (var circuit: circuits) {
-                if (circuit.contains(junction1) || circuit.contains(junction2)) {
-                    if (found) {
-                        foundCircuit.addAll(circuit);
-                        circuits.remove(circuit);
-                        break;
-                    }
+            if (junction1.circuit != junction2.circuit) {
+                junction1.circuit.addAll(junction2.circuit);
 
-                    circuit.add(junction1);
-                    circuit.add(junction2);
-                    found = true;
-                    foundCircuit = circuit;
+                for (var junction: junction2.circuit) {
+                    junction.circuit = junction1.circuit;
                 }
             }
 
-            if (!found) {
-                circuits.add(new HashSet<>(List.of(junction1, junction2)));
-            }
-
-            if (circuits.size() == 1 && circuits.getFirst().size() == junctions.size()) {
-                return junction1.x * junction2.x + "";
+            if (junction1.circuit.size() == junctions.size()) {
+                return junction1.position.x * junction2.position.x + "";
             }
         }
 
         return "-not found-";
+    }
+
+    private static class JunctionBox {
+        public Point3D position;
+        public Set<JunctionBox> circuit;
+
+        public JunctionBox(Point3D position) {
+            this.position = position;
+            this.circuit = new HashSet<>();
+            this.circuit.add(this);
+        }
     }
 }
