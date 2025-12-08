@@ -73,10 +73,10 @@ public class Point {
     public Point down(int distance) { return new Point(x, y + distance); }
 
     // Directional-from-enum methods (grouped for readability)
-    public Point forwardFromCompassDirection(CompassDirection direction) {
-        return forwardFromCompassDirection(direction, 1);
+    public Point goInDirection(CompassDirection direction) {
+        return goInDirection(direction, 1);
     }
-    public Point forwardFromCompassDirection(CompassDirection direction, int distance) {
+    public Point goInDirection(CompassDirection direction, int distance) {
         return switch (direction) {
             case N -> north(distance);
             case E -> east(distance);

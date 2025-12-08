@@ -36,7 +36,7 @@ public class Day1 implements SolutionInterface {
             var distance = Integer.parseInt(instruction.substring(1));
 
             direction = turn == 'R' ? direction.turnRight90() : direction.turnLeft90();
-            point = point.forwardFromCompassDirection(direction, distance);
+            point = point.goInDirection(direction, distance);
         }
 
         return String.valueOf(point.manhattan(new Point(0, 0)));
@@ -56,7 +56,7 @@ public class Day1 implements SolutionInterface {
             direction = turn == 'R' ? direction.turnRight90() : direction.turnLeft90();
 
             for (var i = 0; i < distance; i++) {
-                point = point.forwardFromCompassDirection(direction);
+                point = point.goInDirection(direction);
 
                 if (!visitedLocations.add(point)) {
                     return String.valueOf(point.manhattan(new Point(0, 0)));
