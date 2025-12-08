@@ -56,8 +56,11 @@ public class SolutionScaffolding {
             .addStatement("return \"\"")
             .build();
 
+        String description = adventOfCodeClient.getDayDescription(year, day);
+        description = description.replace("$", "$$");
+
         TypeSpec solution = TypeSpec.classBuilder("Day"+day)
-            .addJavadoc(adventOfCodeClient.getDayDescription(year, day))
+            .addJavadoc(description)
             .addAnnotation(suppressUnused)
             .addModifiers(Modifier.PUBLIC)
             .addSuperinterface(SolutionInterface.class)
