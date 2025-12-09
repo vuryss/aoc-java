@@ -1,6 +1,7 @@
 package com.vuryss.aoc.solutions.event2025;
 
 import com.vuryss.aoc.solutions.SolutionInterface;
+import com.vuryss.aoc.util.Combinatorics;
 import com.vuryss.aoc.util.Point;
 import com.vuryss.aoc.util.StringUtil;
 
@@ -58,19 +59,17 @@ public class Day9 implements SolutionInterface {
             points.add(new Point(coordinates.get(0), coordinates.get(1)));
         }
 
-        for (var point: points) {
-            for (var otherPoint: points) {
-                if (point.equals(otherPoint)) {
-                    continue;
-                }
+        var combinations = Combinatorics.combinations(points, 2);
 
-                long width = Math.abs(point.x - otherPoint.x) + 1;
-                long height = Math.abs(point.y - otherPoint.y) + 1;
-                long area = width * height;
+        for (var combination: combinations) {
+            var point1 = combination.get(0);
+            var point2 = combination.get(1);
+            long width = Math.abs(point1.x - point2.x) + 1;
+            long height = Math.abs(point1.y - point2.y) + 1;
+            long area = width * height;
 
-                if (area > maxArea) {
-                    maxArea = area;
-                }
+            if (area > maxArea) {
+                maxArea = area;
             }
         }
 
@@ -103,52 +102,48 @@ public class Day9 implements SolutionInterface {
             allLines.add(new Line(points.get(i).y, points.get(i).x, points.get(i + 1).x));
         }
 
-        for (var point: points) {
-            nextPoint:
-            for (var otherPoint: points) {
-                if (point.equals(otherPoint)) {
+        var combinations = Combinatorics.combinations(points, 2);
+
+        nextCombination:
+        for (var combination: combinations) {
+            var point1 = combination.get(0);
+            var point2 = combination.get(1);
+
+            long minX = Math.min(point1.x, point2.x);
+            long maxX = Math.max(point1.x, point2.x);
+            long minY = Math.min(point1.y, point2.y);
+            long maxY = Math.max(point1.y, point2.y);
+
+            for (var line: allLines) {
+                if (line.y <= minY || line.y >= maxY) {
                     continue;
                 }
 
-                long minX = Math.min(point.x, otherPoint.x);
-                long maxX = Math.max(point.x, otherPoint.x);
-                long minY = Math.min(point.y, otherPoint.y);
-                long maxY = Math.max(point.y, otherPoint.y);
+                if (
+                    (minX < line.from && maxX > line.from || minX < line.to && maxX > line.to) // Line Point inside the rectangle
+                        || (minX >= line.from && maxX <= line.to) // Rectangle inside the line
+                ) {
+                    continue nextCombination;
+                }
+            }
 
-                for (var line: allLines) {
-                    if (line.y <= minY || line.y >= maxY) {
-                        continue;
-                    }
-
-                    if (
-                        (minX < line.from && maxX > line.from || minX < line.to && maxX > line.to) // Point inside the rectangle
-                        || (minX >= line.from && maxX <= line.to) // Rectangle inside the point
-                    ) {
-                        continue nextPoint;
-                    }
+            for (var column: allColumns) {
+                if (column.x <= minX || column.x >= maxX) {
+                    continue;
                 }
 
-                for (var column: allColumns) {
-                    if (column.x <= minX || column.x >= maxX) {
-                        continue;
-                    }
-
-                    if (
-                        (minY < column.from && maxY > column.from || minY < column.to && maxY > column.to) // Point inside the rectangle
-                        || (minY >= column.from && maxY <= column.to) // Rectangle inside the point
-                    ) {
-                        continue nextPoint;
-                    }
+                if (
+                    (minY < column.from && maxY > column.from || minY < column.to && maxY > column.to) // Line Point inside the rectangle
+                        || (minY >= column.from && maxY <= column.to) // Rectangle inside the line
+                ) {
+                    continue nextCombination;
                 }
+            }
 
-                long width = Math.abs(point.x - otherPoint.x) + 1;
-                long height = Math.abs(point.y - otherPoint.y) + 1;
+            long area = (maxX - minX + 1) * (maxY - minY + 1);
 
-                long area = width * height;
-
-                if (area > maxArea) {
-                    maxArea = area;
-                }
+            if (area > maxArea) {
+                maxArea = area;
             }
         }
 
