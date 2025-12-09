@@ -3,9 +3,7 @@ package com.vuryss.aoc.solutions.event2025;
 import com.vuryss.aoc.solutions.SolutionInterface;
 import com.vuryss.aoc.util.Point;
 import com.vuryss.aoc.util.StringUtil;
-import org.apache.commons.lang3.tuple.Pair;
 
-import java.awt.*;
 import java.lang.Override;
 import java.lang.String;
 import java.lang.SuppressWarnings;
@@ -84,27 +82,25 @@ public class Day9 implements SolutionInterface {
         var lines = input.trim().split("\n");
         var points = new ArrayList<Point>();
         long maxArea = 0;
-        var polygon = new Polygon();
 
         for (var line: lines) {
             var coordinates = StringUtil.ints(line);
             points.add(new Point(coordinates.get(0), coordinates.get(1)));
-            polygon.addPoint(coordinates.get(0), coordinates.get(1));
         }
 
-        var linesPoints = new ArrayList<Pair<Point, Point>>();
-        var columnPoints = new ArrayList<Pair<Point, Point>>();
+        var allLines = new ArrayList<Line>();
+        var allColumns = new ArrayList<Column>();
 
-        points.sort(Comparator.comparingInt(point -> point.x));
+        points.sort(Comparator.<Point>comparingInt(point -> point.x).thenComparingInt(point -> point.y));
 
         for (var i = 0; i < points.size() - 1; i += 2) {
-            columnPoints.add(Pair.of(points.get(i), points.get(i + 1)));
+            allColumns.add(new Column(points.get(i).x, points.get(i).y, points.get(i + 1).y));
         }
 
-        points.sort(Comparator.comparingInt(point -> point.y));
+        points.sort(Comparator.<Point>comparingInt(point -> point.y).thenComparingInt(point -> point.x));
 
         for (var i = 0; i < points.size() - 1; i += 2) {
-            linesPoints.add(Pair.of(points.get(i), points.get(i + 1)));
+            allLines.add(new Line(points.get(i).y, points.get(i).x, points.get(i + 1).x));
         }
 
         for (var point: points) {
@@ -119,39 +115,29 @@ public class Day9 implements SolutionInterface {
                 long minY = Math.min(point.y, otherPoint.y);
                 long maxY = Math.max(point.y, otherPoint.y);
 
-                for (var line: linesPoints) {
-                    Point start = line.getLeft();
-                    Point end = line.getRight();
-
-                    if (start.y <= minY || start.y >= maxY) {
+                for (var line: allLines) {
+                    if (line.y <= minY || line.y >= maxY) {
                         continue;
                     }
 
-                    int from = Math.min(start.x, end.x);
-                    int to = Math.max(start.x, end.x);
-
-                    for (var x = from + 1; x < to; x++) {
-                        if (x > minX && x < maxX) {
-                            continue nextPoint;
-                        }
+                    if (
+                        (minX < line.from && maxX > line.from || minX < line.to && maxX > line.to) // Point inside the rectangle
+                        || (minX >= line.from && maxX <= line.to) // Rectangle inside the point
+                    ) {
+                        continue nextPoint;
                     }
                 }
 
-                for (var column: columnPoints) {
-                    Point start = column.getLeft();
-                    Point end = column.getRight();
-
-                    if (start.x <= minX || start.x >= maxX) {
+                for (var column: allColumns) {
+                    if (column.x <= minX || column.x >= maxX) {
                         continue;
                     }
 
-                    int from = Math.min(start.y, end.y);
-                    int to = Math.max(start.y, end.y);
-
-                    for (var y = from + 1; y < to; y++) {
-                        if (y > minY && y < maxY) {
-                            continue nextPoint;
-                        }
+                    if (
+                        (minY < column.from && maxY > column.from || minY < column.to && maxY > column.to) // Point inside the rectangle
+                        || (minY >= column.from && maxY <= column.to) // Rectangle inside the point
+                    ) {
+                        continue nextPoint;
                     }
                 }
 
@@ -168,4 +154,7 @@ public class Day9 implements SolutionInterface {
 
         return String.valueOf(maxArea);
     }
+
+    private record Line(int y, int from, int to) {}
+    private record Column(int x, int from, int to) {}
 }
