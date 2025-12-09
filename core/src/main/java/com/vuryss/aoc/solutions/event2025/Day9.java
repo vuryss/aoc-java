@@ -7,7 +7,6 @@ import com.vuryss.aoc.util.StringUtil;
 import java.lang.Override;
 import java.lang.String;
 import java.lang.SuppressWarnings;
-import java.util.ArrayList;
 import java.util.Map;
 
 @SuppressWarnings("unused")
@@ -48,16 +47,8 @@ public class Day9 implements SolutionInterface {
 
     @Override
     public String part1Solution(String input, boolean isTest) {
-        var inputLines = input.trim().split("\n");
-        var pointsList = new ArrayList<Point>();
+        var points = parsePoints(input);
         long maxArea = 0;
-
-        for (var line: inputLines) {
-            var coordinates = StringUtil.ints(line);
-            pointsList.add(new Point(coordinates.get(0), coordinates.get(1)));
-        }
-
-        var points = pointsList.toArray(new Point[0]);
 
         for (var i = 0; i < points.length - 1; i++) {
             for (var j = i + 1; j < points.length; j++) {
@@ -78,16 +69,8 @@ public class Day9 implements SolutionInterface {
 
     @Override
     public String part2Solution(String input, boolean isTest) {
-        var inputLines = input.trim().split("\n");
-        var pointsList = new ArrayList<Point>();
+        var points = parsePoints(input);
         long maxArea = 0;
-
-        for (var line: inputLines) {
-            var coordinates = StringUtil.ints(line);
-            pointsList.add(new Point(coordinates.get(0), coordinates.get(1)));
-        }
-
-        var points = pointsList.toArray(new Point[0]);
         var lines = new Point[points.length][2];
 
         for (var i = 0; i < points.length; i++) {
@@ -122,5 +105,17 @@ public class Day9 implements SolutionInterface {
         }
 
         return String.valueOf(maxArea);
+    }
+
+    private Point[] parsePoints(String input) {
+        var lines = input.trim().split("\n");
+        var points = new Point[lines.length];
+
+        for (var i = 0; i < lines.length; i++) {
+            var numbers = StringUtil.ints(lines[i]);
+            points[i] = new Point(numbers.get(0), numbers.get(1));
+        }
+
+        return points;
     }
 }
