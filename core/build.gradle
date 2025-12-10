@@ -16,18 +16,19 @@ repositories {
 dependencies {
     implementation(platform(project(":platform")))
 
-    implementation libs.dotenv.java
-    implementation libs.jsoup
+    implementation libs.commons.codec
     implementation libs.commons.lang3
     implementation libs.commons.math3
     implementation libs.commons.text
-    implementation libs.commons.codec
-    implementation libs.guava
+    implementation libs.dotenv.java
     implementation libs.fastutil
-    implementation libs.jgrapht.core
+    implementation libs.guava
     implementation libs.jackson
     implementation libs.jackson.datatype.jsr310
     implementation libs.javapoet
+    implementation libs.jgrapht.core
+    implementation libs.jsoup
+    implementation libs.ojalgo
 
     compileOnly libs.jetbrains.annotations
     compileOnly 'io.smallrye.config:smallrye-config'

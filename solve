@@ -37,4 +37,5 @@ fi
 # Execute the application's JAR file using Java.
 # Note the path is build/quarkus-app/ for Gradle.
 # All arguments (except --profile) are forwarded to the app.
-java $PROFILE_ARGS -Dquarkus.log.console.enable=false -jar cli/build/cli-1.0-runner.jar solve "${APP_ARGS[@]}"
+java $PROFILE_ARGS -Dquarkus.log.console.enable=false -Xss8m -jar cli/build/cli-1.0-runner.jar solve "${APP_ARGS[@]}"
+#java $PROFILE_ARGS -Dquarkus.log.level=DEBUG -Xss16m -jar cli/build/cli-1.0-runner.jar solve "${APP_ARGS[@]}"
