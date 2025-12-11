@@ -65,32 +65,42 @@ public class Day11 implements SolutionInterface {
     @Override
     public String part2Solution(String input, boolean isTest) {
         var devices = parseDevices(input);
+        var startDeviceName = "svr";
+        var endDeviceName = "out";
+        String firstStop = "fft", secondStop = "dac";
 
-        // srv -> fft
-        var start = devices.get("svr");
+        // Check if there is a path from FFT to DAC first
+        var start = devices.get(firstStop);
         start.pathCount = 1;
-        var end = devices.get("fft");
-        long a = end.getPathCount();
+        var end = devices.get(secondStop);
+        long pathBetweenMiddleStops = end.getPathCount();
 
-        // Reset path counts
+        // If no path, try DAC to FFT
+        if (pathBetweenMiddleStops == 0) {
+            firstStop = "dac";
+            secondStop = "fft";
+            devices.values().forEach(dev -> dev.pathCount = null);
+            start = devices.get(firstStop);
+            start.pathCount = 1;
+            end = devices.get(secondStop);
+            pathBetweenMiddleStops = end.getPathCount();
+        }
+
+        // srv -> (fft or dac)
         devices.values().forEach(dev -> dev.pathCount = null);
-
-        // fft -> dac
-        start = devices.get("fft");
+        start = devices.get(startDeviceName);
         start.pathCount = 1;
-        end = devices.get("dac");
-        long b = end.getPathCount();
+        end = devices.get(firstStop);
+        long startToFirstStop = end.getPathCount();
 
-        // Reset path counts
+        // (fft or dac) to out
         devices.values().forEach(dev -> dev.pathCount = null);
-
-        // dac -> out
-        start = devices.get("dac");
+        start = devices.get(secondStop);
         start.pathCount = 1;
-        end = devices.get("out");
-        long c = end.getPathCount();
+        end = devices.get(endDeviceName);
+        long secondStopToEnd = end.getPathCount();
 
-        return String.valueOf(a * b * c);
+        return String.valueOf(startToFirstStop * pathBetweenMiddleStops * secondStopToEnd);
     }
 
     private Map<String, Device> parseDevices(String input) {
@@ -104,7 +114,6 @@ public class Day11 implements SolutionInterface {
 
             for (var output: outputs) {
                 devices.computeIfAbsent(output, Device::new).inputs.add(device);
-                device.outputs.add(devices.get(output));
             }
         }
 
@@ -113,7 +122,6 @@ public class Day11 implements SolutionInterface {
 
     private static class Device {
         public String name;
-        public Set<Device> outputs = new HashSet<>();
         public Set<Device> inputs = new HashSet<>();
         public Integer pathCount = null;
 
