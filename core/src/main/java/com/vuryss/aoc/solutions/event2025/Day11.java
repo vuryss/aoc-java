@@ -86,14 +86,14 @@ public class Day11 implements SolutionInterface {
             pathBetweenMiddleStops = end.getPathCount();
         }
 
-        // srv -> (fft or dac)
+        // srv -> (fft or dac, whichever comes first)
         devices.values().forEach(dev -> dev.pathCount = null);
         start = devices.get(startDeviceName);
         start.pathCount = 1;
         end = devices.get(firstStop);
         long startToFirstStop = end.getPathCount();
 
-        // (fft or dac) to out
+        // (fft or dac, whichever comes second) to out
         devices.values().forEach(dev -> dev.pathCount = null);
         start = devices.get(secondStop);
         start.pathCount = 1;
