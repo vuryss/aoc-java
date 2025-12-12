@@ -1,5 +1,6 @@
 package com.vuryss.aoc.client;
 
+import com.vuryss.aoc.config.AoCConfig;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.jsoup.Jsoup;
@@ -99,16 +100,17 @@ public class NativeJavaAdventOfCodeClient implements AdventOfCodeClient {
         httpClient.close();
 
         var elements = Jsoup.parse(response.body()).select("article+p > code");
+        var maxChallenges = AoCConfig.getMaxChallengesForYear(eventYear);
 
-        if (elements.size() != 2 && eventDay < 25) {
+        if (elements.size() != 2 && eventDay < maxChallenges) {
             throw new RuntimeException("Cannot resolve answers for year " + eventYear + " day " + eventDay);
-        } else if (elements.size() != 1 && eventDay == 25) {
+        } else if (elements.size() != 1 && eventDay == maxChallenges) {
             throw new RuntimeException("Cannot resolve answers for year " + eventYear + " day " + eventDay);
         }
 
         var answer1 = elements.getFirst().text();
 
-        if (eventDay == 25) {
+        if (eventDay == maxChallenges) {
             return new Answers(answer1, "Merry Christmas!");
         }
 
