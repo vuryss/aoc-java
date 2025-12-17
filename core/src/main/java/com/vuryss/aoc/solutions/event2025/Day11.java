@@ -56,7 +56,7 @@ public class Day11 implements SolutionInterface {
     public String part1Solution(String input, boolean isTest) {
         var devices = parseDevices(input);
         var dev = devices.get("you");
-        dev.pathCount = 1;
+        dev.pathCount = 1L;
         var out = devices.get("out");
 
         return String.valueOf(out.getPathCount());
@@ -65,42 +65,12 @@ public class Day11 implements SolutionInterface {
     @Override
     public String part2Solution(String input, boolean isTest) {
         var devices = parseDevices(input);
-        var startDeviceName = "svr";
-        var endDeviceName = "out";
-        String firstStop = "fft", secondStop = "dac";
+        var srv = devices.get("svr");
+        srv.pathCount = 1L;
+        var out = devices.get("out");
+        out.calculatePathCountThroughFftDac();
 
-        // Check if there is a path from FFT to DAC first
-        var start = devices.get(firstStop);
-        start.pathCount = 1;
-        var end = devices.get(secondStop);
-        long pathBetweenMiddleStops = end.getPathCount();
-
-        // If no path, try DAC to FFT
-        if (pathBetweenMiddleStops == 0) {
-            firstStop = "dac";
-            secondStop = "fft";
-            devices.values().forEach(dev -> dev.pathCount = null);
-            start = devices.get(firstStop);
-            start.pathCount = 1;
-            end = devices.get(secondStop);
-            pathBetweenMiddleStops = end.getPathCount();
-        }
-
-        // srv -> (fft or dac, whichever comes first)
-        devices.values().forEach(dev -> dev.pathCount = null);
-        start = devices.get(startDeviceName);
-        start.pathCount = 1;
-        end = devices.get(firstStop);
-        long startToFirstStop = end.getPathCount();
-
-        // (fft or dac, whichever comes second) to out
-        devices.values().forEach(dev -> dev.pathCount = null);
-        start = devices.get(secondStop);
-        start.pathCount = 1;
-        end = devices.get(endDeviceName);
-        long secondStopToEnd = end.getPathCount();
-
-        return String.valueOf(startToFirstStop * pathBetweenMiddleStops * secondStopToEnd);
+        return String.valueOf(out.passedThroughBoth);
     }
 
     private Map<String, Device> parseDevices(String input) {
@@ -123,18 +93,40 @@ public class Day11 implements SolutionInterface {
     private static class Device {
         public String name;
         public Set<Device> inputs = new HashSet<>();
-        public Integer pathCount = null;
+        public Long pathCount = null;
+        public Long passedThroughDac = 0L;
+        public Long passedThroughFft = 0L;
+        public Long passedThroughBoth = null;
 
         public Device(String name) {
             this.name = name;
         }
 
-        public Integer getPathCount() {
+        public Long getPathCount() {
             if (null == pathCount) {
-                pathCount = inputs.stream().mapToInt(Device::getPathCount).sum();
+                pathCount = inputs.stream().mapToLong(Device::getPathCount).sum();
             }
 
             return pathCount;
+        }
+
+        public void calculatePathCountThroughFftDac() {
+            if (passedThroughBoth == null) {
+                inputs.forEach(Device::calculatePathCountThroughFftDac);
+            }
+
+            var pathCount = getPathCount();
+            passedThroughFft = inputs.stream().mapToLong(d -> d.passedThroughFft).sum();
+            passedThroughDac = inputs.stream().mapToLong(d -> d.passedThroughDac).sum();
+            passedThroughBoth = inputs.stream().mapToLong(d -> d.passedThroughBoth).sum();
+
+            if (name.equals("fft")) {
+                passedThroughFft = pathCount;
+                passedThroughBoth = Math.min(passedThroughDac, pathCount);
+            } else if (name.equals("dac")) {
+                passedThroughDac = pathCount;
+                passedThroughBoth = Math.min(passedThroughFft, pathCount);
+            }
         }
     }
 }
