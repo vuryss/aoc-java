@@ -1,0 +1,19 @@
+digraph G {
+  aaa -> you;
+  aaa -> hhh;
+  you -> bbb;
+  you -> ccc;
+  bbb -> ddd;
+  bbb -> eee;
+  ccc -> ddd;
+  ccc -> eee;
+  ccc -> fff;
+  ddd -> ggg;
+  eee -> out;
+  fff -> out;
+  ggg -> out;
+  hhh -> ccc;
+  hhh -> fff;
+  hhh -> iii;
+  iii -> out;
+}
