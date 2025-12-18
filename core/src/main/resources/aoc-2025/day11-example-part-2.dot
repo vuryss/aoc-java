@@ -1,0 +1,18 @@
+digraph G {
+  svr -> aaa;
+  svr -> bbb;
+  aaa -> fft;
+  fft -> ccc;
+  bbb -> tty;
+  tty -> ccc;
+  ccc -> ddd;
+  ccc -> eee;
+  ddd -> hub;
+  hub -> fff;
+  eee -> dac;
+  dac -> fff;
+  fff -> ggg;
+  fff -> hhh;
+  ggg -> out;
+  hhh -> out;
+}
