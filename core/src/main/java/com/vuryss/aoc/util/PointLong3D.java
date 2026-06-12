@@ -30,6 +30,14 @@ public class PointLong3D implements Cloneable {
         return hashCode;
     }
 
+    public long manhattanDistance(PointLong3D point) {
+        return Math.abs(x - point.x) + Math.abs(y - point.y) + Math.abs(z - point.z);
+    }
+
+    public double euclideanDistance(PointLong3D point) {
+        return Math.sqrt(Math.pow(x - point.x, 2) + Math.pow(y - point.y, 2) + Math.pow(z - point.z, 2));
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof PointLong3D p) {
