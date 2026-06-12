@@ -2,7 +2,7 @@ package com.vuryss.aoc.solutions.event2018;
 
 import com.vuryss.aoc.solutions.SolutionInterface;
 import com.vuryss.aoc.util.Cuboid;
-import com.vuryss.aoc.util.PointLong3D;
+import com.vuryss.aoc.util.Point3D;
 import com.vuryss.aoc.util.StringUtil;
 
 import java.lang.Override;
@@ -49,7 +49,7 @@ public class Day23 implements SolutionInterface {
     public String part1Solution(String input, boolean isTest) {
         var nanoBots = input.lines()
             .map(StringUtil::sints)
-            .map(longs -> new Nanobot(new PointLong3D(longs.get(0), longs.get(1), longs.get(2)), longs.get(3)))
+            .map(longs -> new Nanobot(new Point3D(longs.get(0), longs.get(1), longs.get(2)), longs.get(3)))
             .toList();
 
         var maxRadiusNanobot = nanoBots.stream().max(Comparator.comparingInt(Nanobot::radius)).get();
@@ -65,18 +65,18 @@ public class Day23 implements SolutionInterface {
     public String part2Solution(String input, boolean isTest) {
         var nanoBots = input.lines()
             .map(StringUtil::sints)
-            .map(longs -> new Nanobot(new PointLong3D(longs.get(0), longs.get(1), longs.get(2)), longs.get(3)))
+            .map(longs -> new Nanobot(new Point3D(longs.get(0), longs.get(1), longs.get(2)), longs.get(3)))
             .toList();
-        var minPoint = new PointLong3D(Long.MAX_VALUE, Long.MAX_VALUE, Long.MAX_VALUE);
-        var maxPoint = new PointLong3D(Long.MIN_VALUE, Long.MIN_VALUE, Long.MIN_VALUE);
+        var minPoint = new Point3D(Long.MAX_VALUE, Long.MAX_VALUE, Long.MAX_VALUE);
+        var maxPoint = new Point3D(Long.MIN_VALUE, Long.MIN_VALUE, Long.MIN_VALUE);
 
         for (var nanobot : nanoBots) {
-            minPoint = new PointLong3D(
+            minPoint = new Point3D(
                 Math.min(nanobot.position.x - nanobot.radius, minPoint.x),
                 Math.min(nanobot.position.y - nanobot.radius, minPoint.y),
                 Math.min(nanobot.position.z - nanobot.radius, minPoint.z)
             );
-            maxPoint = new PointLong3D(
+            maxPoint = new Point3D(
                 Math.max(nanobot.position.x + nanobot.radius, maxPoint.x),
                 Math.max(nanobot.position.y + nanobot.radius, maxPoint.y),
                 Math.max(nanobot.position.z + nanobot.radius, maxPoint.z)
@@ -86,9 +86,9 @@ public class Day23 implements SolutionInterface {
         long powerOfTwoSize = 1L;
         while (powerOfTwoSize < maxSpan) powerOfTwoSize <<= 1;
 
-        maxPoint = new PointLong3D(minPoint.x + powerOfTwoSize - 1, minPoint.y + powerOfTwoSize - 1, minPoint.z + powerOfTwoSize - 1);
+        maxPoint = new Point3D(minPoint.x + powerOfTwoSize - 1, minPoint.y + powerOfTwoSize - 1, minPoint.z + powerOfTwoSize - 1);
 
-        var center = new PointLong3D(0, 0, 0);
+        var center = new Point3D(0, 0, 0);
         var queue = new PriorityQueue<>(
             Comparator.comparingLong((Cuboid c) -> intersectingNanobots(c, nanoBots)).reversed()
                 .thenComparing((Cuboid c) -> c.shortestManhattanDistance(center))
@@ -111,48 +111,48 @@ public class Day23 implements SolutionInterface {
             // 1. Low X, Low Y, Low Z
             queue.add(new Cuboid(
                 min,
-                new PointLong3D(min.x + newSize - 1, min.y + newSize - 1, min.z + newSize - 1)
+                new Point3D(min.x + newSize - 1, min.y + newSize - 1, min.z + newSize - 1)
             ));
 
             // 2. High X, Low Y, Low Z
             queue.add(new Cuboid(
-                new PointLong3D(min.x + newSize, min.y, min.z),
-                new PointLong3D(max.x, min.y + newSize - 1, min.z + newSize - 1)
+                new Point3D(min.x + newSize, min.y, min.z),
+                new Point3D(max.x, min.y + newSize - 1, min.z + newSize - 1)
             ));
 
             // 3. Low X, High Y, Low Z
             queue.add(new Cuboid(
-                new PointLong3D(min.x, min.y + newSize, min.z),
-                new PointLong3D(min.x + newSize - 1, max.y, min.z + newSize - 1)
+                new Point3D(min.x, min.y + newSize, min.z),
+                new Point3D(min.x + newSize - 1, max.y, min.z + newSize - 1)
             ));
 
             // 4. High X, High Y, Low Z
             queue.add(new Cuboid(
-                new PointLong3D(min.x + newSize, min.y + newSize, min.z),
-                new PointLong3D(max.x, max.y, min.z + newSize - 1)
+                new Point3D(min.x + newSize, min.y + newSize, min.z),
+                new Point3D(max.x, max.y, min.z + newSize - 1)
             ));
 
             // 5. Low X, Low Y, High Z
             queue.add(new Cuboid(
-                new PointLong3D(min.x, min.y, min.z + newSize),
-                new PointLong3D(min.x + newSize - 1, min.y + newSize - 1, max.z)
+                new Point3D(min.x, min.y, min.z + newSize),
+                new Point3D(min.x + newSize - 1, min.y + newSize - 1, max.z)
             ));
 
             // 6. High X, Low Y, High Z
             queue.add(new Cuboid(
-                new PointLong3D(min.x + newSize, min.y, min.z + newSize),
-                new PointLong3D(max.x, min.y + newSize - 1, max.z)
+                new Point3D(min.x + newSize, min.y, min.z + newSize),
+                new Point3D(max.x, min.y + newSize - 1, max.z)
             ));
 
             // 7. Low X, High Y, High Z
             queue.add(new Cuboid(
-                new PointLong3D(min.x, min.y + newSize, min.z + newSize),
-                new PointLong3D(min.x + newSize - 1, max.y, max.z)
+                new Point3D(min.x, min.y + newSize, min.z + newSize),
+                new Point3D(min.x + newSize - 1, max.y, max.z)
             ));
 
             // 8. High X, High Y, High Z
             queue.add(new Cuboid(
-                new PointLong3D(min.x + newSize, min.y + newSize, min.z + newSize),
+                new Point3D(min.x + newSize, min.y + newSize, min.z + newSize),
                 max
             ));
         }
@@ -172,5 +172,5 @@ public class Day23 implements SolutionInterface {
         return result;
     }
 
-    record Nanobot(PointLong3D position, int radius) {}
+    record Nanobot(Point3D position, int radius) {}
 }

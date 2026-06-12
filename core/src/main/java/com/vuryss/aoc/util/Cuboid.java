@@ -1,11 +1,11 @@
 package com.vuryss.aoc.util;
 
 public class Cuboid {
-    public final PointLong3D minPoint;
-    public final PointLong3D maxPoint;
+    public final Point3D minPoint;
+    public final Point3D maxPoint;
     private long numberOfPoints = -1L;
 
-    public Cuboid(PointLong3D minPoint, PointLong3D maxPoint) {
+    public Cuboid(Point3D minPoint, Point3D maxPoint) {
         this.minPoint = minPoint;
         this.maxPoint = maxPoint;
     }
@@ -30,7 +30,7 @@ public class Cuboid {
         return maxPoint.z - minPoint.z + 1;
     }
 
-    public long shortestManhattanDistance(PointLong3D point) {
+    public long shortestManhattanDistance(Point3D point) {
         return Math.max(0, Math.max(minPoint.x - point.x, point.x - maxPoint.x))
              + Math.max(0, Math.max(minPoint.y - point.y, point.y - maxPoint.y))
              + Math.max(0, Math.max(minPoint.z - point.z, point.z - maxPoint.z));

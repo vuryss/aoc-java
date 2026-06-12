@@ -78,9 +78,9 @@ public class Day22 implements SolutionInterface {
             bricks.add(new Brick(new Point3D(m.get(0), m.get(1), m.get(2)), new Point3D(m.get(3), m.get(4), m.get(5))));
         }
 
-        bricks.sort(Comparator.comparingInt(a -> a.a.z));
+        bricks.sort(Comparator.comparingLong(a -> a.a.z));
 
-        var bricksAtLevelZ = new HashMap<Integer, ArrayList<Brick>>();
+        var bricksAtLevelZ = new HashMap<Long, ArrayList<Brick>>();
 
         for (var brick: bricks) {
             var minZ = brick.a.z;

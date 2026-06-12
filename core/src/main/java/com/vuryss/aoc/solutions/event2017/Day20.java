@@ -1,7 +1,7 @@
 package com.vuryss.aoc.solutions.event2017;
 
 import com.vuryss.aoc.solutions.SolutionInterface;
-import com.vuryss.aoc.util.PointLong3D;
+import com.vuryss.aoc.util.Point3D;
 import com.vuryss.aoc.util.StringUtil;
 
 import java.lang.Override;
@@ -46,7 +46,7 @@ public class Day20 implements SolutionInterface {
         var pCount = particles.length;
 
         for (var i = 0; i < 500; i++) {
-            var collisions = new HashMap<PointLong3D, List<Integer>>();
+            var collisions = new HashMap<Point3D, List<Integer>>();
 
             for (var particle: particles) {
                 if (particle != null) {
@@ -75,9 +75,9 @@ public class Day20 implements SolutionInterface {
             var ints = StringUtil.sints(lines[i]);
             particles[i] = new Particle(
                 i,
-                new PointLong3D(ints.get(0), ints.get(1), ints.get(2)),
-                new PointLong3D(ints.get(3), ints.get(4), ints.get(5)),
-                new PointLong3D(ints.get(6), ints.get(7), ints.get(8))
+                new Point3D(ints.get(0), ints.get(1), ints.get(2)),
+                new Point3D(ints.get(3), ints.get(4), ints.get(5)),
+                new Point3D(ints.get(6), ints.get(7), ints.get(8))
             );
         }
 
@@ -86,11 +86,11 @@ public class Day20 implements SolutionInterface {
 
     private static class Particle {
         public int id;
-        public PointLong3D position;
-        public PointLong3D velocity;
-        public PointLong3D acceleration;
+        public Point3D position;
+        public Point3D velocity;
+        public Point3D acceleration;
 
-        public Particle(int id, PointLong3D position, PointLong3D velocity, PointLong3D acceleration) {
+        public Particle(int id, Point3D position, Point3D velocity, Point3D acceleration) {
             this.id = id;
             this.position = position;
             this.velocity = velocity;

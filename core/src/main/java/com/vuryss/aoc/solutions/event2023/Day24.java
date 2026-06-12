@@ -3,7 +3,7 @@ package com.vuryss.aoc.solutions.event2023;
 import com.vuryss.aoc.solutions.SolutionInterface;
 import com.vuryss.aoc.util.Line2D;
 import com.vuryss.aoc.util.PointLong;
-import com.vuryss.aoc.util.PointLong3D;
+import com.vuryss.aoc.util.Point3D;
 import com.vuryss.aoc.util.StringUtil;
 
 import java.util.*;
@@ -38,8 +38,8 @@ public class Day24 implements SolutionInterface {
             var m = StringUtil.slongs(line);
             hailstones.add(
                 new Hailstone(
-                    new PointLong3D(m.get(0), m.get(1), m.get(2)),
-                    new PointLong3D(m.get(3), m.get(4), m.get(5))
+                    new Point3D(m.get(0), m.get(1), m.get(2)),
+                    new Point3D(m.get(3), m.get(4), m.get(5))
                 )
             );
         }
@@ -99,8 +99,8 @@ public class Day24 implements SolutionInterface {
             var m = StringUtil.slongs(line);
             hailstones.add(
                 new Hailstone(
-                    new PointLong3D(m.get(0), m.get(1), m.get(2)),
-                    new PointLong3D(m.get(3), m.get(4), m.get(5))
+                    new Point3D(m.get(0), m.get(1), m.get(2)),
+                    new Point3D(m.get(3), m.get(4), m.get(5))
                 )
             );
         }
@@ -185,8 +185,8 @@ public class Day24 implements SolutionInterface {
         // Pick any two hailstones and remove the rock velocity from their velocities
         var h1 = hailstones.get(0);
         var h2 = hailstones.get(1);
-        var h1v = h1.velocity.sub(new PointLong3D(rockVelocityX, rockVelocityY, rockVelocityZ));
-        var h2v = h2.velocity.sub(new PointLong3D(rockVelocityX, rockVelocityY, rockVelocityZ));
+        var h1v = h1.velocity.sub(new Point3D(rockVelocityX, rockVelocityY, rockVelocityZ));
+        var h2v = h2.velocity.sub(new Point3D(rockVelocityX, rockVelocityY, rockVelocityZ));
 
         // Find intersection point for just X,Y coordinates as if they were in a 2d space
         var line1 = new Line2D(new PointLong(h1.position.x, h1.position.y), h1v.x, h1v.y);
@@ -204,10 +204,10 @@ public class Day24 implements SolutionInterface {
     }
 
     private static class Hailstone {
-        PointLong3D position;
-        PointLong3D velocity;
+        Point3D position;
+        Point3D velocity;
 
-        public Hailstone(PointLong3D position, PointLong3D velocity) {
+        public Hailstone(Point3D position, Point3D velocity) {
             this.position = position;
             this.velocity = velocity;
         }

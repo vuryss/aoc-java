@@ -405,7 +405,7 @@ public class Day19 implements SolutionInterface {
                     var targetDiffY = beacon1.matchingBeaconPosition.y - beacon2.matchingBeaconPosition.y;
                     var targetDiffZ = beacon1.matchingBeaconPosition.z - beacon2.matchingBeaconPosition.z;
 
-                    var map = new HashMap<Integer, CoordinateConverter>() {{
+                    var map = new HashMap<Long, CoordinateConverter>() {{
                         put(diffX, (pos) -> pos.x);
                         put(-diffX, (pos) -> -pos.x);
                         put(diffY, (pos) -> pos.y);
@@ -470,5 +470,5 @@ class Beacon {
 }
 
 interface CoordinateConverter {
-    int convert(Point3D position);
+    long convert(Point3D position);
 }

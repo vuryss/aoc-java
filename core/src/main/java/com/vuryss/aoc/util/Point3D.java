@@ -1,11 +1,11 @@
 package com.vuryss.aoc.util;
 
 public class Point3D implements Cloneable {
-    public Integer x;
-    public Integer y;
-    public Integer z;
+    public Long x;
+    public Long y;
+    public Long z;
 
-    public Point3D(int x, int y, int z) {
+    public Point3D(long x, long y, long z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -13,6 +13,10 @@ public class Point3D implements Cloneable {
 
     public Point3D add(Point3D delta) {
         return new Point3D(x + delta.x, y + delta.y, z + delta.z);
+    }
+
+    public Point3D sub(Point3D delta) {
+        return new Point3D(x - delta.x, y - delta.y, z - delta.z);
     }
 
     @Override
@@ -24,6 +28,14 @@ public class Point3D implements Cloneable {
         hashCode += 31 * hashCode + z.hashCode();
 
         return hashCode;
+    }
+
+    public long manhattanDistance(Point3D point) {
+        return Math.abs(x - point.x) + Math.abs(y - point.y) + Math.abs(z - point.z);
+    }
+
+    public double euclideanDistance(Point3D point) {
+        return Math.sqrt(Math.pow(x - point.x, 2) + Math.pow(y - point.y, 2) + Math.pow(z - point.z, 2));
     }
 
     @Override
@@ -47,13 +59,5 @@ public class Point3D implements Cloneable {
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }
-    }
-
-    public long manhattanDistance(Point3D point) {
-        return Math.abs(x - point.x) + Math.abs(y - point.y) + Math.abs(z - point.z);
-    }
-
-    public double euclideanDistance(Point3D point) {
-        return Math.sqrt(Math.pow(x - point.x, 2) + Math.pow(y - point.y, 2) + Math.pow(z - point.z, 2));
     }
 }
