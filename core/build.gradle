@@ -16,6 +16,8 @@ repositories {
 dependencies {
     implementation(platform(project(":platform")))
 
+    annotationProcessor libs.lombok
+
     implementation libs.commons.codec
     implementation libs.commons.lang3
     implementation libs.commons.math3
@@ -31,6 +33,7 @@ dependencies {
     implementation libs.ojalgo
 
     compileOnly libs.jetbrains.annotations
+    compileOnly libs.lombok
     compileOnly 'io.smallrye.config:smallrye-config'
     compileOnly 'jakarta.enterprise:jakarta.enterprise.cdi-api'
 }

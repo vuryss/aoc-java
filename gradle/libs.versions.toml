@@ -11,6 +11,7 @@ javapoet = "0.7.0"
 jetbrains-annotations = "26.0.2"
 jgrapht-core = "1.5.2"
 jsoup = "1.21.1"
+lombok = "1.18.46"
 nuprocess = "3.0.0"
 ojalgo = "56.1.1"
 quarkus-resteasy-problem = "3.21.0"
@@ -29,6 +30,7 @@ javapoet = { group = "com.palantir.javapoet", name = "javapoet", version.ref = "
 jetbrains-annotations = { group = "org.jetbrains", name = "annotations", version.ref = "jetbrains-annotations" }
 jgrapht-core = { group = "org.jgrapht", name = "jgrapht-core", version.ref = "jgrapht-core" }
 jsoup = { group = "org.jsoup", name = "jsoup", version.ref = "jsoup" }
+lombok = { group = "org.projectlombok", name = "lombok", version.ref = "lombok" }
 nuprocess = { group = "com.zaxxer", name = "nuprocess", version.ref = "nuprocess" }
 ojalgo = { group = "org.ojalgo", name = "ojalgo", version.ref = "ojalgo" }
 quarkus-resteasy-problem = { group = "io.quarkiverse.resteasy-problem", name = "quarkus-resteasy-problem", version.ref = "quarkus-resteasy-problem" }
