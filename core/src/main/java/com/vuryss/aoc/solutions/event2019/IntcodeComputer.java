@@ -1,8 +1,9 @@
 package com.vuryss.aoc.solutions.event2019;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class IntcodeComputer {
+public class IntcodeComputer implements Runnable {
     private static final Map<Integer, Opcode> opcodes = Map.of(
         1, Opcode.ADD,
         2, Opcode.MULTIPLY,
@@ -17,8 +18,8 @@ public class IntcodeComputer {
     int position = 0;
     int[] memory;
     int[] originalMemory;
-    Queue<Integer> inputQueue = new LinkedList<>();
-    Queue<Integer> outputQueue = new LinkedList<>();
+    Queue<Integer> inputQueue = new ConcurrentLinkedQueue<>();
+    Queue<Integer> outputQueue = new ConcurrentLinkedQueue<>();
     boolean diagnostics = false;
 
     public IntcodeComputer(String programCode) {
@@ -38,8 +39,8 @@ public class IntcodeComputer {
     public void reset() {
         position = 0;
         memory = originalMemory.clone();
-        inputQueue = new LinkedList<>();
-        outputQueue = new LinkedList<>();
+        inputQueue = new ConcurrentLinkedQueue<>();
+        outputQueue = new ConcurrentLinkedQueue<>();
     }
 
     public void run() {
@@ -54,7 +55,7 @@ public class IntcodeComputer {
             instruction /= 10;
             if (instruction % 10 == 1) p2mode = ParameterMode.IMMEDIATE;
             instruction /= 10;
-            if (instruction % 10 == 1) p2mode = ParameterMode.IMMEDIATE;
+            if (instruction % 10 == 1) p3mode = ParameterMode.IMMEDIATE;
             int p1, p2, p3;
 
             switch (opcode) {
@@ -79,6 +80,7 @@ public class IntcodeComputer {
                     break;
 
                 case Opcode.INPUT:
+                    while (inputQueue.isEmpty()) Thread.yield();
                     int input = inputQueue.poll();
                     p1 = memory[position + 1];
                     memory[p1] = input;
