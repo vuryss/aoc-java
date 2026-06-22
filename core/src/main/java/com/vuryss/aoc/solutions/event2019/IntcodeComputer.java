@@ -4,22 +4,24 @@ import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class IntcodeComputer implements Runnable {
-    private static final Map<Integer, Opcode> opcodes = Map.of(
-        1, Opcode.ADD,
-        2, Opcode.MULTIPLY,
-        3, Opcode.INPUT,
-        4, Opcode.OUTPUT,
-        5, Opcode.JUMP_IF_TRUE,
-        6, Opcode.JUMP_IF_FALSE,
-        7, Opcode.LESS_THAN,
-        8, Opcode.EQUALS,
-        99,  Opcode.HALT
+    private static final Map<Long, Opcode> opcodes = Map.of(
+        1L, Opcode.ADD,
+        2L, Opcode.MULTIPLY,
+        3L, Opcode.INPUT,
+        4L, Opcode.OUTPUT,
+        5L, Opcode.JUMP_IF_TRUE,
+        6L, Opcode.JUMP_IF_FALSE,
+        7L, Opcode.LESS_THAN,
+        8L, Opcode.EQUALS,
+        9L, Opcode.RELATIVE_BASE,
+        99L,  Opcode.HALT
     );
-    int position = 0;
-    int[] memory;
-    int[] originalMemory;
-    Queue<Integer> inputQueue = new ConcurrentLinkedQueue<>();
-    Queue<Integer> outputQueue = new ConcurrentLinkedQueue<>();
+    private long position = 0;
+    private long relativeBase = 0;
+    private Map<Long, Long> memory;
+    private final Map<Long, Long> originalMemory;
+    Queue<Long> inputQueue = new ConcurrentLinkedQueue<>();
+    Queue<Long> outputQueue = new ConcurrentLinkedQueue<>();
     boolean diagnostics = false;
 
     public IntcodeComputer(String programCode) {
@@ -27,102 +29,97 @@ public class IntcodeComputer implements Runnable {
     }
 
     public IntcodeComputer(String[] parts) {
-        memory = new int[parts.length];
+        memory = new HashMap<>();
 
         for (var i = 0; i < parts.length; i++) {
-            memory[i] = Integer.parseInt(parts[i]);
+            mem(i, Long.parseLong(parts[i]));
         }
 
-        originalMemory = memory.clone();
+        originalMemory = new HashMap<>(memory);
     }
 
     public void reset() {
         position = 0;
-        memory = originalMemory.clone();
+        memory = new HashMap<>(originalMemory);
         inputQueue = new ConcurrentLinkedQueue<>();
         outputQueue = new ConcurrentLinkedQueue<>();
     }
 
     public void run() {
         while (true) {
-            var instruction = memory[position];
+            var instruction = mem(position);
             var opcode = opcodes.get(instruction % 100);
             instruction /= 100;
-            var p1mode = ParameterMode.POSITION;
-            var p2mode = ParameterMode.POSITION;
-            var p3mode = ParameterMode.POSITION;
-            if (instruction % 10 == 1) p1mode = ParameterMode.IMMEDIATE;
-            instruction /= 10;
-            if (instruction % 10 == 1) p2mode = ParameterMode.IMMEDIATE;
-            instruction /= 10;
-            if (instruction % 10 == 1) p3mode = ParameterMode.IMMEDIATE;
-            int p1, p2, p3;
+            int[] pos = new int[opcode.values - 1];
+
+            for (int i = 0; i < opcode.values - 1; i++) {
+                var mode = switch ((int) (instruction % 10)) {
+                    case 0 -> ParameterMode.POSITION;
+                    case 1 -> ParameterMode.IMMEDIATE;
+                    case 2 -> ParameterMode.RELATIVE;
+                    default -> throw new RuntimeException("Invalid parameter mode!");
+                };
+                instruction /= 10;
+                pos[i] = (int) switch (mode) {
+                    case ParameterMode.POSITION -> mem(position + i + 1);
+                    case ParameterMode.IMMEDIATE -> position + i + 1;
+                    case ParameterMode.RELATIVE -> relativeBase + mem(position + i + 1);
+                };
+            }
 
             switch (opcode) {
                 case Opcode.ADD:
-                    p1 = p1mode == ParameterMode.POSITION ? memory[memory[position + 1]] : memory[position + 1];
-                    p2 = p2mode == ParameterMode.POSITION ? memory[memory[position + 2]] : memory[position + 2];
-                    p3 = memory[position + 3];
-                    memory[p3] = p1 + p2;
+                    mem(pos[2], mem(pos[0]) + mem(pos[1]));
                     position += opcode.values;
                     if (diagnostics)
-                        System.out.println("Add " + p1 + "+" + p2 + "=" + (p1 + p2) + " storing at: " + p3);
+                        System.out.println("Add " + mem(pos[0]) + "+" + mem(pos[1]) + "=" + (mem(pos[0]) + mem(pos[1])) + " storing at: " + pos[2]);
                     break;
 
                 case Opcode.MULTIPLY:
-                    p1 = p1mode == ParameterMode.POSITION ? memory[memory[position + 1]] : memory[position + 1];
-                    p2 = p2mode == ParameterMode.POSITION ? memory[memory[position + 2]] : memory[position + 2];
-                    p3 = memory[position + 3];
-                    memory[p3] = p1 * p2;
+                    mem(pos[2], mem(pos[0]) * mem(pos[1]));
                     position += opcode.values;
                     if (diagnostics)
-                        System.out.println("Multiply " + p1 + "*" + p2 + "=" + (p1 * p2) + " storing at: " + p3);
+                        System.out.println("Multiply " + mem(pos[0]) + "*" + mem(pos[1]) + "=" + (mem(pos[0]) * mem(pos[1])) + " storing at: " + pos[2]);
                     break;
 
                 case Opcode.INPUT:
                     while (inputQueue.isEmpty()) Thread.yield();
-                    int input = inputQueue.poll();
-                    p1 = memory[position + 1];
-                    memory[p1] = input;
+                    long input = inputQueue.poll();
+                    mem(pos[0], input);
                     position += opcode.values;
                     if (diagnostics)
-                        System.out.println("Input: " + input + " storing at: " + p1);
+                        System.out.println("Input: " + input + " storing at: " + pos[0]);
                     break;
 
                 case Opcode.OUTPUT:
-                    p1 = p1mode == ParameterMode.POSITION ? memory[memory[position + 1]] : memory[position + 1];
-                    outputQueue.add(p1);
+                    outputQueue.add(mem(pos[0]));
                     position += opcode.values;
                     if (diagnostics)
-                        System.out.println("Output: " + p1);
+                        System.out.println("Output: " + mem(pos[0]));
                     break;
 
                 case Opcode.JUMP_IF_TRUE:
-                    p1 = p1mode == ParameterMode.POSITION ? memory[memory[position + 1]] : memory[position + 1];
-                    p2 = p2mode == ParameterMode.POSITION ? memory[memory[position + 2]] : memory[position + 2];
-                    position = p1 != 0 ? p2 : position + opcode.values;
+                    position = (mem(pos[0]) != 0 ? mem(pos[1]) : position + opcode.values);
                     break;
 
                 case Opcode.JUMP_IF_FALSE:
-                    p1 = p1mode == ParameterMode.POSITION ? memory[memory[position + 1]] : memory[position + 1];
-                    p2 = p2mode == ParameterMode.POSITION ? memory[memory[position + 2]] : memory[position + 2];
-                    position = p1 == 0 ? p2 : position + opcode.values;
+                    position = (mem(pos[0]) == 0 ? mem(pos[1]) : position + opcode.values);
                     break;
 
                 case Opcode.LESS_THAN:
-                    p1 = p1mode == ParameterMode.POSITION ? memory[memory[position + 1]] : memory[position + 1];
-                    p2 = p2mode == ParameterMode.POSITION ? memory[memory[position + 2]] : memory[position + 2];
-                    memory[memory[position + 3]] = p1 < p2 ? 1 : 0;
+                    mem(pos[2], mem(pos[0]) < mem(pos[1]) ? 1 : 0);
                     position += opcode.values;
                     break;
 
                 case Opcode.EQUALS:
-                    p1 = p1mode == ParameterMode.POSITION ? memory[memory[position + 1]] : memory[position + 1];
-                    p2 = p2mode == ParameterMode.POSITION ? memory[memory[position + 2]] : memory[position + 2];
-                    p3 = memory[position + 3];
+                    mem(pos[2], mem(pos[0]) == mem(pos[1]) ? 1 : 0);
+                    position += opcode.values;
                     if (diagnostics)
-                        System.out.println("If " + p1 + "==" + p2 + " store 1 at " + p3 + " otherwise 0");
-                    memory[p3] = p1 == p2 ? 1 : 0;
+                        System.out.println("If " + pos[0] + "==" + pos[1] + " store 1 at " + pos[2] + " otherwise 0");
+                    break;
+
+                case Opcode.RELATIVE_BASE:
+                    relativeBase += (int) mem(pos[0]);
                     position += opcode.values;
                     break;
 
@@ -132,12 +129,21 @@ public class IntcodeComputer implements Runnable {
         }
     }
 
-    private enum ParameterMode { POSITION, IMMEDIATE }
+    public long mem(long position) {
+        return memory.getOrDefault(position, 0L);
+    }
+
+    public void mem(long position, long value) {
+        memory.put(position, value);
+    }
+
+    private enum ParameterMode { POSITION, IMMEDIATE, RELATIVE }
     private enum Opcode {
         ADD(4), MULTIPLY(4),
         INPUT(2), OUTPUT(2),
         JUMP_IF_TRUE(3), JUMP_IF_FALSE(3),
         LESS_THAN(4), EQUALS(4),
+        RELATIVE_BASE(2),
         HALT(1)
         ;
 

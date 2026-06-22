@@ -29,13 +29,13 @@ public class Day2 implements SolutionInterface {
         var computer = new IntcodeComputer(input.trim());
 
         if (!isTest) {
-            computer.memory[1] = 12;
-            computer.memory[2] = 2;
+            computer.mem(1,  12);
+            computer.mem(2, 2);
         }
 
         computer.run();
 
-        return computer.memory[0] + "";
+        return computer.mem(0) + "";
     }
 
     @Override
@@ -45,11 +45,11 @@ public class Day2 implements SolutionInterface {
         for (var noun = 0; noun < 100; noun++) {
             for (var verb = 0; verb < 100; verb++) {
                 computer.reset();
-                computer.memory[1] = noun;
-                computer.memory[2] = verb;
+                computer.mem(1, noun);
+                computer.mem(2, verb);
                 computer.run();
 
-                if (computer.memory[0] == 19690720) {
+                if (computer.mem(0) == 19690720) {
                     return (100 * noun + verb) + "";
                 }
             }

@@ -32,13 +32,13 @@ public class Day7 implements SolutionInterface {
     public String part1Solution(String input, boolean isTest) {
         var computer = new IntcodeComputer(input.trim());
         var permutations = Combinatorics.permutations(List.of(0, 1, 2, 3, 4), 5);
-        var max = Integer.MIN_VALUE;
+        var max = Long.MIN_VALUE;
 
         for (var permutation : permutations) {
-            var value = 0;
+            var value = 0L;
 
             for (var i = 0; i < 5; i++) {
-                computer.inputQueue.add(permutation.get(i));
+                computer.inputQueue.add(permutation.get(i).longValue());
                 computer.inputQueue.add(value);
                 computer.run();
                 value = computer.outputQueue.poll();
@@ -56,18 +56,18 @@ public class Day7 implements SolutionInterface {
         var amplifiers = new IntcodeComputer[5];
         var threads = new Thread[5];
         var permutations = Combinatorics.permutations(List.of(5, 6, 7, 8, 9), 5);
-        var max = Integer.MIN_VALUE;
+        var max = Long.MIN_VALUE;
 
         for (var i = 0; i < 5; i++) amplifiers[i] = new IntcodeComputer(input.trim());
 
         for (var permutation : permutations) {
             for (var i = 0; i < 5; i++) {
                 amplifiers[i].reset();
-                amplifiers[i].inputQueue.add(permutation.get(i));
+                amplifiers[i].inputQueue.add(permutation.get(i).longValue());
                 threads[i] = new Thread(amplifiers[i]);
                 threads[i].start();
             }
-            var value = 0;
+            var value = 0L;
 
             outer:
             while (true) {
