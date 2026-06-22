@@ -15,6 +15,14 @@ public class LetterOCR {
         #  # #  # #  # #    #    #  # #  #  #   #  # # #  #    #  # #    # #     # #  # #   \s
         #  # ###   ##  #### #     ### #  # ###   ##  #  # ####  ##  #    #  # ###   ##  ####\s
         """;
+    private static final String ALPHABET_5_6 = """
+        #   #
+        #   #
+         # #\s
+          # \s
+          # \s
+          # \s
+        """;
     private static final String ALPHABET_6_10_CHARACTERS = "ABCEFGHJKLNPRXZ";
     private static final String ALPHABET_6_10 = """
           ##   #####   ####  ###### ######  ####  #    #    ### #    # #      #    # #####  #####  #    # ######\s
@@ -33,17 +41,10 @@ public class LetterOCR {
         var result = new StringBuilder();
         var startX = 0;
         var map46 = get46Map();
+        var map56 = get56Map();
 
         while (true) {
-            var points = new HashSet<Point>();
-
-            for (var x = startX; x < startX + 4; x++) {
-                for (var y = 0; y < 6; y++) {
-                    if (grid.contains(new Point(x, y))) {
-                        points.add(new Point(x - startX, y));
-                    }
-                }
-            }
+            var points = extract(grid, startX, 4);
 
             if (points.isEmpty()) {
                 break;
@@ -55,10 +56,46 @@ public class LetterOCR {
                 continue;
             }
 
+            points = extract(grid, startX, 5);
+            if (map56.containsKey(points)) {
+                result.append(map56.get(points));
+                startX += 6;
+                continue;
+            }
+
             throw new RuntimeException("Letter not found. Please check!");
         }
 
         return result.toString();
+    }
+
+    private static HashSet<Point> extract(HashSet<Point> grid, int startX, int width) {
+        var points = new HashSet<Point>();
+        for (var x = startX; x < startX + width; x++) {
+            for (var y = 0; y < 6; y++) {
+                if (grid.contains(new Point(x, y))) {
+                    points.add(new Point(x - startX, y));
+                }
+            }
+        }
+        return points;
+    }
+
+    private static Map<Set<Point>, Character> get56Map() {
+        var map = new HashMap<Set<Point>, Character>();
+        var lines = ALPHABET_5_6.split("\n", -1);
+        var points = new HashSet<Point>();
+
+        for (var x = 0; x < 5; x++) {
+            for (var y = 0; y < 6; y++) {
+                if (lines[y].charAt(x) == '#') {
+                    points.add(new Point(x, y));
+                }
+            }
+        }
+
+        map.put(points, 'Y');
+        return map;
     }
 
     private static Map<Set<Point>, Character> get46Map() {
