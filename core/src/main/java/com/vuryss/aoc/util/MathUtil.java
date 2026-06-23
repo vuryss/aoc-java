@@ -24,6 +24,19 @@ public class MathUtil {
         return lcm(List.copyOf(numbers));
     }
 
+    public static long gcd(long a, long b) {
+        a = Math.abs(a);
+        b = Math.abs(b);
+
+        while (b != 0) {
+            long temp = b;
+            b = a % b;
+            a = temp;
+        }
+
+        return a;
+    }
+
     public static QuadraticRoots quadratic(double a, double b, double c) {
         var discriminant = Math.fma(b, b, - 4 * a * c);
 
