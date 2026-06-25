@@ -1,7 +1,8 @@
 package com.vuryss.aoc.solutions.event2019;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class IntcodeComputer implements Runnable {
     private static final Map<Long, Opcode> opcodes = Map.of(
@@ -16,12 +17,13 @@ public class IntcodeComputer implements Runnable {
         9L, Opcode.RELATIVE_BASE,
         99L,  Opcode.HALT
     );
+    private Thread thread;
     private long position = 0;
     private long relativeBase = 0;
     private Map<Long, Long> memory;
     private final Map<Long, Long> originalMemory;
-    Queue<Long> inputQueue = new ConcurrentLinkedQueue<>();
-    Queue<Long> outputQueue = new ConcurrentLinkedQueue<>();
+    private BlockingQueue<Long> inputQueue = new LinkedBlockingQueue<>();
+    private BlockingQueue<Long> outputQueue = new LinkedBlockingQueue<>();
     boolean diagnostics = false;
 
     public IntcodeComputer(String programCode) {
@@ -38,11 +40,58 @@ public class IntcodeComputer implements Runnable {
         originalMemory = new HashMap<>(memory);
     }
 
+    public void start() {
+        if (thread != null) throw new IllegalStateException("Already started");
+        thread = Thread.ofVirtual().start(this);
+    }
+
     public void reset() {
+        waitTillShutdown();
+        thread = null;
         position = 0;
         memory = new HashMap<>(originalMemory);
-        inputQueue = new ConcurrentLinkedQueue<>();
-        outputQueue = new ConcurrentLinkedQueue<>();
+        inputQueue = new LinkedBlockingQueue<>();
+        outputQueue = new LinkedBlockingQueue<>();
+    }
+
+    public void input(long value) {
+        inputQueue.add(value);
+    }
+
+    public long input() {
+        try { return inputQueue.take(); }
+        catch (InterruptedException e) { throw new RuntimeException(e); }
+    }
+
+    public long takeSingleOutput() {
+        try { return outputQueue.take(); }
+        catch (InterruptedException e) { throw new RuntimeException(e); }
+    }
+
+    public List<Long> consumeOutputUntilShutdown() {
+        var result = new ArrayList<Long>();
+
+        while (isRunning()) {
+            if (hasOutput()) {
+                result.add(takeSingleOutput());
+            }
+        }
+
+        return result;
+    }
+
+    public boolean isRunning() {
+        return thread != null && thread.isAlive();
+    }
+
+    public boolean hasOutput() {
+        return !outputQueue.isEmpty();
+    }
+
+    public void waitTillShutdown() {
+        if (thread == null) return;
+        try { thread.join(); }
+        catch (InterruptedException e) { throw new RuntimeException(e); }
     }
 
     public void run() {
@@ -83,8 +132,7 @@ public class IntcodeComputer implements Runnable {
                     break;
 
                 case Opcode.INPUT:
-                    while (inputQueue.isEmpty()) Thread.yield();
-                    long input = inputQueue.poll();
+                    long input = input();
                     mem(pos[0], input);
                     position += opcode.values;
                     if (diagnostics)

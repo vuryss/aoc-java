@@ -38,10 +38,10 @@ public class Day7 implements SolutionInterface {
             var value = 0L;
 
             for (var i = 0; i < 5; i++) {
-                computer.inputQueue.add(permutation.get(i).longValue());
-                computer.inputQueue.add(value);
-                computer.run();
-                value = computer.outputQueue.poll();
+                computer.input(permutation.get(i).longValue());
+                computer.input(value);
+                computer.start();
+                value = computer.takeSingleOutput();
                 computer.reset();
             }
 
@@ -63,7 +63,7 @@ public class Day7 implements SolutionInterface {
         for (var permutation : permutations) {
             for (var i = 0; i < 5; i++) {
                 amplifiers[i].reset();
-                amplifiers[i].inputQueue.add(permutation.get(i).longValue());
+                amplifiers[i].input(permutation.get(i).longValue());
                 threads[i] = new Thread(amplifiers[i]);
                 threads[i].start();
             }
@@ -72,12 +72,12 @@ public class Day7 implements SolutionInterface {
             outer:
             while (true) {
                 for (var i = 0; i < 5; i++) {
-                    amplifiers[i].inputQueue.add(value);
-                    while (amplifiers[i].outputQueue.isEmpty()) {
+                    amplifiers[i].input(value);
+                    while (!amplifiers[i].hasOutput()) {
                         if (!threads[i].isAlive()) break outer;
                         Thread.yield();
                     }
-                    value = amplifiers[i].outputQueue.poll();
+                    value = amplifiers[i].takeSingleOutput();
                 }
             }
 

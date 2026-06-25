@@ -43,20 +43,42 @@ public class PointLong {
         );
     }
 
-    public PointLong north() {
-        return new PointLong(x, y - 1);
+    // Directional movement methods (grouped for readability)
+    public PointLong north() { return north(1); }
+    public PointLong north(int distance) { return new PointLong(x, y - distance); }
+
+    public PointLong east() { return east(1); }
+    public PointLong east(int distance) { return new PointLong(x + distance, y); }
+
+    public PointLong south() { return south(1); }
+    public PointLong south(int distance) { return new PointLong(x, y + distance); }
+
+    public PointLong west() { return west(1); }
+    public PointLong west(int distance) { return new PointLong(x - distance, y); }
+
+    public PointLong right() { return right(1); }
+    public PointLong right(int distance) { return new PointLong(x + distance, y); }
+
+    public PointLong left() { return left(1); }
+    public PointLong left(int distance) { return new PointLong(x - distance, y); }
+
+    public PointLong up() { return up(1); }
+    public PointLong up(int distance) { return new PointLong(x, y - distance); }
+
+    public PointLong down() { return down(1); }
+    public PointLong down(int distance) { return new PointLong(x, y + distance); }
+
+    public PointLong goInDirection(Direction direction) {
+        return goInDirection(direction, 1);
     }
 
-    public PointLong east() {
-        return new PointLong(x + 1, y);
-    }
-
-    public PointLong south() {
-        return new PointLong(x, y + 1);
-    }
-
-    public PointLong west() {
-        return new PointLong(x - 1, y);
+    public PointLong goInDirection(Direction direction, int distance) {
+        return switch (direction) {
+            case U -> up(distance);
+            case D -> down(distance);
+            case L -> left(distance);
+            case R -> right(distance);
+        };
     }
 
     public long manhattan(PointLong p) {

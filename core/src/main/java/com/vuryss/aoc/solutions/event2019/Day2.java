@@ -33,7 +33,8 @@ public class Day2 implements SolutionInterface {
             computer.mem(2, 2);
         }
 
-        computer.run();
+        computer.start();
+        computer.waitTillShutdown();
 
         return computer.mem(0) + "";
     }
@@ -47,7 +48,8 @@ public class Day2 implements SolutionInterface {
                 computer.reset();
                 computer.mem(1, noun);
                 computer.mem(2, verb);
-                computer.run();
+                computer.start();
+                computer.waitTillShutdown();
 
                 if (computer.mem(0) == 19690720) {
                     return (100 * noun + verb) + "";

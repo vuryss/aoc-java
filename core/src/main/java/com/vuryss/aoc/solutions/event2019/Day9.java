@@ -24,16 +24,16 @@ public class Day9 implements SolutionInterface {
     @Override
     public String part1Solution(String input, boolean isTest) {
         var computer = new IntcodeComputer(input.trim());
-        computer.inputQueue.add(1L);
-        computer.run();
-        return computer.outputQueue.poll() + "";
+        computer.input(1L);
+        computer.start();
+        return computer.takeSingleOutput() + "";
     }
 
     @Override
     public String part2Solution(String input, boolean isTest) {
         var computer = new IntcodeComputer(input.trim());
-        computer.inputQueue.add(2L);
-        computer.run();
-        return computer.outputQueue.poll() + "";
+        computer.input(2L);
+        computer.start();
+        return computer.takeSingleOutput() + "";
     }
 }

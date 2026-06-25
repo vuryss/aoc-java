@@ -39,7 +39,7 @@ public class LetterOCR {
 
     public static String decode46(HashSet<Point> grid) {
         var result = new StringBuilder();
-        var startX = 0;
+        var startX = findMinX(grid);
         var map46 = get46Map();
         var map56 = get56Map();
 
@@ -174,5 +174,13 @@ public class LetterOCR {
         }
 
         return map;
+    }
+
+    private static int findMinX(HashSet<Point> points) {
+        var minX = Integer.MAX_VALUE;
+        for (var point : points) {
+            if (point.x < minX) minX = point.x;
+        }
+        return minX;
     }
 }

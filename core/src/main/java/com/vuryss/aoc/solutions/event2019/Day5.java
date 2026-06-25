@@ -28,18 +28,19 @@ public class Day5 implements SolutionInterface {
     @Override
     public String part1Solution(String input, boolean isTest) {
         var computer = new IntcodeComputer(input.trim());
-        computer.inputQueue.add(1L);
-        computer.run();
+        computer.input(1L);
+        computer.start();
 
-        return computer.outputQueue.stream().map(String::valueOf).collect(Collectors.joining()).replaceAll("^0*", "");
+        return computer.consumeOutputUntilShutdown()
+            .stream().map(String::valueOf).collect(Collectors.joining()).replaceAll("^0*", "");
     }
 
     @Override
     public String part2Solution(String input, boolean isTest) {
         var computer = new IntcodeComputer(input.trim());
-        computer.inputQueue.add(isTest ? 8L : 5L);
-        computer.run();
+        computer.input(isTest ? 8L : 5L);
+        computer.start();
 
-        return computer.outputQueue.stream().map(String::valueOf).collect(Collectors.joining());
+        return computer.consumeOutputUntilShutdown().stream().map(String::valueOf).collect(Collectors.joining());
     }
 }
