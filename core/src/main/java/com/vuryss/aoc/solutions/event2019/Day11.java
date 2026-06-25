@@ -60,8 +60,6 @@ public class Day11 implements SolutionInterface {
         var direction = Direction.U;
         var grid = new HashMap<Point, Boolean>();
         grid.put(position, true);
-        int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE;
-        int maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
 
         while (computer.isRunning()) {
             computer.input(grid.getOrDefault(position, false) == false ? 0 : 1);
@@ -74,11 +72,6 @@ public class Day11 implements SolutionInterface {
             grid.put(position, color != 0);
             if (turn == 0) direction = direction.turnLeft();
             else direction = direction.turnRight();
-
-            minX = Math.min(minX, position.x);
-            maxX = Math.max(maxX, position.x);
-            minY = Math.min(minY, position.y);
-            maxY = Math.max(maxY, position.y);
 
             position = position.goInDirection(direction);
         }
