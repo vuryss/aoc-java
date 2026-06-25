@@ -49,6 +49,7 @@ public class IntcodeComputer implements Runnable {
         waitTillShutdown();
         thread = null;
         position = 0;
+        relativeBase = 0;
         memory = new HashMap<>(originalMemory);
         inputQueue = new LinkedBlockingQueue<>();
         outputQueue = new LinkedBlockingQueue<>();
@@ -60,24 +61,17 @@ public class IntcodeComputer implements Runnable {
 
     public long input() {
         try { return inputQueue.take(); }
-        catch (InterruptedException e) { throw new RuntimeException(e); }
+        catch (InterruptedException e) { Thread.currentThread().interrupt(); throw new RuntimeException(e); }
     }
 
     public long takeSingleOutput() {
         try { return outputQueue.take(); }
-        catch (InterruptedException e) { throw new RuntimeException(e); }
+        catch (InterruptedException e) { Thread.currentThread().interrupt(); throw new RuntimeException(e); }
     }
 
     public List<Long> consumeOutputUntilShutdown() {
-        var result = new ArrayList<Long>();
-
-        while (isRunning()) {
-            if (hasOutput()) {
-                result.add(takeSingleOutput());
-            }
-        }
-
-        return result;
+        waitTillShutdown();
+        return new ArrayList<>(outputQueue);
     }
 
     public boolean isRunning() {
@@ -91,7 +85,7 @@ public class IntcodeComputer implements Runnable {
     public void waitTillShutdown() {
         if (thread == null) return;
         try { thread.join(); }
-        catch (InterruptedException e) { throw new RuntimeException(e); }
+        catch (InterruptedException e) { Thread.currentThread().interrupt(); throw new RuntimeException(e); }
     }
 
     public void run() {

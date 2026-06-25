@@ -54,7 +54,6 @@ public class Day7 implements SolutionInterface {
     @Override
     public String part2Solution(String input, boolean isTest) {
         var amplifiers = new IntcodeComputer[5];
-        var threads = new Thread[5];
         var permutations = Combinatorics.permutations(List.of(5, 6, 7, 8, 9), 5);
         var max = Long.MIN_VALUE;
 
@@ -64,8 +63,7 @@ public class Day7 implements SolutionInterface {
             for (var i = 0; i < 5; i++) {
                 amplifiers[i].reset();
                 amplifiers[i].input(permutation.get(i).longValue());
-                threads[i] = new Thread(amplifiers[i]);
-                threads[i].start();
+                amplifiers[i].start();
             }
             var value = 0L;
 
@@ -74,7 +72,7 @@ public class Day7 implements SolutionInterface {
                 for (var i = 0; i < 5; i++) {
                     amplifiers[i].input(value);
                     while (!amplifiers[i].hasOutput()) {
-                        if (!threads[i].isAlive()) break outer;
+                        if (!amplifiers[i].isRunning()) break outer;
                         Thread.yield();
                     }
                     value = amplifiers[i].takeSingleOutput();
@@ -82,7 +80,7 @@ public class Day7 implements SolutionInterface {
             }
 
             for (var i = 0; i < 5; i++) {
-                try { threads[i].join(); } catch (InterruptedException ignored) { }
+                amplifiers[i].waitTillShutdown();
             }
 
             max = Math.max(max, value);
