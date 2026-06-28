@@ -3,6 +3,7 @@ package com.vuryss.aoc.solutions.event2019;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class IntcodeComputer implements Runnable {
     private static final Map<Long, Opcode> opcodes = Map.of(
@@ -17,6 +18,7 @@ public class IntcodeComputer implements Runnable {
         9L, Opcode.RELATIVE_BASE,
         99L,  Opcode.HALT
     );
+    private final AtomicInteger waitingForInput = new AtomicInteger(0);
     private Thread thread;
     private long position = 0;
     private long relativeBase = 0;
@@ -53,15 +55,22 @@ public class IntcodeComputer implements Runnable {
         memory = new HashMap<>(originalMemory);
         inputQueue = new LinkedBlockingQueue<>();
         outputQueue = new LinkedBlockingQueue<>();
+        waitingForInput.set(0);
     }
 
     public void input(long value) {
+        waitingForInput.decrementAndGet();
         inputQueue.add(value);
     }
 
-    public long input() {
+    private long readInput() {
+        waitingForInput.incrementAndGet();
         try { return inputQueue.take(); }
         catch (InterruptedException e) { Thread.currentThread().interrupt(); throw new RuntimeException(e); }
+    }
+
+    public boolean isWaitingForInput() {
+        return waitingForInput.get() > 0;
     }
 
     public long takeSingleOutput() {
@@ -88,12 +97,13 @@ public class IntcodeComputer implements Runnable {
         catch (InterruptedException e) { Thread.currentThread().interrupt(); throw new RuntimeException(e); }
     }
 
+    @Override
     public void run() {
         while (true) {
             var instruction = mem(position);
             var opcode = opcodes.get(instruction % 100);
             instruction /= 100;
-            int[] pos = new int[opcode.values - 1];
+            long[] pos = new long[opcode.values - 1];
 
             for (int i = 0; i < opcode.values - 1; i++) {
                 var mode = switch ((int) (instruction % 10)) {
@@ -103,7 +113,7 @@ public class IntcodeComputer implements Runnable {
                     default -> throw new RuntimeException("Invalid parameter mode!");
                 };
                 instruction /= 10;
-                pos[i] = (int) switch (mode) {
+                pos[i] = switch (mode) {
                     case ParameterMode.POSITION -> mem(position + i + 1);
                     case ParameterMode.IMMEDIATE -> position + i + 1;
                     case ParameterMode.RELATIVE -> relativeBase + mem(position + i + 1);
@@ -126,7 +136,7 @@ public class IntcodeComputer implements Runnable {
                     break;
 
                 case Opcode.INPUT:
-                    long input = input();
+                    long input = readInput();
                     mem(pos[0], input);
                     position += opcode.values;
                     if (diagnostics)
@@ -142,15 +152,21 @@ public class IntcodeComputer implements Runnable {
 
                 case Opcode.JUMP_IF_TRUE:
                     position = (mem(pos[0]) != 0 ? mem(pos[1]) : position + opcode.values);
+                    if (diagnostics)
+                        System.out.println("Jump if true: " + mem(pos[0]));
                     break;
 
                 case Opcode.JUMP_IF_FALSE:
                     position = (mem(pos[0]) == 0 ? mem(pos[1]) : position + opcode.values);
+                    if (diagnostics)
+                        System.out.println("Jump if false: " + mem(pos[0]));
                     break;
 
                 case Opcode.LESS_THAN:
                     mem(pos[2], mem(pos[0]) < mem(pos[1]) ? 1 : 0);
                     position += opcode.values;
+                    if (diagnostics)
+                        System.out.println("Less than: " + mem(pos[0]));
                     break;
 
                 case Opcode.EQUALS:
@@ -161,11 +177,15 @@ public class IntcodeComputer implements Runnable {
                     break;
 
                 case Opcode.RELATIVE_BASE:
-                    relativeBase += (int) mem(pos[0]);
+                    relativeBase += mem(pos[0]);
                     position += opcode.values;
+                    if (diagnostics)
+                        System.out.println("Relative base: " + mem(pos[0]));
                     break;
 
                 case Opcode.HALT:
+                    if (diagnostics)
+                        System.out.println("Halt");
                     return;
             }
         }

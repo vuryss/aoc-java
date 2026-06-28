@@ -72,7 +72,7 @@ public class Day7 implements SolutionInterface {
                 for (var i = 0; i < 5; i++) {
                     amplifiers[i].input(value);
                     while (!amplifiers[i].hasOutput()) {
-                        if (!amplifiers[i].isRunning()) break outer;
+                        if (!amplifiers[i].isRunning() && !amplifiers[i].hasOutput()) break outer;
                         Thread.yield();
                     }
                     value = amplifiers[i].takeSingleOutput();
