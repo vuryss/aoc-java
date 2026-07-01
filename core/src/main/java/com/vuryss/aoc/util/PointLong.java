@@ -34,12 +34,22 @@ public class PointLong {
         );
     }
 
-    public List<PointLong> getAdjacentPoints() {
-        return List.of(
+    // Top, Left, Right, Bottom to keep order line then column
+    public PointLong[] adjacentTopLeftOrder() {
+        return new PointLong[] {
+            new PointLong(x, y - 1),
             new PointLong(x - 1, y),
             new PointLong(x + 1, y),
-            new PointLong(x, y - 1),
             new PointLong(x, y + 1)
+        };
+    }
+
+    public List<PointLong> getAdjacentPoints() {
+        return List.of(
+            new PointLong(x - 1, y), // Left
+            new PointLong(x + 1, y), // Right
+            new PointLong(x, y - 1), // Top
+            new PointLong(x, y + 1)  // Bottom
         );
     }
 

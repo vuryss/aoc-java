@@ -63,10 +63,9 @@ public class IntcodeComputer implements Runnable {
         inputQueue.add(value);
     }
 
-    private long readInput() {
+    private long readInput() throws InterruptedException {
         waitingForInput.incrementAndGet();
-        try { return inputQueue.take(); }
-        catch (InterruptedException e) { Thread.currentThread().interrupt(); throw new RuntimeException(e); }
+        return inputQueue.take();
     }
 
     public boolean isWaitingForInput() {
@@ -97,8 +96,21 @@ public class IntcodeComputer implements Runnable {
         catch (InterruptedException e) { Thread.currentThread().interrupt(); throw new RuntimeException(e); }
     }
 
+    public void shutdown() {
+        if (thread == null) return;
+        thread.interrupt();
+    }
+
     @Override
     public void run() {
+        try {
+            innerRun();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    public void innerRun() throws InterruptedException {
         while (true) {
             var instruction = mem(position);
             var opcode = opcodes.get(instruction % 100);
