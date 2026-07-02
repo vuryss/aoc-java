@@ -57,6 +57,16 @@ public class StringUtil {
         return digits;
     }
 
+    public static byte[] toByteArray(String string) {
+        byte[] digits = new byte[string.length()];
+
+        for (int i = 0; i < string.length(); i++) {
+            digits[i] = (byte) (string.charAt(i) - '0');
+        }
+
+        return digits;
+    }
+
     public static String[] chunk(String string, int size) {
         int len = string.length();
         int full = len / size;
