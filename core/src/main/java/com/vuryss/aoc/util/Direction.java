@@ -1,5 +1,7 @@
 package com.vuryss.aoc.util;
 
+import org.jetbrains.annotations.NotNull;
+
 public enum Direction {
     R, L, U, D;
 
@@ -32,6 +34,7 @@ public enum Direction {
         };
     }
 
+    @NotNull
     public Direction turnLeft() {
         return switch (this) {
             case R -> U;
@@ -41,6 +44,7 @@ public enum Direction {
         };
     }
 
+    @NotNull
     public Direction turnRight() {
         return switch (this) {
             case R -> D;
@@ -50,6 +54,7 @@ public enum Direction {
         };
     }
 
+    @NotNull
     public String getChar() {
         return switch (this) {
             case R -> "R";
@@ -59,6 +64,7 @@ public enum Direction {
         };
     }
 
+    @NotNull
     public String toString() {
         return switch (this) {
             case R -> ">";

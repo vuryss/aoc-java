@@ -6,6 +6,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class IntcodeComputer implements Runnable {
+    private static final AtomicInteger computersCount = new AtomicInteger(0);
     private static final Map<Long, Opcode> opcodes = Map.of(
         1L, Opcode.ADD,
         2L, Opcode.MULTIPLY,
@@ -44,7 +45,7 @@ public class IntcodeComputer implements Runnable {
 
     public void start() {
         if (thread != null) throw new IllegalStateException("Already started");
-        thread = Thread.ofVirtual().start(this);
+        thread = Thread.ofVirtual().name("computer-"+computersCount.getAndIncrement()).start(this);
     }
 
     public void reset() {
