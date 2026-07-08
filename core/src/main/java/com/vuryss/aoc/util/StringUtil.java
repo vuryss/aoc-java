@@ -22,6 +22,21 @@ public class StringUtil {
         return characterCount;
     }
 
+    public static char[][] toCharGrid(String data) {
+        var lines = data.split("\n");
+        var height = lines.length;
+        var width = lines[0].length();
+        char[][] grid = new char[height][width];
+
+        for (var y = 0; y < height; y++) {
+            for (var x = 0; x < width; x++) {
+                grid[y][x] = lines[y].charAt(x);
+            }
+        }
+
+        return grid;
+    }
+
     public static Set<Integer> uniqueInts(String string) {
         return new HashSet<>(ints(string));
     }
