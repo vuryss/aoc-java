@@ -132,42 +132,37 @@ public class Day18 implements SolutionInterface {
         var entrance = new Node(startPosition, '@');
         entrance.buildPaths(grid);
 
-        var queue = new PriorityQueue<>(Comparator.comparingInt(StepPart1::steps));
-        queue.add(new StepPart1(entrance, 0, 0));
+        var nodeKeysMinSteps = new HashMap<NodeKeys, Integer>();
+        var queue = new PriorityQueue<>(Comparator.comparingInt(NodeKeysSteps::steps));
+        var nodeKeys = new NodeKeys(entrance, 0);
+        nodeKeysMinSteps.put(nodeKeys, 0);
+        queue.add(new NodeKeysSteps(nodeKeys, 0));
 
         var min = Integer.MAX_VALUE;
-        var foundSteps = new HashMap<SeenState, Integer>();
         var allKeys = (1 << keys.size()) - 1;
 
         while (!queue.isEmpty()) {
             var state = queue.poll();
 
-            for (var next: state.node.doorsToKey.keySet()) {
-                if ((state.keys & next) > 0) continue; // We already have this key
-                if ((state.keys & state.node.doorsToKey.get(next)) != state.node.doorsToKey.get(next)) continue;  // We don't have all keys to get there
+            if (state.steps != nodeKeysMinSteps.get(state.nodeKeys)) continue;
 
-                var newKeys = state.keys | next;
-                var newSteps = state.steps + state.node.stepsToKey.get(next);
+            for (var next: state.nodeKeys.node.doorsToKey.keySet()) {
+                if ((state.nodeKeys.keys & next) > 0) continue; // We already have this key
+                if ((state.nodeKeys.keys & state.nodeKeys.node.doorsToKey.get(next)) != state.nodeKeys.node.doorsToKey.get(next)) continue;  // We don't have all keys to get there
+
+                var newKeys = state.nodeKeys.keys | next;
+                var newSteps = state.steps + state.nodeKeys.node.stepsToKey.get(next);
+                var newNode = new NodeKeys(keys.get(next), newKeys);
 
                 if (newSteps >= min) continue;
-
+                if (newSteps >= nodeKeysMinSteps.getOrDefault(newNode, Integer.MAX_VALUE)) continue;
                 if (newKeys == allKeys) {
                     min = newSteps;
                     continue;
                 }
 
-                var checkState = new SeenState(keys.get(next).position, newKeys);
-
-                if (foundSteps.containsKey(checkState) && foundSteps.get(checkState) <= newSteps) {
-                    continue;
-                }
-
-                foundSteps.put(checkState, newSteps);
-                queue.add(new StepPart1(
-                    keys.get(next),
-                    newSteps,
-                    newKeys
-                ));
+                nodeKeysMinSteps.put(newNode, newSteps);
+                queue.add(new NodeKeysSteps(newNode, newSteps));
             }
         }
 
@@ -329,8 +324,9 @@ public class Day18 implements SolutionInterface {
         return 1 << (c >= 'a' ? c - 'a' : c - 'A');
     }
 
-    private record StepPart1(Node node, int steps, int keys) {}
-    private record SeenState(Point position, int keys) {}
+    private record NodeKeys(Node node, int keys) {}
+    private record NodeKeysSteps(NodeKeys nodeKeys, int steps) {}
+
     private record StepPart2(Map<Character, Node> nodes, int steps, int keys) {
         public Set<Point> points() {
             var points = new HashSet<Point>();
