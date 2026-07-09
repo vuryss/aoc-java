@@ -210,49 +210,46 @@ public class Day18 implements SolutionInterface {
         robotC.buildPaths(grid);
         robotD.buildPaths(grid);
 
-        var queue = new PriorityQueue<>(Comparator.comparingInt(StepPart2::steps));
-        queue.add(new StepPart2(Map.of('A', robotA, 'B', robotB, 'C', robotC, 'D', robotD), 0, 0));
+        var nodesKeysMinSteps = new HashMap<NodesKeys, Integer>();
+        var queue = new PriorityQueue<>(Comparator.comparingInt(NodesKeysSteps::steps));
+        var nodesKeys = new NodesKeys(Set.of(robotA, robotB, robotC, robotD), 0);
+        nodesKeysMinSteps.put(nodesKeys, 0);
+        queue.add(new NodesKeysSteps(nodesKeys, 0));
 
         var min = Integer.MAX_VALUE;
-        var seenStates = new HashMap<SeenState2, Integer>();
         var allKeys = (1 << keys.size()) - 1;
 
         while (!queue.isEmpty()) {
-            var step = queue.poll();
+            var nks = queue.poll();
 
-            for (var entrySet: step.nodes.entrySet()) {
-                for (var next: entrySet.getValue().doorsToKey.keySet()) {
-                    if ((step.keys & next) > 0) continue; // We already have this key
-                    if ((step.keys & entrySet.getValue().doorsToKey.get(next)) != entrySet.getValue().doorsToKey.get(next)) continue;  // We don't have all keys to get there
+            if (nks.steps != nodesKeysMinSteps.get(nks.nodesKeys)) continue;
 
-                    var newKeys = step.keys | next;
-                    var newSteps = step.steps + entrySet.getValue().stepsToKey.get(next);
+            for (var node: nks.nodesKeys.nodes) {
+                for (var next: node.doorsToKey.keySet()) {
+                    if ((nks.nodesKeys.keys & next) > 0) continue; // We already have this key
+                    if ((nks.nodesKeys.keys & node.doorsToKey.get(next)) != node.doorsToKey.get(next)) continue;  // We don't have all keys to get there
+
+                    var newKeys = nks.nodesKeys.keys | next;
+                    var newSteps = nks.steps + node.stepsToKey.get(next);
+                    var newNodes = new HashSet<>(nks.nodesKeys.nodes);
+                    newNodes.remove(node);
+                    newNodes.add(keys.get(next));
+                    var newNodesKeys = new NodesKeys(newNodes, newKeys);
 
                     if (newSteps >= min) continue;
-
+                    if (newSteps >= nodesKeysMinSteps.getOrDefault(newNodesKeys, Integer.MAX_VALUE)) continue;
                     if (newKeys == allKeys) {
                         min = newSteps;
                         continue;
                     }
 
-                    var newNodes = new HashMap<>(step.nodes);
-                    newNodes.put(entrySet.getKey(), keys.get(next));
-
-                    var newStep = new StepPart2(newNodes, newSteps, newKeys);
-                    var checkState = new SeenState2(newStep.points(), newKeys);
-
-                    if (seenStates.containsKey(checkState) && seenStates.get(checkState) <= newSteps) {
-                        continue;
-                    }
-
-                    seenStates.put(checkState, newSteps);
-                    queue.add(newStep);
+                    nodesKeysMinSteps.put(newNodesKeys, newSteps);
+                    queue.add(new NodesKeysSteps(newNodesKeys, newSteps));
                 }
             }
         }
 
         return min + "";
-//        return "";
     }
 
     private class Node {
@@ -327,12 +324,6 @@ public class Day18 implements SolutionInterface {
     private record NodeKeys(Node node, int keys) {}
     private record NodeKeysSteps(NodeKeys nodeKeys, int steps) {}
 
-    private record StepPart2(Map<Character, Node> nodes, int steps, int keys) {
-        public Set<Point> points() {
-            var points = new HashSet<Point>();
-            nodes.forEach((ch, node) -> points.add(node.position));
-            return points;
-        }
-    }
-    private record SeenState2(Set<Point> points, int keys) {}
+    private record NodesKeys(Set<Node> nodes, int keys) {}
+    private record NodesKeysSteps(NodesKeys nodesKeys, int steps) {}
 }
