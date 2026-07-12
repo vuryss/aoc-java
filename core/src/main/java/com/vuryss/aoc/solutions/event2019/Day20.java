@@ -189,9 +189,6 @@ public class Day20 implements SolutionInterface {
                         continue;
                     }
 
-                    Objects.requireNonNull(portName, "port name is null");
-                    Objects.requireNonNull(arrivalsLoc, "grid location is null");
-
                     if (portMap.containsKey(portName)) {
                         var targetPort = portMap.get(portName);
                         var port = new Port(location, arrivalsLoc, targetPort.arrivalLocation, isOuter(location, grid));
@@ -212,14 +209,18 @@ public class Day20 implements SolutionInterface {
 
     private Map<Point, List<Edge>> linkNodes(Data data) {
         var nodes = new HashMap<Point, List<Edge>>();
-        var waiting = new ArrayList<Point>();
+        var waiting = new ArrayDeque<Point>();
         var calculated = new HashSet<Point>();
         waiting.add(data.start);
+        calculated.add(data.start);
 
         while (!waiting.isEmpty()) {
             var queue = new ArrayDeque<State>();
             var visited = new HashSet<Point>();
             var fromPoint = waiting.removeFirst();
+            var edges = new ArrayList<Edge>();
+
+            nodes.put(fromPoint, edges);
             visited.add(fromPoint);
             queue.add(new State(fromPoint, 0));
 
@@ -228,15 +229,11 @@ public class Day20 implements SolutionInterface {
 
                 for (var next: state.location.getAdjacentPoints()) {
                     if (next.equals(data.end)) {
-                        var edges = nodes.getOrDefault(fromPoint, new ArrayList<>());
-
                         edges.add(new Edge(data.end, state.steps + 1, 0));
-                        nodes.put(fromPoint, edges);
                         continue;
                     }
 
-                    if (data.grid[next.y][next.x] == '.' && !visited.contains(next)) {
-                        visited.add(next);
+                    if (data.grid[next.y][next.x] == '.' && visited.add(next)) {
                         queue.add(new State(next, state.steps + 1));
                         continue;
                     }
@@ -245,14 +242,11 @@ public class Day20 implements SolutionInterface {
                         var port = data.ports.get(next);
                         var portTarget = port.departureLocation;
                         var levelChange = port.outer ? -1 : 1;
-                        var edges = nodes.getOrDefault(fromPoint, new ArrayList<>());
 
                         edges.add(new Edge(portTarget, state.steps + 1, levelChange));
-                        nodes.put(fromPoint, edges);
 
-                        if (!calculated.contains(port.departureLocation)) {
-                            waiting.add(port.departureLocation);
-                            calculated.add(port.departureLocation);
+                        if (calculated.add(port.departureLocation)) {
+                            waiting.addLast(port.departureLocation);
                         }
                     }
                 }
