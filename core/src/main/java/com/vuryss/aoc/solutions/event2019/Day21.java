@@ -25,23 +25,13 @@ public class Day21 implements SolutionInterface {
 
         computer.start();
 
-//        String instructions = """
-//            NOT C J // J = true if 3rd hole
-//            OR D T // T = true if 4th ground
-//            AND T J // J = true if (3rd hole && 4th ground)
-//            NOT A T // T = true if 1st hole
-//            OR T J // J = true if (3rd hole && 4th ground) or 1st hole
-//            WALK
-//            """;
-
-        String instructions = """
-            NOT C J
-            OR D T
-            AND T J
-            NOT A T
-            OR T J
-            WALK
-            """;
+        String instructions =
+            "NOT C J\n" + // Jump if the third tile ahead is a hole
+            "OR D T\n"  + // Store whether the fourth tile ahead is ground
+            "AND T J\n" + // Jump if the third tile is a hole and the fourth tile is ground
+            "NOT A T\n" + // Store whether the first tile ahead is a hole
+            "OR T J\n"  + // Jump if the first tile is a hole, or if the third tile is a hole and the fourth tile is ground
+            "WALK\n";
 
         for (var ch: instructions.toCharArray()) computer.input(ch);
         while (computer.isRunning()) while (computer.hasOutput()) result = computer.takeSingleOutput();
@@ -56,33 +46,18 @@ public class Day21 implements SolutionInterface {
 
         computer.start();
 
-//        String instructions = """
-//            NOT A T // T = true if 1st = hole
-//            NOT B J // J = true if 2nd = hole
-//            OR T J // J = true if (1st hole || 2nd hole)
-//            NOT C T // T = true if 3rd = hole
-//            OR T J // J = true if (1st hole || 2nd hole || 3rd hole)
-//            AND D J // J = true if (1st hole || 2nd hole || 3rd hole) && 4th ground
-//            NOT E T // T = true if 5th hole
-//            NOT T T // T = true if 5th ground
-//            OR H T // T = true if (5th ground || 8th ground)
-//            AND T J // J = true if (1st hole || 2nd hole || 3rd hole) && 4th ground && (5th ground || 8th ground)
-//            RUN
-//            """;
-
-        String instructions = """
-            NOT A T
-            NOT B J
-            OR T J
-            NOT C T
-            OR T J
-            AND D J
-            NOT E T
-            NOT T T
-            OR H T
-            AND T J
-            RUN
-            """;
+        String instructions =
+            "NOT A T\n" + // Store whether the first tile ahead is a hole
+            "NOT B J\n" + // Jump if the second tile ahead is a hole
+            "OR T J\n"  + // Jump if either the first or the second tile ahead is a hole
+            "NOT C T\n" + // Store whether the third tile ahead is a hole
+            "OR T J\n"  + // Jump if any of the first three tiles ahead is a hole
+            "AND D J\n" + // Jump only if the fourth tile ahead, where the droid will land, is ground
+            "NOT E T\n" + // Store whether the fifth tile ahead is a hole
+            "NOT T T\n" + // Invert the temporary register so it indicates whether the fifth tile is ground
+            "OR H T\n"  + // Continue only if the fifth or the eighth tile ahead is ground
+            "AND T J\n" + // Jump if there is a hole within the first three tiles, the landing tile is ground, and the droid can continue afterwards
+            "RUN\n";
 
         for (var ch: instructions.toCharArray()) computer.input(ch);
         while (computer.isRunning()) while (computer.hasOutput()) result = computer.takeSingleOutput();
