@@ -3,6 +3,16 @@ package com.vuryss.aoc.util;
 public enum CompassDirection {
     N, E, S, W, NE, SE, SW, NW;
 
+    public static CompassDirection tryFromString(String direction) {
+        return switch (direction) {
+            case "north" -> N;
+            case "east" -> E;
+            case "west" -> W;
+            case "south" -> S;
+            default -> null;
+        };
+    }
+
     public static CompassDirection fromChar(char c) {
         return switch (c) {
             case 'N' -> N;
@@ -49,6 +59,19 @@ public enum CompassDirection {
             case SE -> SW;
             case SW -> NW;
             case NW -> NE;
+        };
+    }
+
+    public String toWord() {
+        return switch (this) {
+            case N -> "north";
+            case E -> "east";
+            case S -> "south";
+            case W -> "west";
+            case NE -> "ne";
+            case SE -> "se";
+            case SW -> "sw";
+            case NW -> "nw";
         };
     }
 }

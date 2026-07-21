@@ -14,6 +14,12 @@ public class Regex {
         return m.find() ? m.group() : null;
     }
 
+    public static String matchFirstGroup(String regex, String input) {
+        var m = Pattern.compile(regex).matcher(input);
+
+        return m.find() ? m.group(1) : null;
+    }
+
     public static List<String> matchAll(String regex, String input) {
         var p = Pattern.compile(regex);
 
