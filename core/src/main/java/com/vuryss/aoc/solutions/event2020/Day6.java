@@ -7,7 +7,6 @@ import java.lang.Override;
 import java.lang.String;
 import java.lang.SuppressWarnings;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Map;
 
 @SuppressWarnings("unused")
@@ -43,11 +42,9 @@ public class Day6 implements SolutionInterface {
             sum += Arrays.stream(group.split("\n"))
                 .map(StringUtil::tally)
                 .map(Map::keySet)
-                .reduce((a, b) -> {
-                    var common = new HashSet<>(a);
-                    common.retainAll(b);
-                    return common;
-                }).get().size();
+                .reduce((a, b) -> { a.retainAll(b); return a; })
+                .get()
+                .size();
         }
 
         return sum + "";
