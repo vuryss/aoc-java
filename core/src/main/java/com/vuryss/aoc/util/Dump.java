@@ -68,4 +68,18 @@ public final class Dump {
             System.out.println();
         }
     }
+
+    public static void dumpGrid(char[][] grid) {
+        var minx = 0;
+        var maxx = grid.length;
+        var miny = 0;
+        var maxy = grid[0].length;
+
+        for (var y = miny; y < maxy; y++) {
+            for (var x = minx; x < maxx; x++) {
+                System.out.print(grid[y][x]);
+            }
+            System.out.println();
+        }
+    }
 }

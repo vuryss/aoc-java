@@ -3,6 +3,18 @@ package com.vuryss.aoc.util;
 import java.util.List;
 
 public class GridUtil {
+    public static int[][] SURROUNDING_DELTAS = new int[][] {
+        // y, x
+        {-1, -1}, // UP LEFT
+        {-1,  0}, // UP
+        {-1,  1}, // UP RIGHT
+        { 0, -1}, // LEFT
+        { 0,  1}, // RIGHT
+        { 1, -1}, // DOWN LEFT
+        { 1,  0}, // DOWN
+        { 1,  1}, // DOWN RIGHT
+    };
+
     public static Point[] rectanglePerimeter(int x, int y, int width, int height) {
         var points = new Point[width * 2 + height * 2 - 4];
         var index = 0;
