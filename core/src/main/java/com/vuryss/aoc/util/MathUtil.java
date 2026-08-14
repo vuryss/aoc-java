@@ -24,6 +24,10 @@ public class MathUtil {
         return lcm(List.copyOf(numbers));
     }
 
+    public static long lcm(long a, long b) {
+        return ArithmeticUtils.lcm(a, b);
+    }
+
     public static long gcd(long a, long b) {
         a = Math.abs(a);
         b = Math.abs(b);
