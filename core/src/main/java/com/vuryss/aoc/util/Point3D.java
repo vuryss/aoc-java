@@ -19,14 +19,31 @@ public class Point3D implements Cloneable {
         return new Point3D(x - delta.x, y - delta.y, z - delta.z);
     }
 
+    public Point3D min(Point3D other) {
+        return new Point3D(Math.min(x, other.x), Math.min(y, other.y), Math.min(z, other.z));
+    }
+
+    public Point3D max(Point3D other) {
+        return new Point3D(Math.max(x, other.x), Math.max(y, other.y), Math.max(z, other.z));
+    }
+
+    public Point3D[] surrounding() {
+        var deltas = Util.getSurroundingDeltas3d();
+        var surrounding = new Point3D[deltas.length];
+
+        for (var i = 0; i < deltas.length; i++) {
+            surrounding[i] = new Point3D(x + deltas[i][0], y + deltas[i][1], z + deltas[i][2]);
+        }
+
+        return surrounding;
+    }
+
     @Override
     public int hashCode() {
         int hashCode = 1;
-
-        hashCode += 31 * hashCode + x.hashCode();
-        hashCode += 31 * hashCode + y.hashCode();
-        hashCode += 31 * hashCode + z.hashCode();
-
+        hashCode = 31 * hashCode + x.hashCode();
+        hashCode = 31 * hashCode + y.hashCode();
+        hashCode = 31 * hashCode + z.hashCode();
         return hashCode;
     }
 

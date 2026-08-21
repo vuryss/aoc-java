@@ -1,19 +1,23 @@
 package com.vuryss.aoc.util;
 
-import lombok.EqualsAndHashCode;
+public record Point4D(long x, long y, long z, long w) {
+    public Point4D[] surrounding() {
+        var deltas = Util.getSurroundingDeltas4d();
+        var surrounding = new Point4D[deltas.length];
 
-@EqualsAndHashCode
-public class Point4D {
-    public long x;
-    public long y;
-    public long z;
-    public long w;
+        for (var i = 0; i < deltas.length; i++) {
+            surrounding[i] = new Point4D(x + deltas[i][0], y + deltas[i][1], z + deltas[i][2], w + deltas[i][3]);
+        }
 
-    public Point4D(long x, long y, long z, long w) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.w = w;
+        return surrounding;
+    }
+
+    public Point4D min(Point4D other) {
+        return new Point4D(Math.min(x, other.x), Math.min(y, other.y), Math.min(z, other.z), Math.min(w, other.w));
+    }
+
+    public Point4D max(Point4D other) {
+        return new Point4D(Math.max(x, other.x), Math.max(y, other.y), Math.max(z, other.z), Math.max(w, other.w));
     }
 
     public long manhattanDistance(Point4D point) {

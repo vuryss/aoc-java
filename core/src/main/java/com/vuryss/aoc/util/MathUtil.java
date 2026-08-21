@@ -3,9 +3,7 @@ package com.vuryss.aoc.util;
 import org.apache.commons.math3.util.ArithmeticUtils;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class MathUtil {
     public record QuadraticRoots(double one, double two) {}
@@ -72,6 +70,26 @@ public class MathUtil {
                 factors.add(n / i);
             }
         }
+
+        return factors;
+    }
+
+    public static List<Long> primeFactors(long n) {
+        var factors = new ArrayList<Long>();
+
+        while (n % 2 == 0) {
+            factors.add(2L);
+            n /= 2;
+        }
+
+        for (long p = 3; p <= n / p; p += 2) {
+            while (n % p == 0) {
+                factors.add(p);
+                n /= p;
+            }
+        }
+
+        if (n > 1) factors.add(n);
 
         return factors;
     }
