@@ -55,6 +55,15 @@ public enum Direction {
     }
 
     @NotNull
+    public Direction flipHorizontally() {
+        return switch (this) {
+            case U, D -> this;
+            case L -> R;
+            case R -> L;
+        };
+    }
+
+    @NotNull
     public String getChar() {
         return switch (this) {
             case R -> "R";

@@ -50,4 +50,16 @@ public class ArrayUtil {
 
         return maxIndex;
     }
+
+    public static char[] reverse(char[] array) {
+        var reversed = array.clone();
+
+        for (int i = 0, j = reversed.length - 1; i < j; i++, j--) {
+            char tmp = reversed[i];
+            reversed[i] = reversed[j];
+            reversed[j] = tmp;
+        }
+
+        return reversed;
+    }
 }

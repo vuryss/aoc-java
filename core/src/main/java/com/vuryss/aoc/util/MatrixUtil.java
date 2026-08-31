@@ -44,6 +44,20 @@ public class MatrixUtil {
         return flipped;
     }
 
+    public static char[][] flipVertically(char[][] matrix) {
+        var n = matrix.length;
+        var m = matrix[0].length;
+        var flipped = new char[n][m];
+
+        for (var i = 0; i < n; i++) {
+            for (var j = 0; j < m; j++) {
+                flipped[i][j] = matrix[n - 1 - i][j];
+            }
+        }
+
+        return flipped;
+    }
+
     public static int[] flatten(int[][] matrix) {
         var n = matrix.length;
         var m = matrix[0].length;
