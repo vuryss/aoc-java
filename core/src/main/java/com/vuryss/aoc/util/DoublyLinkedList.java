@@ -28,12 +28,30 @@ public class DoublyLinkedList<T> {
         return newNode;
     }
 
+    public DoublyLinkedList<T> insertNext(DoublyLinkedList<T> next) {
+        next.next = this.next;
+        next.previous = this;
+
+        this.next.previous = next;
+        this.next = next;
+
+        return next;
+    }
+
     public DoublyLinkedList<T> removePrevious() {
         var prev = this.previous;
         prev.previous.next = this;
         this.previous = prev.previous;
 
         return prev;
+    }
+
+    public DoublyLinkedList<T> removeNext() {
+        var next = this.next;
+        this.next = next.next;
+        this.next.previous = this;
+
+        return next;
     }
 
     public DoublyLinkedList<T> forward(int steps) {
