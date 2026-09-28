@@ -1,7 +1,7 @@
 package com.vuryss.aoc.solutions.event2017;
 
 import com.vuryss.aoc.solutions.SolutionInterface;
-import com.vuryss.aoc.util.HexDirection;
+import com.vuryss.aoc.util.FlatTopHexDirection;
 import com.vuryss.aoc.util.PointHex;
 
 import java.lang.Override;
@@ -29,7 +29,7 @@ public class Day11 implements SolutionInterface {
 
     @Override
     public String part1Solution(String input, boolean isTest) {
-        var directions = Arrays.stream(input.trim().split(",")).map(HexDirection::from).toList();
+        var directions = Arrays.stream(input.trim().split(",")).map(FlatTopHexDirection::from).toList();
         var start = new PointHex(0, 0, 0);
         var position = start;
 
@@ -42,7 +42,7 @@ public class Day11 implements SolutionInterface {
 
     @Override
     public String part2Solution(String input, boolean isTest) {
-        var directions = Arrays.stream(input.trim().split(",")).map(HexDirection::from).toList();
+        var directions = Arrays.stream(input.trim().split(",")).map(FlatTopHexDirection::from).toList();
         var start = new PointHex(0, 0, 0);
         var position = start;
         var max = 0L;

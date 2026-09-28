@@ -1,9 +1,9 @@
 package com.vuryss.aoc.util;
 
-public enum HexDirection {
+public enum FlatTopHexDirection {
     N, NE, SE, S, SW, NW;
 
-    public static HexDirection from(String direction) {
+    public static FlatTopHexDirection from(String direction) {
         return switch (direction) {
             case "n" -> N;
             case "ne" -> NE;
@@ -11,7 +11,8 @@ public enum HexDirection {
             case "s" -> S;
             case "sw" -> SW;
             case "nw" -> NW;
-            default -> throw new IllegalArgumentException("Invalid direction");
+            default -> throw new IllegalArgumentException("Invalid direction: " + direction);
         };
     }
 }
+
