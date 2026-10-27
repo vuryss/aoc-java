@@ -120,7 +120,7 @@ public class WholeEventDisplay implements AutoCloseable {
                     : "◆ COMPUTED · DOWNLOADING ANSWERS";
 
                 case VALID -> testMode ? "✓ PASSED" : "✓ CORRECT";
-                case INVALID -> testMode ? "✗ FAILED" : "✗ WRONG";
+                case INVALID -> (testMode ? "✗ FAILED" : "✗ WRONG") + " (expected: " + state.expectedResult() + ")";
                 case UNAVAILABLE -> testMode ? "? NO TESTS" : "? NO ANSWER";
                 case ERROR -> testMode ? "! TEST ERROR" : "! VALIDATION ERROR";
             };
