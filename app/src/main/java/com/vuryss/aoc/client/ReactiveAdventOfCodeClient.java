@@ -117,6 +117,11 @@ public class ReactiveAdventOfCodeClient implements AdventOfCodeClient {
                                 return Mono.just(new Answers(elements.getFirst().text(), "Merry Christmas!"));
                             }
 
+                            // Only part 1 solved
+                            if (elements.size() == 1) {
+                                return Mono.just(new Answers(elements.getFirst().text(), null));
+                            }
+
                             return Mono.error(new RuntimeException(
                                 "Cannot resolve answers for event %s day %s (found %s submitted answers)".formatted(
                                     puzzle.event(), puzzle.day(), elements.size()
