@@ -18,6 +18,7 @@ import reactor.util.context.Context;
 
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 @RequiredArgsConstructor
 public class SingleSolutionExecutor {
@@ -33,8 +34,8 @@ public class SingleSolutionExecutor {
 
     Flux<StateUpdate> executeUpdates(PuzzleDayReference puzzle, boolean validate) {
         return Flux.defer(() -> {
-            Mono<String> input = Mono.defer(() -> dataProvider.getInput(puzzle)).cache();
-            Mono<Answers> answers = Mono.defer(() -> dataProvider.getAnswers(puzzle)).cache();
+            var input = SharedDownload.of(() -> dataProvider.getInput(puzzle));
+            var answers = SharedDownload.of(() -> dataProvider.getAnswers(puzzle));
 
             return Flux.just(1, 2)
                 .flatMap(part -> runPart(new PuzzlePartReference(puzzle, part), input, answers, validate));
@@ -43,8 +44,8 @@ public class SingleSolutionExecutor {
 
     private Flux<StateUpdate> runPart(
         PuzzlePartReference part,
-        Mono<String> input,
-        Mono<Answers> answers,
+        SharedDownload<String> input,
+        SharedDownload<Answers> answers,
         boolean validate
     ) {
         return Flux
@@ -57,22 +58,15 @@ public class SingleSolutionExecutor {
                     );
                 }
 
-                Sinks.Many<StateUpdate> sink = Sinks.many().unicast().onBackpressureBuffer();
-                Consumer<Status> statusConsumer = status -> {
-                    if (status == Status.DOWNLOADING) {
-                        sink.tryEmitNext(new StateUpdate(
-                            part,
-                            state -> state.withStatus(PartState.Status.LOADING_INPUT)
-                        ));
-                    }
-                };
+                Flux<StateUpdate> loading = input.status()
+                    .filter(status -> status == Status.DOWNLOADING)
+                    .map(_ -> new StateUpdate(part, state -> state.withStatus(PartState.Status.LOADING_INPUT)));
 
                 var process = input
-                    .contextWrite(Context.of(Status.class, statusConsumer))
-                    .doOnTerminate(sink::tryEmitComplete)
+                    .value()
                     .flatMapMany(inputValue -> solvePart(solution, part, inputValue, answers, validate));
 
-                return Flux.mergeSequential(sink.asFlux(), process);
+                return Flux.mergeSequential(loading, process);
             })
             .subscribeOn(solverScheduler)
             .onErrorResume(failure -> {
@@ -87,7 +81,7 @@ public class SingleSolutionExecutor {
         SolutionInterface solution,
         PuzzlePartReference part,
         String input,
-        Mono<Answers> answers,
+        SharedDownload<Answers> answers,
         boolean validate
     ) {
         return Flux
@@ -120,20 +114,17 @@ public class SingleSolutionExecutor {
             .subscribeOn(solverScheduler);
     }
 
-    private Flux<StateUpdate> validatePart(PuzzlePartReference part, String result, Mono<Answers> answers) {
+    private Flux<StateUpdate> validatePart(PuzzlePartReference part, String result, SharedDownload<Answers> answers) {
         return Flux.defer(() -> {
-            Sinks.Many<StateUpdate> sink = Sinks.many().unicast().onBackpressureBuffer();
-
-            Consumer<Status> statusConsumer = status -> {
-                if (status == Status.DOWNLOADING) sink.tryEmitNext(new StateUpdate(
+            Flux<StateUpdate> loading = answers.status()
+                .filter(status -> status == Status.DOWNLOADING)
+                .map(_ -> new StateUpdate(
                     part,
                     state -> state.withValidation(PartState.ValidationStatus.LOADING_EXPECTED_RESULT, null, null)
                 ));
-            };
 
             var validation = answers
-                .contextWrite(Context.of(Status.class, statusConsumer))
-                .doOnTerminate(sink::tryEmitComplete)
+                .value()
                 .map(ans -> {
                     var answer = part.part() == 1 ? ans.part1() : ans.part2();
                     var validationStatus = answer == null
@@ -153,9 +144,23 @@ public class SingleSolutionExecutor {
                     ));
                 });
 
-            return Flux.mergeSequential(sink.asFlux(), validation);
+            return Flux.mergeSequential(loading, validation);
         });
     }
 
     private record Solved(String result, long finishedAtNs) {}
+
+    private record SharedDownload<T>(Mono<T> value, Flux<Status> status) {
+        static <T> SharedDownload<T> of(Supplier<Mono<T>> source) {
+            Sinks.Many<Status> status = Sinks.many().replay().latest();
+            Consumer<Status> onStatus = status::tryEmitNext;
+
+            Mono<T> value = Mono.defer(source)
+                .contextWrite(Context.of(Status.class, onStatus))
+                .doFinally(_ -> status.tryEmitComplete())
+                .cache();
+
+            return new SharedDownload<>(value, status.asFlux());
+        }
+    }
 }
