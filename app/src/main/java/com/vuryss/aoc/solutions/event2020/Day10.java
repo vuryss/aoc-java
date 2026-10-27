@@ -9,7 +9,7 @@ import java.util.Map;
 
 @SuppressWarnings("unused")
 public class Day10 implements SolutionInterface {
-    private final static HashMap<Integer, Long> cache = new HashMap<>();
+    private final HashMap<Integer, Long> cache = new HashMap<>();
 
     @Override
     public Map<String, String> part1Tests() {

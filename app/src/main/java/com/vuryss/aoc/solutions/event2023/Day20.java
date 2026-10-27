@@ -38,7 +38,7 @@ public class Day20 implements SolutionInterface {
         return Map.of("", "");
     }
 
-    public static HashMap<String, Long> tracker = new HashMap<>();
+    public HashMap<String, Long> tracker = new HashMap<>();
 
     @Override
     public String part1Solution(String input, boolean isTest) {
@@ -109,8 +109,8 @@ public class Day20 implements SolutionInterface {
                 }
             }
 
-            if (Day20.tracker.size() == trackedConjunctions.size()) {
-                return String.valueOf(MathUtil.lcm(Day20.tracker.values()));
+            if (tracker.size() == trackedConjunctions.size()) {
+                return String.valueOf(MathUtil.lcm(tracker.values()));
             }
         }
 
@@ -151,7 +151,7 @@ public class Day20 implements SolutionInterface {
         return modules;
     }
 
-    private static class Module {
+    private class Module {
         public long sentLowPulses = 0;
         public long sentHighPulses = 0;
         public final String name;
@@ -206,7 +206,7 @@ public class Day20 implements SolutionInterface {
                     outputs.forEach(output -> output.sendPulse(this, hasLow));
 
                     if (hasLow && this.track) {
-                        Day20.tracker.put(this.name, counter);
+                        tracker.put(this.name, counter);
                     }
                 }
             }
