@@ -30,13 +30,9 @@ public class RichTerminalOutput implements OutputInterface {
                     var executor = new SingleSolutionTestExecutor(solverScheduler, output);
 
                     Flux
-                        .combineLatest(
-                            Flux.interval(Duration.ofMillis(100)).onBackpressureLatest().startWith(0L),
-                            executor.execute(puzzle),
-                            (_, tests) -> tests
-                        )
+                        .interval(Duration.ZERO, Duration.ofMillis(100), renderScheduler)
+                        .withLatestFrom(executor.execute(puzzle), (_, state) -> state)
                         .takeUntil(tests -> tests.stream().allMatch(test -> test.state().isFinished()))
-                        .publishOn(renderScheduler)
                         .doOnNext(display::renderTests)
                         .blockLast();
 
@@ -46,13 +42,9 @@ public class RichTerminalOutput implements OutputInterface {
                 var executor = new SingleSolutionExecutor(generateDataProvider.apply(output), solverScheduler, output);
 
                 Flux
-                    .combineLatest(
-                        Flux.interval(Duration.ofMillis(100)).onBackpressureLatest().startWith(0L),
-                        executor.execute(puzzle, validate),
-                        (_, dayState) -> dayState
-                    )
+                    .interval(Duration.ZERO, Duration.ofMillis(100), renderScheduler)
+                    .withLatestFrom(executor.execute(puzzle, validate), (_, state) -> state)
                     .takeUntil(DayState::isFinished)
-                    .publishOn(renderScheduler)
                     .doOnNext(display::render)
                     .blockLast();
             }
@@ -77,14 +69,9 @@ public class RichTerminalOutput implements OutputInterface {
                     : executor.execute(event, generateDataProvider.apply(output), validate);
 
                 Flux
-                    .combineLatest(
-                        Flux.interval(Duration.ofMillis(100)).onBackpressureLatest().startWith(0L),
-                        execution,
-                        (_, eventState) -> eventState
-                    )
+                    .interval(Duration.ZERO, Duration.ofMillis(100), renderScheduler)
+                    .withLatestFrom(execution, (_, state) -> state)
                     .takeUntil(EventState::isFinished)
-                    .onBackpressureLatest()
-                    .publishOn(renderScheduler)
                     .doOnNext(display::render)
                     .blockLast();
             }
