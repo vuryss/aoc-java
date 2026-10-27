@@ -1,28 +1,19 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-# Build the project quietly using Gradle.
-# --quiet suppresses most build output.
-# -x test skips the test task.
-./gradlew build --quiet -x test
+cd "$(dirname "$0")"
 
-# Check if the build failed. If so, exit.
-if [ $? -ne 0 ]; then
-    echo "Build failed! Run './gradlew build' manually to see errors." >&2
+interface_file="$(find . -type f -path '*/src/main/java/*/SolutionInterface.java')"
+
+if [[ -z "$interface_file" || "$interface_file" == *$'\n'* ]]; then
+    printf '%s\n' 'Expected exactly one SolutionInterface.java' >&2
     exit 1
 fi
 
-# Check for.env file and load it if it exists. This makes the variables
-# available to the Java process we are about to start.
-if [ -f.env ]; then
-  # The 'set -a' command marks variables for export.
-  # 'source' executes the.env file in the current shell context.
-  # 'set +a' stops the automatic export.
-  set -a
-  source .env
-  set +a
-fi
+source_root="${interface_file%%/src/main/java/*}/src/main/java"
 
-# Execute the application's JAR file using Java.
-# Note the path is build/quarkus-app/ for Gradle.
-# All arguments passed to this script ($@) are forwarded to the app.
-java -Dquarkus.log.console.enable=false -jar cli/build/cli-1.0-runner.jar scaffold "$@"
+./gradlew :app:shadowJar
+
+exec java --enable-native-access=ALL-UNNAMED \
+    -jar app/build/libs/app-all.jar \
+    scaffold --source-root "$source_root" "$@"

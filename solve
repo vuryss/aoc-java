@@ -1,41 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -e
 
-# Parse command line arguments to check for --profile flag
-PROFILE_ARGS=""
-APP_ARGS=()
+cd "$(dirname "$0")"
 
-for arg in "$@"; do
-    if [ "$arg" = "--profile" ]; then
-        PROFILE_ARGS="-XX:StartFlightRecording=duration=60s,filename=profile.jfr"
-    else
-        APP_ARGS+=("$arg")
-    fi
-done
+./gradlew :app:shadowJar
 
-# Build the project quietly using Gradle.
-# --quiet suppresses most build output.
-# -x test skips the test task.
-./gradlew cli:quarkusBuild --quiet -x test
-
-# Check if the build failed. If so, exit.
-if [ $? -ne 0 ]; then
-    echo "Build failed! Run './gradlew cli:build' manually to see errors." >&2
-    exit 1
-fi
-
-# Check for.env file and load it if it exists. This makes the variables
-# available to the Java process we are about to start.
-if [ -f.env ]; then
-  # The 'set -a' command marks variables for export.
-  # 'source' executes the.env file in the current shell context.
-  # 'set +a' stops the automatic export.
-  set -a
-  source .env
-  set +a
-fi
-
-# Execute the application's JAR file using Java.
-# Note the path is build/quarkus-app/ for Gradle.
-# All arguments (except --profile) are forwarded to the app.
-java $PROFILE_ARGS -Dquarkus.log.console.enable=false -Xss8m -jar cli/build/cli-1.0-runner.jar solve "${APP_ARGS[@]}"
-#java $PROFILE_ARGS -Dquarkus.log.level=DEBUG -Xss16m -jar cli/build/cli-1.0-runner.jar solve "${APP_ARGS[@]}"
+exec java --enable-native-access=ALL-UNNAMED \
+    -jar app/build/libs/app-all.jar \
+    solve "$@"

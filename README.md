@@ -1,108 +1,54 @@
 # Advent of Code solutions in Java
 
-## Connect your AoC account
+Run solutions, check built-in examples, and generate new solution classes.
 
-Copy `.env.dist` to `.env` and set your Advent of Code session cookie value in `SESSION_TOKEN` (after logging in to AoC). This enables the CLI to download inputs and validate answers. Test runs and stdin mode do not require network access.
+Requires **JDK 25** and **Bash** (if you wanna use shortcut commands). Run the shortcuts from the repository root; they build the application automatically.
 
-## CLI usage
-
-Two scripts are provided at the repository root:
-- `./solve` — runs the CLI normally
-- `./debug` — runs the CLI in Quarkus dev mode with the JVM suspended, waiting for a debugger to attach (port 5005)
-
-Both scripts accept the same parameters shown below; `debug` only changes how the app starts (for debugging).
-
-### Common examples
+For personal inputs, answer validation, and scaffolding, set your Advent of Code `session` cookie from your logged-in browser:
 
 ```bash
-# 1) Run a single day with your AoC input
-./solve -y 2023 -d 1
-
-# 2) Run a single day using built‑in test data (no AoC account needed)
-./solve -y 2022 -d 13 -t
-
-# 3) Run an entire year with your AoC input
-./solve -y 2021
+export SESSION_TOKEN="your-session-cookie"
 ```
 
-Tip: You can also provide input via stdin for a single day:
-```bash
-echo "<your input>" | ./solve -y 2020 -d 10 -i
-```
-
-### Parameters for `solve` and `debug`
-
-Below are the supported parameters. All are optional; omit `--year` and `--day` to run all released events and all days (1–25).
-
-- Year (`-y`, `--year`)
-  - Type: integer
-  - Required: no
-  - Default: all released years (2015..current year; excludes current year if it’s not December)
-  - Purpose: Select which event year(s) to run
-  - Example: `./solve -y 2023`
-
-- Day (`-d`, `--day`)
-  - Type: integer (1..25)
-  - Required: no
-  - Default: all days (1..25)
-  - Purpose: Select which day(s) to run; if year is omitted, runs that day across all released years
-  - Example: `./solve -d 5`
-
-- Test mode (`-t`, `--test`)
-  - Type: flag (boolean)
-  - Required: no
-  - Default: false
-  - Purpose: Run built-in test cases instead of your AoC input
-  - Example: `./solve -y 2022 -d 13 -t`
-
-- Validate (`-v`, `--validate`)
-  - Type: flag (boolean)
-  - Required: no
-  - Default: false
-  - Purpose: Validate answers of already completed puzzles using AoC
-  - Example: `./solve -y 2021 -d 12 -v`
-
-- Overwrite cache (`-c`, `--overwrite-cache`)
-  - Type: flag (boolean)
-  - Required: no
-  - Default: false
-  - Purpose: Ignore local cache and re-download AoC input and answers
-  - Example: `./solve -y 2019 -c`
-
-- Read input from stdin (`-i`, `--input-from-stdin`)
-  - Type: flag (boolean)
-  - Required: no (only valid when a single year and single day are specified)
-  - Default: false
-  - Purpose: Provide puzzle input via stdin; useful for ad-hoc runs or CI
-  - Example: `echo "..." | ./solve -y 2020 -d 10 -i`
-
-### Debugging
-
-Use the `./debug` script with the same parameters as `./solve`:
+You can also set `SESSION_TOKEN` in a `.env` file at the repository root.
 
 ```bash
-./debug -y 2023 -d 1
+./solve 2015 1       # Run a day with your puzzle input
+./solve 2015 1 -t    # Run its built-in examples (no session needed)
+./solve 2015         # Run an entire year
+./solve --help      # Show all options
 ```
 
-Then attach your IDE’s Remote JVM Debug to localhost:5005.
+Omit both year and day to run all supported years. Inputs are cached automatically.
 
-### Running tests on the API
+| Option | Purpose |
+| --- | --- |
+| `-v`, `--validate` | Check results against your previously submitted answers |
+| `-j`, `--json-output` | Print results as JSON |
+| `--fresh-data` | Download fresh inputs and answers, ignoring cached values |
+| `--no-cache` | Skip cache reads and writes |
+
+Provide your own input for a single day without a session cookie:
 
 ```bash
-./gradlew test --rerun
+./solve 2015 1 -i < input.txt
+./solve 2015 1 -i --input '()())'
 ```
 
-## Scaffolding a solution
-
-Generate a solution class skeleton for a specific year and day:
+Generate a solution template, including the puzzle description:
 
 ```bash
-./scaffold 2023 1
+./scaffold 2025 1
 ```
 
----
-This repo follows the automation guidelines on the /r/adventofcode community wiki: https://www.reddit.com/r/adventofcode/wiki/faqs/automation
+This creates `event2025/Day1.java` under `app/src/main/java/com/vuryss/aoc/solutions/`.
 
-- Once inputs are downloaded, they are cached locally
-- If you suspect your input is corrupted, you can execute the solution without a cache by adding `-c`
-- The User-Agent header in `com.vuryss.aoc.client.NativeJavaAdventOfCodeClient` is set to the repository maintainer
+For debugging, use `./debug 2015 1 -t` with the same arguments as `solve`. It waits for your IDE's remote JVM debugger to connect to `127.0.0.1:5005`.
+
+Advent of Code is created by **Eric Wastl (Topaz)**. Please respect his [participation and sharing guidance](https://adventofcode.com/2025/about) and the [r/adventofcode automation rules](https://www.reddit.com/r/adventofcode/wiki/faqs/automation/):
+
+- Be respectful, clearly label spoilers, and follow your private leaderboard's rules. Eric discourages using AI to solve the puzzles.
+- Share your solution code, but do not publish puzzle text or personal inputs. Scaffolding embeds puzzle descriptions in generated source; remove those descriptions before publishing. Keep your session cookie and `.env` private.
+- Cache downloads after the first request. This project caches inputs and known answers; use `--fresh-data` or `--no-cache` only when necessary, such as to fix a corrupted cache.
+- Throttle automated requests. This client's requests are spaced five seconds apart within each run. Avoid polling unreleased puzzles or running repeated downloads in parallel.
+- Identify automated traffic with a repository URL and the **tool maintainer's** contact details, as [Eric requests](https://www.reddit.com/r/adventofcode/comments/z9dhtd/). This client sends `github.com/vuryss/aoc-java by vuryss@gmail.com` in its `User-Agent`; update that identity if you maintain a fork.

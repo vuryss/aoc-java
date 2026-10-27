@@ -1,16 +1,13 @@
-#!/bin/bash
-#
-# Wrapper script to debug the Quarkus CLI application.
-# It starts the app in dev mode, suspends the JVM, and passes all
-# script arguments to the Quarkus application.
-#
+#!/usr/bin/env bash
+set -e
 
-echo "▶️ Starting Quarkus in suspended debug mode..."
-echo "  Passing arguments to application: $*"
+cd "$(dirname "$0")"
 
-# Execute the Gradle task, passing all script arguments as a single
-# string ("$*") to the --quarkus-args option. The JVM will wait for a
-# debugger to connect on port 5005.
-./gradlew cli:quarkusDev -Dsuspend=y --console=plain --quarkus-args="solve $*"
+./gradlew :app:shadowJar
 
-echo "✅ Debug session finished."
+# Start the application and wait for a debugger.
+exec java \
+    --enable-native-access=ALL-UNNAMED \
+    -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=127.0.0.1:5005 \
+    -jar app/build/libs/app-all.jar \
+    solve "$@"

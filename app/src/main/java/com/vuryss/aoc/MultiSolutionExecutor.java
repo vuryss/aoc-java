@@ -1,0 +1,95 @@
+package com.vuryss.aoc;
+
+import com.vuryss.aoc.cli.display.EventState;
+import com.vuryss.aoc.cli.display.PartState;
+import com.vuryss.aoc.cli.display.StateUpdate;
+import com.vuryss.aoc.cli.display.TestCaseState;
+import com.vuryss.aoc.data.DataProviderInterface;
+import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Scheduler;
+
+import java.util.List;
+import java.util.function.Function;
+
+@RequiredArgsConstructor
+public class MultiSolutionExecutor {
+    private final Scheduler solverScheduler;
+
+    public Flux<EventState> execute(int event, DataProviderInterface dataProvider, boolean validate) {
+        var executor = new SingleSolutionExecutor(dataProvider, solverScheduler);
+
+        return executeDays(event, validate, puzzle -> executor.executeUpdates(puzzle, validate));
+    }
+
+    public Flux<EventState> executeTests(int event) {
+        var executor = new SingleSolutionTestExecutor(solverScheduler);
+
+        return executeDays(event, true, puzzle ->
+            executor.execute(puzzle).flatMap(tests ->
+                Flux.just(1, 2)
+                    .map(part -> new StateUpdate(new PuzzlePartReference(puzzle, part), _ -> summarize(tests, part))))
+        );
+    }
+
+    private Flux<EventState> executeDays(
+        int event,
+        boolean validate,
+        Function<PuzzleDayReference, Flux<StateUpdate>> executeDay
+    ) {
+        int dayCount = Configuration.getMaxChallengesForYear(event);
+
+        return Flux.range(1, dayCount)
+            .flatMap(day -> runDay(new PuzzleDayReference(event, day), executeDay))
+            .scanWith(
+                () -> EventState.queued(dayCount, validate),
+                EventState::withUpdate
+            );
+    }
+
+    private Flux<StateUpdate> runDay(
+        PuzzleDayReference puzzle,
+        Function<PuzzleDayReference, Flux<StateUpdate>> executeDay
+    ) {
+        return Flux
+            .defer(() -> executeDay.apply(puzzle))
+            .onErrorResume(failure -> {
+                var failedAtNs = System.nanoTime();
+
+                return Flux.just(1, 2)
+                    .map(part -> new StateUpdate(
+                        new PuzzlePartReference(puzzle, part),
+                        state -> state.isFinished() ? state : state.failed(failure, failedAtNs)
+                    ));
+            })
+            .subscribeOn(solverScheduler);
+    }
+
+    private PartState summarize(List<TestCaseState> tests, int part) {
+        var states = tests.stream().filter(test -> test.part() == part).map(TestCaseState::state).toList();
+        long startedAtNs = states.stream().mapToLong(PartState::startedAtNs).filter(t -> t >= 0).min().orElse(-1);
+        var summary = PartState.queued(true);
+
+        if (startedAtNs >= 0) summary = summary.started(startedAtNs);
+        if (!states.stream().allMatch(PartState::isFinished)) return summary;
+
+        long passed = states.stream()
+            .filter(state -> state.validationStatus() == PartState.ValidationStatus.VALID)
+            .count();
+        var failure = states.stream()
+            .filter(state -> state.validationStatus() == PartState.ValidationStatus.ERROR)
+            .findFirst();
+
+        var validation = PartState.ValidationStatus.VALID;
+
+        if (states.isEmpty()) validation = PartState.ValidationStatus.UNAVAILABLE;
+        else if (failure.isPresent()) validation = PartState.ValidationStatus.ERROR;
+        else if (passed != states.size()) validation = PartState.ValidationStatus.INVALID;
+
+        long finishedAtNs = states.stream().mapToLong(PartState::finishedAtNs).max().orElse(-1);
+
+        return summary
+            .completed(passed + "/" + states.size(), finishedAtNs)
+            .withValidation(validation, null, failure.map(PartState::error).orElse(null));
+    }
+}
