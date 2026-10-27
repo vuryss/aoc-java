@@ -8,6 +8,7 @@ import com.vuryss.aoc.data.DataProviderInterface;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
+import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
@@ -95,9 +96,12 @@ public class JsonOutput implements OutputInterface {
     }
 
     private void withSchedulers(Execution execution) throws Exception {
-        Scheduler solverScheduler = Schedulers.newParallel(
-            "aoc-solvers",
-            Runtime.getRuntime().availableProcessors()
+        Scheduler solverScheduler = Schedulers.fromExecutorService(
+            Executors.newFixedThreadPool(
+                Runtime.getRuntime().availableProcessors(),
+                Thread.ofPlatform().name("aoc-solver-", 0).factory()
+            ),
+            "aoc-solvers"
         );
         Scheduler renderScheduler = Schedulers.newSingle("console-renderer");
 

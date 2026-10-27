@@ -10,6 +10,7 @@ import reactor.core.scheduler.Schedulers;
 
 import java.io.*;
 import java.time.Duration;
+import java.util.concurrent.Executors;
 import java.util.function.Function;
 
 public class RichTerminalOutput implements OutputInterface {
@@ -91,9 +92,12 @@ public class RichTerminalOutput implements OutputInterface {
     }
 
     private void withSchedulers(Execution execution) throws Exception {
-        Scheduler solverScheduler = Schedulers.newParallel(
-            "aoc-solvers",
-            Runtime.getRuntime().availableProcessors()
+        Scheduler solverScheduler = Schedulers.fromExecutorService(
+            Executors.newFixedThreadPool(
+                Runtime.getRuntime().availableProcessors(),
+                Thread.ofPlatform().name("aoc-solver-", 0).factory()
+            ),
+            "aoc-solvers"
         );
         Scheduler renderScheduler = Schedulers.newSingle("cli-display");
 
