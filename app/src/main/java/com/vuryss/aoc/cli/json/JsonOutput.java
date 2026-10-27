@@ -2,18 +2,19 @@ package com.vuryss.aoc.cli.json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vuryss.aoc.*;
+import com.vuryss.aoc.cli.AppRuntime;
 import com.vuryss.aoc.cli.NotificationOutputInterface;
 import com.vuryss.aoc.cli.display.*;
 import com.vuryss.aoc.data.DataProviderInterface;
-import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
+import lombok.RequiredArgsConstructor;
 
-import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 
+@RequiredArgsConstructor
 public class JsonOutput implements OutputInterface {
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final AppRuntime runtime;
 
     public void singleDay(
         PuzzleDayReference puzzle,
@@ -21,43 +22,41 @@ public class JsonOutput implements OutputInterface {
         boolean validate,
         Function<NotificationOutputInterface, DataProviderInterface> generateDataProvider
     ) throws Exception {
-        withSchedulers((solverScheduler, renderScheduler) -> {
-            var output = new InMemoryNotificationOutputInterface();
+        var output = new InMemoryNotificationOutputInterface();
 
-            if (isTest) {
-                var executor = new SingleSolutionTestExecutor(solverScheduler, output);
+        if (isTest) {
+            var executor = new SingleSolutionTestExecutor(runtime.solver(), output);
 
-                var testStatesList = executor.execute(puzzle)
-                    .takeUntil(tests -> tests.stream().allMatch(test -> test.state().isFinished()))
-                    .publishOn(renderScheduler)
-                    .blockLast();
-
-                assert testStatesList != null;
-
-                var outputDto = SingleDayTestOutputDto.from(puzzle, testStatesList)
-                    .addErrors(output.getErrors())
-                    .addNotices(output.getNotices());
-
-                System.out.println(objectMapper.writeValueAsString(outputDto));
-
-                return;
-            }
-
-            var executor = new SingleSolutionExecutor(generateDataProvider.apply(output), solverScheduler, output);
-
-            var lastState = executor.execute(puzzle, validate)
-                .takeUntil(DayState::isFinished)
-                .publishOn(renderScheduler)
+            var testStatesList = executor.execute(puzzle)
+                .takeUntil(tests -> tests.stream().allMatch(test -> test.state().isFinished()))
+                .publishOn(runtime.render())
                 .blockLast();
 
-            assert lastState != null;
+            assert testStatesList != null;
 
-            var outputDto = SingleDayOutputDto.from(puzzle, lastState)
-                .withErrors(output.getErrors())
-                .withNotices(output.getNotices());
+            var outputDto = SingleDayTestOutputDto.from(puzzle, testStatesList)
+                .addErrors(output.getErrors())
+                .addNotices(output.getNotices());
 
             System.out.println(objectMapper.writeValueAsString(outputDto));
-        });
+
+            return;
+        }
+
+        var executor = new SingleSolutionExecutor(generateDataProvider.apply(output), runtime.solver(), output);
+
+        var lastState = executor.execute(puzzle, validate)
+            .takeUntil(DayState::isFinished)
+            .publishOn(runtime.render())
+            .blockLast();
+
+        assert lastState != null;
+
+        var outputDto = SingleDayOutputDto.from(puzzle, lastState)
+            .withErrors(output.getErrors())
+            .withNotices(output.getNotices());
+
+        System.out.println(objectMapper.writeValueAsString(outputDto));
     }
 
     public void wholeEvent(
@@ -66,54 +65,30 @@ public class JsonOutput implements OutputInterface {
         boolean validate,
         Function<NotificationOutputInterface, DataProviderInterface> generateDataProvider
     ) throws Exception {
-        withSchedulers((solverScheduler, renderScheduler) -> {
-            var output = new InMemoryNotificationOutputInterface();
-            var executor = new MultiSolutionExecutor(solverScheduler, output);
+        var output = new InMemoryNotificationOutputInterface();
+        var executor = new MultiSolutionExecutor(runtime.solver(), output);
 
-            var execution = isTest
-                ? executor.executeTests(event)
-                : executor.execute(event, generateDataProvider.apply(output), validate);
+        var execution = isTest
+            ? executor.executeTests(event)
+            : executor.execute(event, generateDataProvider.apply(output), validate);
 
-            var eventState = execution
-                .takeUntil(EventState::isFinished)
-                .onBackpressureLatest()
-                .publishOn(renderScheduler)
-                .blockLast();
+        var eventState = execution
+            .takeUntil(EventState::isFinished)
+            .onBackpressureLatest()
+            .publishOn(runtime.render())
+            .blockLast();
 
-            assert eventState != null;
-            var eventOutput = IntStream.range(0, eventState.days().size())
-                .mapToObj(i -> {
-                    var dayState = eventState.days().get(i);
-                    return WholeEventOutputDto.DayDto.from(new PuzzleDayReference(event, i + 1), dayState);
-                })
-                .toList();
-            var outputDto = WholeEventOutputDto.from(eventOutput)
-                .withErrors(output.getErrors())
-                .withNotices(output.getNotices());
+        assert eventState != null;
+        var eventOutput = IntStream.range(0, eventState.days().size())
+            .mapToObj(i -> {
+                var dayState = eventState.days().get(i);
+                return WholeEventOutputDto.DayDto.from(new PuzzleDayReference(event, i + 1), dayState);
+            })
+            .toList();
+        var outputDto = WholeEventOutputDto.from(eventOutput)
+            .withErrors(output.getErrors())
+            .withNotices(output.getNotices());
 
-            System.out.println(objectMapper.writeValueAsString(outputDto));
-        });
-    }
-
-    private void withSchedulers(Execution execution) throws Exception {
-        Scheduler solverScheduler = Schedulers.fromExecutorService(
-            Executors.newFixedThreadPool(
-                Runtime.getRuntime().availableProcessors(),
-                Thread.ofPlatform().name("aoc-solver-", 0).stackSize(512L*1024*1024).factory()
-            ),
-            "aoc-solvers"
-        );
-        Scheduler renderScheduler = Schedulers.newSingle("console-renderer");
-
-        try {
-            execution.run(solverScheduler, renderScheduler);
-        } finally {
-            solverScheduler.dispose();
-            renderScheduler.dispose();
-        }
-    }
-
-    private interface Execution {
-        void run(Scheduler solverScheduler, Scheduler rendererSchedule) throws Exception;
+        System.out.println(objectMapper.writeValueAsString(outputDto));
     }
 }

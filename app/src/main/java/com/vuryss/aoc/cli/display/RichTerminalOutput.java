@@ -1,54 +1,55 @@
 package com.vuryss.aoc.cli.display;
 
 import com.vuryss.aoc.*;
+import com.vuryss.aoc.cli.AppRuntime;
 import com.vuryss.aoc.cli.NotificationOutputInterface;
 import com.vuryss.aoc.data.DataProviderInterface;
 import dev.tamboui.inline.InlineDisplay;
+import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Scheduler;
-import reactor.core.scheduler.Schedulers;
 
 import java.io.*;
 import java.time.Duration;
-import java.util.concurrent.Executors;
 import java.util.function.Function;
 
+@RequiredArgsConstructor
 public class RichTerminalOutput implements OutputInterface {
+    private final AppRuntime runtime;
+
     public void singleDay(
         PuzzleDayReference puzzle,
         boolean isTest,
         boolean validate,
         Function<NotificationOutputInterface, DataProviderInterface> generateDataProvider
     ) throws Exception {
-        withSchedulers((solverScheduler, renderScheduler) -> {
-            try (
-                var display = new SingleDayDisplay(puzzle);
-                var output = new DisplayConsoleNotificationOutput(display.display(), renderScheduler);
-                var _ = new RedirectedSystemOut(display.display(), renderScheduler)
-            ) {
-                if (isTest) {
-                    var executor = new SingleSolutionTestExecutor(solverScheduler, output);
-
-                    Flux
-                        .interval(Duration.ZERO, Duration.ofMillis(100), renderScheduler)
-                        .withLatestFrom(executor.execute(puzzle), (_, state) -> state)
-                        .takeUntil(tests -> tests.stream().allMatch(test -> test.state().isFinished()))
-                        .doOnNext(display::renderTests)
-                        .blockLast();
-
-                    return;
-                }
-
-                var executor = new SingleSolutionExecutor(generateDataProvider.apply(output), solverScheduler, output);
+        try (
+            var display = new SingleDayDisplay(puzzle);
+            var output = new DisplayConsoleNotificationOutput(display.display(), runtime.render());
+            var _ = new RedirectedSystemOut(display.display(), runtime.render())
+        ) {
+            if (isTest) {
+                var executor = new SingleSolutionTestExecutor(runtime.solver(), output);
 
                 Flux
-                    .interval(Duration.ZERO, Duration.ofMillis(100), renderScheduler)
-                    .withLatestFrom(executor.execute(puzzle, validate), (_, state) -> state)
-                    .takeUntil(DayState::isFinished)
-                    .doOnNext(display::render)
+                    .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())
+                    .withLatestFrom(executor.execute(puzzle), (_, state) -> state)
+                    .takeUntil(tests -> tests.stream().allMatch(test -> test.state().isFinished()))
+                    .doOnNext(display::renderTests)
                     .blockLast();
+
+                return;
             }
-        });
+
+            var executor = new SingleSolutionExecutor(generateDataProvider.apply(output), runtime.solver(), output);
+
+            Flux
+                .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())
+                .withLatestFrom(executor.execute(puzzle, validate), (_, state) -> state)
+                .takeUntil(DayState::isFinished)
+                .doOnNext(display::render)
+                .blockLast();
+        }
     }
 
     public void wholeEvent(
@@ -57,47 +58,23 @@ public class RichTerminalOutput implements OutputInterface {
         boolean validate,
         Function<NotificationOutputInterface, DataProviderInterface> generateDataProvider
     ) throws Exception {
-        withSchedulers((solverScheduler, renderScheduler) -> {
-            try (
-                var display = new WholeEventDisplay(event, isTest);
-                var output = new DisplayConsoleNotificationOutput(display.display(), renderScheduler);
-                var _ = new RedirectedSystemOut(display.display(), renderScheduler)
-            ) {
-                var executor = new MultiSolutionExecutor(solverScheduler, output);
-                var execution = isTest
-                    ? executor.executeTests(event)
-                    : executor.execute(event, generateDataProvider.apply(output), validate);
+        try (
+            var display = new WholeEventDisplay(event, isTest);
+            var output = new DisplayConsoleNotificationOutput(display.display(), runtime.render());
+            var _ = new RedirectedSystemOut(display.display(), runtime.render())
+        ) {
+            var executor = new MultiSolutionExecutor(runtime.solver(), output);
+            var execution = isTest
+                ? executor.executeTests(event)
+                : executor.execute(event, generateDataProvider.apply(output), validate);
 
-                Flux
-                    .interval(Duration.ZERO, Duration.ofMillis(100), renderScheduler)
-                    .withLatestFrom(execution, (_, state) -> state)
-                    .takeUntil(EventState::isFinished)
-                    .doOnNext(display::render)
-                    .blockLast();
-            }
-        });
-    }
-
-    private void withSchedulers(Execution execution) throws Exception {
-        Scheduler solverScheduler = Schedulers.fromExecutorService(
-            Executors.newFixedThreadPool(
-                Runtime.getRuntime().availableProcessors(),
-                Thread.ofPlatform().name("aoc-solver-", 0).stackSize(512L*1024*1024).factory()
-            ),
-            "aoc-solvers"
-        );
-        Scheduler renderScheduler = Schedulers.newSingle("cli-display");
-
-        try {
-            execution.run(solverScheduler, renderScheduler);
-        } finally {
-            solverScheduler.dispose();
-            renderScheduler.dispose();
+            Flux
+                .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())
+                .withLatestFrom(execution, (_, state) -> state)
+                .takeUntil(EventState::isFinished)
+                .doOnNext(display::render)
+                .blockLast();
         }
-    }
-
-    private interface Execution {
-        void run(Scheduler solverScheduler, Scheduler rendererSchedule) throws Exception;
     }
 }
 

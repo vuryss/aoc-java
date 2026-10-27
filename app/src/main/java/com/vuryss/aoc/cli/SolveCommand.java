@@ -58,6 +58,12 @@ public class SolveCommand implements Runnable {
     @SneakyThrows
     @Override
     public void run() {
+        try (var runtime = AppRuntime.create()) {
+            solve(runtime);
+        }
+    }
+
+    public void solve(AppRuntime runtime) throws Exception {
         var events = event == null ? Configuration.getSupportedEvents() : List.of(event);
         var inputSelection = inputSelection();
         var manualInput = inputSelection.manual == null ? null : inputSelection.manual.resolveInput();
@@ -67,7 +73,7 @@ public class SolveCommand implements Runnable {
         if (printStacktrace) Configuration.enableExceptionStacktrace();
 
         if (canUseRichTerminal()) {
-            output = new RichTerminalOutput();
+            output = new RichTerminalOutput(runtime);
 
             // Restore cursor on ctrl+c in the middle of execution
             var terminalOut = System.out; // To avoid being captured from the stdout overwrite in the RichTerminalOutput
@@ -77,7 +83,7 @@ public class SolveCommand implements Runnable {
                 terminalOut.flush();
             }));
         } else {
-            output = new JsonOutput();
+            output = new JsonOutput(runtime);
         }
 
         if (events.size() == 1 && day != null) {
