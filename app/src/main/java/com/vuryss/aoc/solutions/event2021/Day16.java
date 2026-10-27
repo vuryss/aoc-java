@@ -74,7 +74,7 @@ public class Day16 implements SolutionInterface {
 
     @Override
     public String part1Solution(String input, boolean isTest) {
-        var binary = StringUtil.hex2bin(input);
+        var binary = StringUtil.hex2bin(input.trim());
         var packet = parse(binary);
 
         return String.valueOf(packet.sumVersions());
@@ -82,7 +82,7 @@ public class Day16 implements SolutionInterface {
 
     @Override
     public String part2Solution(String input, boolean isTest) {
-        var binary = StringUtil.hex2bin(input);
+        var binary = StringUtil.hex2bin(input.trim());
         var packet = parse(binary);
 
         return String.valueOf(packet.getValue());
