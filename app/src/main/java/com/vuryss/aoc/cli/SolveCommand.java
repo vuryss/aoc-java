@@ -49,6 +49,12 @@ public class SolveCommand implements Runnable {
     )
     boolean jsonOutput;
 
+    @CommandLine.Option(
+        names = {"--stacktrace"},
+        description = "Prints all exceptions stack traces"
+    )
+    boolean printStacktrace;
+
     @SneakyThrows
     @Override
     public void run() {
@@ -57,6 +63,8 @@ public class SolveCommand implements Runnable {
         var manualInput = inputSelection.manual == null ? null : inputSelection.manual.resolveInput();
         var validate = inputSelection.user != null && inputSelection.user.validate;
         OutputInterface output;
+
+        if (printStacktrace) Configuration.enableExceptionStacktrace();
 
         if (canUseRichTerminal()) {
             output = new RichTerminalOutput();
@@ -89,7 +97,7 @@ public class SolveCommand implements Runnable {
                 puzzle,
                 inputSelection.test,
                 validate,
-                outputInterface -> dataProvider(outputInterface, manualInput)
+                notificationsOutput -> dataProvider(notificationsOutput, manualInput)
             );
             return;
         }
@@ -99,7 +107,7 @@ public class SolveCommand implements Runnable {
                 selectedEvent,
                 inputSelection.test,
                 validate,
-                outputInterface -> dataProvider(outputInterface, manualInput)
+                notificationsOutput -> dataProvider(notificationsOutput, manualInput)
             );
         }
     }

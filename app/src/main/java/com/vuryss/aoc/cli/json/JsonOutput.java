@@ -24,7 +24,7 @@ public class JsonOutput implements OutputInterface {
             var output = new InMemoryNotificationOutputInterface();
 
             if (isTest) {
-                var executor = new SingleSolutionTestExecutor(solverScheduler);
+                var executor = new SingleSolutionTestExecutor(solverScheduler, output);
 
                 var testStatesList = executor.execute(puzzle)
                     .takeUntil(tests -> tests.stream().allMatch(test -> test.state().isFinished()))
@@ -42,7 +42,7 @@ public class JsonOutput implements OutputInterface {
                 return;
             }
 
-            var executor = new SingleSolutionExecutor(generateDataProvider.apply(output), solverScheduler);
+            var executor = new SingleSolutionExecutor(generateDataProvider.apply(output), solverScheduler, output);
 
             var lastState = executor.execute(puzzle, validate)
                 .takeUntil(DayState::isFinished)
@@ -66,8 +66,8 @@ public class JsonOutput implements OutputInterface {
         Function<NotificationOutputInterface, DataProviderInterface> generateDataProvider
     ) throws Exception {
         withSchedulers((solverScheduler, renderScheduler) -> {
-            var executor = new MultiSolutionExecutor(solverScheduler);
             var output = new InMemoryNotificationOutputInterface();
+            var executor = new MultiSolutionExecutor(solverScheduler, output);
 
             var execution = isTest
                 ? executor.executeTests(event)

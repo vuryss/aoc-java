@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 public class Configuration {
     private static final Map<Integer, Integer> MAX_CHALLENGES_PER_YEAR = new HashMap<>();
     private static final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+    private static boolean enableExceptionStacktrace = false;
 
     static {
         // Historical years with 25 challenges each (December 1-25)
@@ -63,5 +64,13 @@ public class Configuration {
         if (sessionToken != null) return sessionToken;
 
         throw new RuntimeException("SESSION_TOKEN is not set, cannot authenticate with Advent of Code");
+    }
+
+    public static void enableExceptionStacktrace() {
+        enableExceptionStacktrace = true;
+    }
+
+    public static boolean exceptionStacktraceEnabled() {
+        return enableExceptionStacktrace;
     }
 }

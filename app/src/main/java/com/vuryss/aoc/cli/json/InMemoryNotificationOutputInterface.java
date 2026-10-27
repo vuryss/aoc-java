@@ -1,5 +1,6 @@
 package com.vuryss.aoc.cli.json;
 
+import com.vuryss.aoc.Configuration;
 import com.vuryss.aoc.cli.NotificationOutputInterface;
 import lombok.Getter;
 
@@ -29,5 +30,14 @@ public class InMemoryNotificationOutputInterface implements NotificationOutputIn
     @Override
     public void notice(String message) {
         notices.add(message);
+    }
+
+    @Override
+    public void exception(Throwable e) {
+        if (!Configuration.exceptionStacktraceEnabled()) return;
+
+        System.err.println();
+        e.printStackTrace(System.err);
+        System.err.println();
     }
 }

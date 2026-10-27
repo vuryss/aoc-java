@@ -1,5 +1,6 @@
 package com.vuryss.aoc;
 
+import com.vuryss.aoc.cli.NotificationOutputInterface;
 import com.vuryss.aoc.cli.display.DayState;
 import com.vuryss.aoc.cli.display.StateUpdate;
 import com.vuryss.aoc.cli.display.PartState;
@@ -23,6 +24,7 @@ public class SingleSolutionExecutor {
     private final SolutionRepository solutionRepository = SolutionRepository.instance();
     private final DataProviderInterface dataProvider;
     private final Scheduler solverScheduler;
+    private final NotificationOutputInterface notificationsOutput;
 
     public Flux<DayState> execute(PuzzleDayReference puzzle, boolean validate) {
         return executeUpdates(puzzle, validate)
@@ -75,6 +77,7 @@ public class SingleSolutionExecutor {
             .subscribeOn(solverScheduler)
             .onErrorResume(failure -> {
                 long failedAtNs = System.nanoTime();
+                notificationsOutput.exception(failure);
 
                 return Mono.just(new StateUpdate(part, state -> state.failed(failure, failedAtNs)));
             });
@@ -142,10 +145,13 @@ public class SingleSolutionExecutor {
                         state -> state.withValidation(validationStatus, answer, null)
                     );
                 })
-                .onErrorResume(failure -> Mono.just(new StateUpdate(
-                    part,
-                    state -> state.withValidation(PartState.ValidationStatus.ERROR, null, failure.getMessage())
-                )));
+                .onErrorResume(failure -> {
+                    notificationsOutput.exception(failure);
+                    return Mono.just(new StateUpdate(
+                        part,
+                        state -> state.withValidation(PartState.ValidationStatus.ERROR, null, failure.getMessage())
+                    ));
+                });
 
             return Flux.mergeSequential(sink.asFlux(), validation);
         });

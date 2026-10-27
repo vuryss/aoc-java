@@ -26,7 +26,7 @@ public class RichTerminalOutput implements OutputInterface {
                 var _ = new RedirectedSystemOut(display.display(), renderScheduler)
             ) {
                 if (isTest) {
-                    var executor = new SingleSolutionTestExecutor(solverScheduler);
+                    var executor = new SingleSolutionTestExecutor(solverScheduler, output);
 
                     Flux
                         .combineLatest(
@@ -42,7 +42,7 @@ public class RichTerminalOutput implements OutputInterface {
                     return;
                 }
 
-                var executor = new SingleSolutionExecutor(generateDataProvider.apply(output), solverScheduler);
+                var executor = new SingleSolutionExecutor(generateDataProvider.apply(output), solverScheduler, output);
 
                 Flux
                     .combineLatest(
@@ -65,13 +65,12 @@ public class RichTerminalOutput implements OutputInterface {
         Function<NotificationOutputInterface, DataProviderInterface> generateDataProvider
     ) throws Exception {
         withSchedulers((solverScheduler, renderScheduler) -> {
-            var executor = new MultiSolutionExecutor(solverScheduler);
-
             try (
                 var display = new WholeEventDisplay(event, isTest);
                 var output = new DisplayConsoleNotificationOutput(display.display(), renderScheduler);
                 var _ = new RedirectedSystemOut(display.display(), renderScheduler)
             ) {
+                var executor = new MultiSolutionExecutor(solverScheduler, output);
                 var execution = isTest
                     ? executor.executeTests(event)
                     : executor.execute(event, generateDataProvider.apply(output), validate);

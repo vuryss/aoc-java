@@ -25,6 +25,7 @@ Omit both year and day to run all supported years. Inputs are cached automatical
 | --- | --- |
 | `-v`, `--validate` | Check results against your previously submitted answers |
 | `-j`, `--json-output` | Print results as JSON |
+| `--stacktrace` | Print exception stack traces for debugging |
 | `--fresh-data` | Download fresh inputs and answers, ignoring cached values |
 | `--no-cache` | Skip cache reads and writes |
 

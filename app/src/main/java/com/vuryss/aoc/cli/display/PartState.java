@@ -1,5 +1,8 @@
 package com.vuryss.aoc.cli.display;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public record PartState(
     Status status,
     String result,
@@ -7,7 +10,8 @@ public record PartState(
     long finishedAtNs,
     ValidationStatus validationStatus,
     String expectedResult,
-    String error
+    String error,
+    List<Throwable> exceptions
 ) {
     public static PartState queued(boolean validate) {
         return new PartState(
@@ -17,12 +21,15 @@ public record PartState(
             -1,
             validate ? ValidationStatus.QUEUED : ValidationStatus.NOT_REQUESTED,
             null,
-            null
+            null,
+            new ArrayList<>()
         );
     }
 
     public PartState failed(Throwable failure, long failureAtNs) {
         long end = status == Status.RUNNING ? failureAtNs : finishedAtNs;
+        var updatedList = new ArrayList<>(exceptions);
+        updatedList.add(failure);
 
         return new PartState(
             Status.ERROR,
@@ -31,7 +38,8 @@ public record PartState(
             end,
             validationStatus,
             null,
-            failure.toString()
+            failure.toString(),
+            updatedList
         );
     }
 
@@ -43,7 +51,8 @@ public record PartState(
             finishedAtNs,
             validationStatus,
             expectedResult,
-            error
+            error,
+            new ArrayList<>()
         );
     }
 
@@ -55,7 +64,8 @@ public record PartState(
             -1,
             validationStatus,
             expectedResult,
-            error
+            error,
+            new ArrayList<>()
         );
     }
 
@@ -67,7 +77,8 @@ public record PartState(
             finishedAtNs,
             validationStatus,
             expectedResult,
-            error
+            error,
+            new ArrayList<>()
         );
     }
 
@@ -79,7 +90,8 @@ public record PartState(
             finishedAtNs,
             nextValidationStatus,
             expectedResult,
-            error
+            error,
+            new ArrayList<>()
         );
     }
 

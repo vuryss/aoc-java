@@ -1,5 +1,6 @@
 package com.vuryss.aoc;
 
+import com.vuryss.aoc.cli.NotificationOutputInterface;
 import com.vuryss.aoc.cli.display.EventState;
 import com.vuryss.aoc.cli.display.PartState;
 import com.vuryss.aoc.cli.display.StateUpdate;
@@ -15,15 +16,16 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class MultiSolutionExecutor {
     private final Scheduler solverScheduler;
+    private final NotificationOutputInterface notificationOutput;
 
     public Flux<EventState> execute(int event, DataProviderInterface dataProvider, boolean validate) {
-        var executor = new SingleSolutionExecutor(dataProvider, solverScheduler);
+        var executor = new SingleSolutionExecutor(dataProvider, solverScheduler, notificationOutput);
 
         return executeDays(event, validate, puzzle -> executor.executeUpdates(puzzle, validate));
     }
 
     public Flux<EventState> executeTests(int event) {
-        var executor = new SingleSolutionTestExecutor(solverScheduler);
+        var executor = new SingleSolutionTestExecutor(solverScheduler, notificationOutput);
 
         return executeDays(event, true, puzzle ->
             executor.execute(puzzle).flatMap(tests ->
@@ -55,6 +57,7 @@ public class MultiSolutionExecutor {
             .defer(() -> executeDay.apply(puzzle))
             .onErrorResume(failure -> {
                 var failedAtNs = System.nanoTime();
+                notificationOutput.exception(failure);
 
                 return Flux.just(1, 2)
                     .map(part -> new StateUpdate(
