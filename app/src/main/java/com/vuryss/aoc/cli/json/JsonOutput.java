@@ -99,7 +99,7 @@ public class JsonOutput implements OutputInterface {
         Scheduler solverScheduler = Schedulers.fromExecutorService(
             Executors.newFixedThreadPool(
                 Runtime.getRuntime().availableProcessors(),
-                Thread.ofPlatform().name("aoc-solver-", 0).factory()
+                Thread.ofPlatform().name("aoc-solver-", 0).stackSize(512L*1024*1024).factory()
             ),
             "aoc-solvers"
         );

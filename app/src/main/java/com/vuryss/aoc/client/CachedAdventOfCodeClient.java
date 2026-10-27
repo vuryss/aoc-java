@@ -49,7 +49,9 @@ public class CachedAdventOfCodeClient implements AdventOfCodeClient {
             return adventOfCodeClient.getCorrectAnswers(puzzle)
                 .doOnNext(answers -> {
                     fileCacheService.put(cacheKeyPart1, answers.part1());
-                    fileCacheService.put(cacheKeyPart2, answers.part2());
+
+                    if (answers.part2() != null)
+                        fileCacheService.put(cacheKeyPart2, answers.part2());
                 });
         });
     }

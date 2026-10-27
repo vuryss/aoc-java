@@ -89,15 +89,19 @@ public class SingleSolutionExecutor {
                 long startedAtNs = System.nanoTime();
 
                 Mono<Solved> calculation = Mono.fromCallable(() -> {
-                    String result = switch (part.part()) {
-                        case 1 -> solution.part1Solution(input, false);
-                        case 2 -> solution.part2Solution(input, false);
-                        default -> throw new IllegalStateException("Invalid part: " + part.part());
-                    };
+                    try {
+                        String result = switch (part.part()) {
+                            case 1 -> solution.part1Solution(input, false);
+                            case 2 -> solution.part2Solution(input, false);
+                            default -> throw new IllegalStateException("Invalid part: " + part.part());
+                        };
 
-                    Objects.requireNonNull(result);
+                        Objects.requireNonNull(result);
 
-                    return new Solved(result, System.nanoTime());
+                        return new Solved(result, System.nanoTime());
+                    } catch (VirtualMachineError e) {
+                        throw new RuntimeException(e);
+                    }
                 });
 
                 return Flux.concat(

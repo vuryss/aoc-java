@@ -26,7 +26,7 @@ public class SolutionRepository {
             return clazz.asSubclass(SolutionInterface.class).getDeclaredConstructor().newInstance();
         } catch (ClassNotFoundException e) {
             return null;
-        } catch (Exception e) {
+        } catch (Exception | LinkageError e) {
             throw new RuntimeException("Error creating solution instance for: " + className, e);
         }
     }
