@@ -2,19 +2,20 @@ package com.vuryss.aoc.data;
 
 import com.vuryss.aoc.PuzzleDayReference;
 import com.vuryss.aoc.client.Answers;
+import com.vuryss.aoc.client.Download;
 import lombok.RequiredArgsConstructor;
-import reactor.core.publisher.Mono;
+import reactor.core.publisher.Flux;
 
 @RequiredArgsConstructor
 public class ManualDataProvider implements DataProviderInterface {
     private final String input;
 
     @Override
-    public Mono<String> getInput(PuzzleDayReference puzzle) {
-        return Mono.just(input);
+    public Flux<Download<String>> getInput(PuzzleDayReference puzzle) {
+        return Flux.just(new Download.Done<>(input));
     }
 
-    public Mono<Answers> getAnswers(PuzzleDayReference puzzle) {
-        return Mono.error(new RuntimeException("Answers not implemented in manual data input"));
+    public Flux<Download<Answers>> getAnswers(PuzzleDayReference puzzle) {
+        return Flux.error(new RuntimeException("Answers not implemented in manual data input"));
     }
 }

@@ -10,12 +10,12 @@ import lombok.Setter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
 
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -54,8 +54,8 @@ public class ReactiveAdventOfCodeClient implements AdventOfCodeClient {
         return Holder.INSTANCE;
     }
 
-    public Mono<String> getPlayerInput(PuzzleDayReference puzzle) {
-        return throttle(() -> {
+    public Flux<Download<String>> getPlayerInput(PuzzleDayReference puzzle) {
+        return download(() -> {
             notice("Downloading input for event %s, day %s".formatted(puzzle.event(), puzzle.day()));
 
             return authenticatedHttpClient()
@@ -83,8 +83,8 @@ public class ReactiveAdventOfCodeClient implements AdventOfCodeClient {
         });
     }
 
-    public Mono<Answers> getCorrectAnswers(PuzzleDayReference puzzle) {
-        return throttle(() -> {
+    public Flux<Download<Answers>> getCorrectAnswers(PuzzleDayReference puzzle) {
+        return download(() -> {
             notice("Downloading answers for event %s, day %s".formatted(puzzle.event(), puzzle.day()));
 
             return authenticatedHttpClient()
@@ -193,18 +193,15 @@ public class ReactiveAdventOfCodeClient implements AdventOfCodeClient {
         return element.text().replace("@NEW_LINE@", "\n").trim();
     }
 
-    private <T> Mono<T> throttle(Supplier<? extends Mono<? extends T>> supplier) {
-        return Mono.deferContextual(context -> {
-            Consumer<Status> onStatusChange = context.getOrDefault(Status.class, _ -> {});
-            assert onStatusChange != null;
-            onStatusChange.accept(Status.QUEUED);
+    private <T> Mono<T> throttle(Supplier<Mono<T>> request) {
+        return waitUntilNextAllowedTimeSlot().then(Mono.defer(request));
+    }
 
-            return waitUntilNextAllowedTimeSlot()
-                .then(Mono.fromRunnable(() -> onStatusChange.accept(Status.DOWNLOADING)))
-                .then(Mono.defer(supplier))
-                .doOnSuccess(_ -> onStatusChange.accept(Status.COMPLETED))
-                .doOnError(_ -> onStatusChange.accept(Status.FAILED));
-        });
+    private <T> Flux<Download<T>> download(Supplier<Mono<T>> request) {
+        return Flux.concat(
+            waitUntilNextAllowedTimeSlot().thenReturn(new Download.Started<>()),
+            Mono.defer(request).map(Download.Done::new)
+        );
     }
 
     private String wrapTextMaxWidth(String text) {
