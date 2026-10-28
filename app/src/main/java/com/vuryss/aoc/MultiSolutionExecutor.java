@@ -17,16 +17,16 @@ public class MultiSolutionExecutor {
     private final Scheduler solverScheduler;
     private final NotificationsOutputInterface notificationOutput;
 
-    public Flux<StateUpdate> execute(int event, DataProviderInterface dataProvider, boolean validate) {
+    public Flux<StateUpdate> execute(Flux<PuzzleDayReference> puzzles, DataProviderInterface dataProvider, boolean validate) {
         var executor = new SingleSolutionExecutor(dataProvider, solverScheduler, notificationOutput);
 
-        return executeDays(event, puzzle -> executor.executeUpdates(puzzle, validate));
+        return executeDays(puzzles, puzzle -> executor.executeUpdates(puzzle, validate));
     }
 
-    public Flux<StateUpdate> executeTests(int event) {
+    public Flux<StateUpdate> executeTests(Flux<PuzzleDayReference> puzzles) {
         var executor = new SingleSolutionTestExecutor(solverScheduler, notificationOutput);
 
-        return executeDays(event, puzzle ->
+        return executeDays(puzzles, puzzle ->
             executor.execute(puzzle).flatMap(tests ->
                 Flux.just(1, 2)
                     .map(part -> new StateUpdate(new PuzzlePartReference(puzzle, part), _ -> summarize(tests, part))))
@@ -34,11 +34,10 @@ public class MultiSolutionExecutor {
     }
 
     private Flux<StateUpdate> executeDays(
-        int event,
+        Flux<PuzzleDayReference> puzzles,
         Function<PuzzleDayReference, Flux<StateUpdate>> executeDay
     ) {
-        return Flux.range(1, Configuration.getMaxChallengesForYear(event))
-            .flatMap(day -> runDay(new PuzzleDayReference(event, day), executeDay));
+        return puzzles.flatMap(puzzle -> runDay(puzzle, executeDay));
     }
 
     private Flux<StateUpdate> runDay(

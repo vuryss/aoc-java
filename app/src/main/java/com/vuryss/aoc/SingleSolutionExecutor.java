@@ -1,7 +1,6 @@
 package com.vuryss.aoc;
 
 import com.vuryss.aoc.cli.NotificationsOutputInterface;
-import com.vuryss.aoc.cli.display.DayState;
 import com.vuryss.aoc.cli.display.StateUpdate;
 import com.vuryss.aoc.cli.display.PartState;
 import com.vuryss.aoc.client.Answers;
@@ -27,12 +26,7 @@ public class SingleSolutionExecutor {
     private final Scheduler solverScheduler;
     private final NotificationsOutputInterface notificationsOutput;
 
-    public Flux<DayState> execute(PuzzleDayReference puzzle, boolean validate) {
-        return executeUpdates(puzzle, validate)
-            .scanWith(() -> DayState.queued(validate), DayState::withUpdate);
-    }
-
-    Flux<StateUpdate> executeUpdates(PuzzleDayReference puzzle, boolean validate) {
+    public Flux<StateUpdate> executeUpdates(PuzzleDayReference puzzle, boolean validate) {
         return Flux.defer(() -> {
             var input = SharedDownload.of(() -> dataProvider.getInput(puzzle));
             var answers = SharedDownload.of(() -> dataProvider.getAnswers(puzzle));

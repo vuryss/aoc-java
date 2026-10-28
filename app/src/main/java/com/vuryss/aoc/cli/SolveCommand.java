@@ -2,6 +2,7 @@ package com.vuryss.aoc.cli;
 
 import com.vuryss.aoc.*;
 import com.vuryss.aoc.cache.FileCache;
+import com.vuryss.aoc.cli.display.DayState;
 import com.vuryss.aoc.cli.display.EventState;
 import com.vuryss.aoc.cli.display.RichTerminalOutput;
 import com.vuryss.aoc.cli.json.JsonOutput;
@@ -107,7 +108,7 @@ public class SolveCommand implements Runnable {
                 output.singleDayTests(puzzle, executor.execute(puzzle));
             } else {
                 var executor = new SingleSolutionExecutor(dataProvider, runtime.solver(), runtime.notifications());
-                output.singleDay(puzzle, executor.execute(puzzle, validate));
+                output.singleDay(puzzle, DayState.queued(validate), executor.executeUpdates(puzzle, validate)).block();
             }
 
             return;
@@ -121,9 +122,11 @@ public class SolveCommand implements Runnable {
                     Configuration.getMaxChallengesForYear(selectedEvent),
                     validate || inputSelection.test
                 );
+                var puzzles = Flux.range(1, Configuration.getMaxChallengesForYear(selectedEvent))
+                    .map(d -> new PuzzleDayReference(selectedEvent, d));
                 var updates = inputSelection.test
-                    ? executor.executeTests(selectedEvent)
-                    : executor.execute(selectedEvent, dataProvider, validate);
+                    ? executor.executeTests(puzzles)
+                    : executor.execute(puzzles, dataProvider, validate);
 
                 return output.wholeEvent(selectedEvent, inputSelection.test, initial, updates);
             })

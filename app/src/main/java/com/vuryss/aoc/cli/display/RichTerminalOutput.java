@@ -16,20 +16,19 @@ import java.util.List;
 public class RichTerminalOutput implements OutputInterface {
     private final AppRuntime runtime;
 
-    public void singleDay(PuzzleDayReference puzzle, Flux<DayState> states) throws Exception {
-        try (
-            var display = new SingleDayDisplay(puzzle);
-            var output = new DisplayConsoleNotificationsOutput(display.display(), runtime.render());
-            var _ = new RedirectedSystemOut(display.display(), runtime.render());
-            var _ = runtime.notifications().subscribe(output);
-        ) {
-            Flux
-                .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())
-                .withLatestFrom(states, (_, state) -> state)
-                .takeUntil(DayState::isFinished)
-                .doOnNext(display::render)
-                .blockLast();
-        }
+    public Mono<Void> singleDay(PuzzleDayReference puzzle, DayState initial, Flux<StateUpdate> updates) {
+        return Mono.using(
+            () -> new SingleDayDisplay(puzzle),
+            display -> Mono.using(
+                () -> attach(display.display()),
+                _ -> Flux
+                    .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())
+                    .withLatestFrom(updates.scan(initial, DayState::withUpdate), (_, state) -> state)
+                    .takeUntil(DayState::isFinished)
+                    .doOnNext(display::render)
+                    .then()
+            ).publishOn(runtime.render())
+        );
     }
 
     public void singleDayTests(PuzzleDayReference puzzle, Flux<List<TestCaseState>> states) throws Exception {

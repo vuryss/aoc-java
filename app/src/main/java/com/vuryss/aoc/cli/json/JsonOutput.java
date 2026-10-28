@@ -17,23 +17,21 @@ public class JsonOutput implements OutputInterface {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final AppRuntime runtime;
 
-    public void singleDay(PuzzleDayReference puzzle, Flux<DayState> states) throws Exception {
+    public Mono<Void> singleDay(PuzzleDayReference puzzle, DayState initial, Flux<StateUpdate> updates) {
         var output = new InMemoryNotificationsOutput();
 
-        try (var _ = runtime.notifications().subscribe(output)) {
-            var lastState = states
-                .takeUntil(DayState::isFinished)
+        return Mono.using(
+            () -> runtime.notifications().subscribe(output),
+            _ -> updates
+                .reduce(initial, DayState::withUpdate)
                 .publishOn(runtime.render())
-                .blockLast();
-
-            assert lastState != null;
-
-            var outputDto = SingleDayOutputDto.from(puzzle, lastState)
-                .withErrors(output.getErrors())
-                .withNotices(output.getNotices());
-
-            System.out.println(objectMapper.writeValueAsString(outputDto));
-        }
+                .doOnNext(dayState -> print(
+                    SingleDayOutputDto.from(puzzle, dayState)
+                        .withErrors(output.getErrors())
+                        .withNotices(output.getNotices())
+                ))
+                .then()
+        );
     }
 
     public void singleDayTests(PuzzleDayReference puzzle, Flux<List<TestCaseState>> states) throws Exception {

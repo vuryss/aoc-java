@@ -10,7 +10,7 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 public interface OutputInterface {
-    void singleDay(PuzzleDayReference puzzle, Flux<DayState> states) throws Exception;
+    Mono<Void> singleDay(PuzzleDayReference puzzle, DayState initial, Flux<StateUpdate> updates);
     void singleDayTests(PuzzleDayReference puzzle, Flux<List<TestCaseState>> states) throws Exception;
     Mono<Void> wholeEvent(int event, boolean isTest, EventState initial, Flux<StateUpdate> updates);
 }
