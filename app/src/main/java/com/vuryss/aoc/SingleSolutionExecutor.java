@@ -26,7 +26,7 @@ public class SingleSolutionExecutor {
     private final Scheduler solverScheduler;
     private final NotificationsOutputInterface notificationsOutput;
 
-    public Flux<StateUpdate> executeUpdates(PuzzleDayReference puzzle, boolean validate) {
+    Flux<StateUpdate> executeUpdates(PuzzleDayReference puzzle, boolean validate) {
         return Flux.defer(() -> {
             var input = SharedDownload.of(() -> dataProvider.getInput(puzzle));
             var answers = SharedDownload.of(() -> dataProvider.getAnswers(puzzle));

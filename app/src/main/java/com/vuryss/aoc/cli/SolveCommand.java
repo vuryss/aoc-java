@@ -90,6 +90,8 @@ public class SolveCommand implements Runnable {
             output = new JsonOutput(runtime);
         }
 
+        var executor = new MultiSolutionExecutor(runtime.solver(), runtime.notifications());
+
         if (events.size() == 1 && day != null) {
             var puzzle = new PuzzleDayReference(events.getFirst(), day);
             var maxChallenges = Configuration.getMaxChallengesForYear(puzzle.event());
@@ -104,17 +106,15 @@ public class SolveCommand implements Runnable {
             }
 
             if (inputSelection.test) {
-                var executor = new SingleSolutionTestExecutor(runtime.solver(), runtime.notifications());
-                output.singleDayTests(puzzle, executor.execute(puzzle));
+                var testExecutor = new SingleSolutionTestExecutor(runtime.solver(), runtime.notifications());
+                output.singleDayTests(puzzle, testExecutor.execute(puzzle));
             } else {
-                var executor = new SingleSolutionExecutor(dataProvider, runtime.solver(), runtime.notifications());
-                output.singleDay(puzzle, DayState.queued(validate), executor.executeUpdates(puzzle, validate)).block();
+                var updates = executor.execute(Flux.just(puzzle), dataProvider, validate);
+                output.singleDay(puzzle, DayState.queued(validate), updates).block();
             }
 
             return;
         }
-
-        var executor = new MultiSolutionExecutor(runtime.solver(), runtime.notifications());
 
         Flux.fromIterable(events)
             .concatMap(selectedEvent -> {
