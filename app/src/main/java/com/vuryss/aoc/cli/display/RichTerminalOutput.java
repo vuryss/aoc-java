@@ -31,20 +31,19 @@ public class RichTerminalOutput implements OutputInterface {
         );
     }
 
-    public void singleDayTests(PuzzleDayReference puzzle, Flux<List<TestCaseState>> states) throws Exception {
-        try (
-            var display = new SingleDayDisplay(puzzle);
-            var output = new DisplayConsoleNotificationsOutput(display.display(), runtime.render());
-            var _ = new RedirectedSystemOut(display.display(), runtime.render());
-            var _ = runtime.notifications().subscribe(output);
-        ) {
-            Flux
-                .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())
-                .withLatestFrom(states, (_, state) -> state)
-                .takeUntil(tests -> tests.stream().allMatch(test -> test.state().isFinished()))
-                .doOnNext(display::renderTests)
-                .blockLast();
-        }
+    public Mono<Void> singleDayTests(PuzzleDayReference puzzle, Flux<List<TestCaseState>> states) {
+        return Mono.using(
+            () -> new SingleDayDisplay(puzzle),
+            display -> Mono.using(
+                () -> attach(display.display()),
+                _ -> Flux
+                    .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())
+                    .withLatestFrom(states, (_, state) -> state)
+                    .takeUntil(tests -> tests.stream().allMatch(test -> test.state().isFinished()))
+                    .doOnNext(display::renderTests)
+                    .then()
+            ).publishOn(runtime.render())
+        );
     }
 
     public Mono<Void> wholeEvent(int event, boolean isTest, EventState initial, Flux<StateUpdate> updates) {

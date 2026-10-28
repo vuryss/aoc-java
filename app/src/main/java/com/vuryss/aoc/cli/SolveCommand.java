@@ -15,6 +15,7 @@ import com.vuryss.aoc.data.UserDataProvider;
 import lombok.SneakyThrows;
 import picocli.CommandLine;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -91,6 +92,7 @@ public class SolveCommand implements Runnable {
         }
 
         var executor = new MultiSolutionExecutor(runtime.solver(), runtime.notifications());
+        Mono<Void> solving;
 
         if (events.size() == 1 && day != null) {
             var puzzle = new PuzzleDayReference(events.getFirst(), day);
@@ -107,30 +109,30 @@ public class SolveCommand implements Runnable {
 
             if (inputSelection.test) {
                 var testExecutor = new SingleSolutionTestExecutor(runtime.solver(), runtime.notifications());
-                output.singleDayTests(puzzle, testExecutor.execute(puzzle));
+                solving = output.singleDayTests(puzzle, testExecutor.execute(puzzle));
             } else {
                 var updates = executor.execute(Flux.just(puzzle), dataProvider, validate);
-                output.singleDay(puzzle, DayState.queued(validate), updates).block();
+                solving = output.singleDay(puzzle, DayState.queued(validate), updates);
             }
+        } else {
+            solving = Flux.fromIterable(events)
+                .concatMap(selectedEvent -> {
+                    var initial = EventState.queued(
+                        Configuration.getMaxChallengesForYear(selectedEvent),
+                        validate || inputSelection.test
+                    );
+                    var puzzles = Flux.range(1, Configuration.getMaxChallengesForYear(selectedEvent))
+                        .map(d -> new PuzzleDayReference(selectedEvent, d));
+                    var updates = inputSelection.test
+                        ? executor.executeTests(puzzles)
+                        : executor.execute(puzzles, dataProvider, validate);
 
-            return;
+                    return output.wholeEvent(selectedEvent, inputSelection.test, initial, updates);
+                })
+                .then();
         }
 
-        Flux.fromIterable(events)
-            .concatMap(selectedEvent -> {
-                var initial = EventState.queued(
-                    Configuration.getMaxChallengesForYear(selectedEvent),
-                    validate || inputSelection.test
-                );
-                var puzzles = Flux.range(1, Configuration.getMaxChallengesForYear(selectedEvent))
-                    .map(d -> new PuzzleDayReference(selectedEvent, d));
-                var updates = inputSelection.test
-                    ? executor.executeTests(puzzles)
-                    : executor.execute(puzzles, dataProvider, validate);
-
-                return output.wholeEvent(selectedEvent, inputSelection.test, initial, updates);
-            })
-            .blockLast();
+        solving.block();
     }
 
     private boolean canUseRichTerminal() {

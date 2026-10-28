@@ -34,23 +34,21 @@ public class JsonOutput implements OutputInterface {
         );
     }
 
-    public void singleDayTests(PuzzleDayReference puzzle, Flux<List<TestCaseState>> states) throws Exception {
+    public Mono<Void> singleDayTests(PuzzleDayReference puzzle, Flux<List<TestCaseState>> states) {
         var output = new InMemoryNotificationsOutput();
 
-        try (var _ = runtime.notifications().subscribe(output)) {
-            var testStatesList = states
-                .takeUntil(tests -> tests.stream().allMatch(test -> test.state().isFinished()))
+        return Mono.using(
+            () -> runtime.notifications().subscribe(output),
+            _ -> states
+                .last()
                 .publishOn(runtime.render())
-                .blockLast();
-
-            assert testStatesList != null;
-
-            var outputDto = SingleDayTestOutputDto.from(puzzle, testStatesList)
-                .addErrors(output.getErrors())
-                .addNotices(output.getNotices());
-
-            System.out.println(objectMapper.writeValueAsString(outputDto));
-        }
+                .doOnNext(tests -> print(
+                    SingleDayTestOutputDto.from(puzzle, tests)
+                        .addErrors(output.getErrors())
+                        .addNotices(output.getNotices())
+                ))
+                .then()
+        );
     }
 
     public Mono<Void> wholeEvent(int event, boolean isTest, EventState initial, Flux<StateUpdate> updates) {

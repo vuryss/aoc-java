@@ -11,6 +11,6 @@ import java.util.List;
 
 public interface OutputInterface {
     Mono<Void> singleDay(PuzzleDayReference puzzle, DayState initial, Flux<StateUpdate> updates);
-    void singleDayTests(PuzzleDayReference puzzle, Flux<List<TestCaseState>> states) throws Exception;
+    Mono<Void> singleDayTests(PuzzleDayReference puzzle, Flux<List<TestCaseState>> states);
     Mono<Void> wholeEvent(int event, boolean isTest, EventState initial, Flux<StateUpdate> updates);
 }
