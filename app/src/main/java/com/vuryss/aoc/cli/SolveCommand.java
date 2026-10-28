@@ -100,12 +100,25 @@ public class SolveCommand implements Runnable {
                 );
             }
 
-            output.singleDay(puzzle, inputSelection.test, validate, dataProvider);
+            if (inputSelection.test) {
+                var executor = new SingleSolutionTestExecutor(runtime.solver(), runtime.notifications());
+                output.singleDayTests(puzzle, executor.execute(puzzle));
+            } else {
+                var executor = new SingleSolutionExecutor(dataProvider, runtime.solver(), runtime.notifications());
+                output.singleDay(puzzle, executor.execute(puzzle, validate));
+            }
+
             return;
         }
 
+        var executor = new MultiSolutionExecutor(runtime.solver(), runtime.notifications());
+
         for (int selectedEvent: events) {
-            output.wholeEvent(selectedEvent, inputSelection.test, validate, dataProvider);
+            var states = inputSelection.test
+                ? executor.executeTests(selectedEvent)
+                : executor.execute(selectedEvent, dataProvider, validate);
+
+            output.wholeEvent(selectedEvent, inputSelection.test, states);
         }
     }
 

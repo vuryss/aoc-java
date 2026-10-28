@@ -4,9 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vuryss.aoc.*;
 import com.vuryss.aoc.cli.AppRuntime;
 import com.vuryss.aoc.cli.display.*;
-import com.vuryss.aoc.data.DataProviderInterface;
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Flux;
 
+import java.util.List;
 import java.util.stream.IntStream;
 
 @RequiredArgsConstructor
@@ -14,37 +15,11 @@ public class JsonOutput implements OutputInterface {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final AppRuntime runtime;
 
-    public void singleDay(
-        PuzzleDayReference puzzle,
-        boolean isTest,
-        boolean validate,
-        DataProviderInterface dataProvider
-    ) throws Exception {
+    public void singleDay(PuzzleDayReference puzzle, Flux<DayState> states) throws Exception {
         var output = new InMemoryNotificationsOutput();
 
         try (var _ = runtime.notifications().subscribe(output)) {
-            if (isTest) {
-                var executor = new SingleSolutionTestExecutor(runtime.solver(), runtime.notifications());
-
-                var testStatesList = executor.execute(puzzle)
-                    .takeUntil(tests -> tests.stream().allMatch(test -> test.state().isFinished()))
-                    .publishOn(runtime.render())
-                    .blockLast();
-
-                assert testStatesList != null;
-
-                var outputDto = SingleDayTestOutputDto.from(puzzle, testStatesList)
-                    .addErrors(output.getErrors())
-                    .addNotices(output.getNotices());
-
-                System.out.println(objectMapper.writeValueAsString(outputDto));
-
-                return;
-            }
-
-            var executor = new SingleSolutionExecutor(dataProvider, runtime.solver(), runtime.notifications());
-
-            var lastState = executor.execute(puzzle, validate)
+            var lastState = states
                 .takeUntil(DayState::isFinished)
                 .publishOn(runtime.render())
                 .blockLast();
@@ -59,21 +34,30 @@ public class JsonOutput implements OutputInterface {
         }
     }
 
-    public void wholeEvent(
-        int event,
-        boolean isTest,
-        boolean validate,
-        DataProviderInterface dataProvider
-    ) throws Exception {
+    public void singleDayTests(PuzzleDayReference puzzle, Flux<List<TestCaseState>> states) throws Exception {
         var output = new InMemoryNotificationsOutput();
 
         try (var _ = runtime.notifications().subscribe(output)) {
-            var executor = new MultiSolutionExecutor(runtime.solver(), runtime.notifications());
-            var execution = isTest
-                ? executor.executeTests(event)
-                : executor.execute(event, dataProvider, validate);
+            var testStatesList = states
+                .takeUntil(tests -> tests.stream().allMatch(test -> test.state().isFinished()))
+                .publishOn(runtime.render())
+                .blockLast();
 
-            var eventState = execution
+            assert testStatesList != null;
+
+            var outputDto = SingleDayTestOutputDto.from(puzzle, testStatesList)
+                .addErrors(output.getErrors())
+                .addNotices(output.getNotices());
+
+            System.out.println(objectMapper.writeValueAsString(outputDto));
+        }
+    }
+
+    public void wholeEvent(int event, boolean isTest, Flux<EventState> states) throws Exception {
+        var output = new InMemoryNotificationsOutput();
+
+        try (var _ = runtime.notifications().subscribe(output)) {
+            var eventState = states
                 .takeUntil(EventState::isFinished)
                 .onBackpressureLatest()
                 .publishOn(runtime.render())

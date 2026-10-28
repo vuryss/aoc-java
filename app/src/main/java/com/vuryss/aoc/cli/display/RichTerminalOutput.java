@@ -2,7 +2,6 @@ package com.vuryss.aoc.cli.display;
 
 import com.vuryss.aoc.*;
 import com.vuryss.aoc.cli.AppRuntime;
-import com.vuryss.aoc.data.DataProviderInterface;
 import dev.tamboui.inline.InlineDisplay;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
@@ -10,67 +9,54 @@ import reactor.core.scheduler.Scheduler;
 
 import java.io.*;
 import java.time.Duration;
+import java.util.List;
 
 @RequiredArgsConstructor
 public class RichTerminalOutput implements OutputInterface {
     private final AppRuntime runtime;
 
-    public void singleDay(
-        PuzzleDayReference puzzle,
-        boolean isTest,
-        boolean validate,
-        DataProviderInterface dataProvider
-    ) throws Exception {
+    public void singleDay(PuzzleDayReference puzzle, Flux<DayState> states) throws Exception {
         try (
             var display = new SingleDayDisplay(puzzle);
             var output = new DisplayConsoleNotificationsOutput(display.display(), runtime.render());
             var _ = new RedirectedSystemOut(display.display(), runtime.render());
             var _ = runtime.notifications().subscribe(output);
         ) {
-            if (isTest) {
-                var executor = new SingleSolutionTestExecutor(runtime.solver(), runtime.notifications());
-
-                Flux
-                    .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())
-                    .withLatestFrom(executor.execute(puzzle), (_, state) -> state)
-                    .takeUntil(tests -> tests.stream().allMatch(test -> test.state().isFinished()))
-                    .doOnNext(display::renderTests)
-                    .blockLast();
-
-                return;
-            }
-
-            var executor = new SingleSolutionExecutor(dataProvider, runtime.solver(), runtime.notifications());
-
             Flux
                 .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())
-                .withLatestFrom(executor.execute(puzzle, validate), (_, state) -> state)
+                .withLatestFrom(states, (_, state) -> state)
                 .takeUntil(DayState::isFinished)
                 .doOnNext(display::render)
                 .blockLast();
         }
     }
 
-    public void wholeEvent(
-        int event,
-        boolean isTest,
-        boolean validate,
-        DataProviderInterface dataProvider
-    ) throws Exception {
+    public void singleDayTests(PuzzleDayReference puzzle, Flux<List<TestCaseState>> states) throws Exception {
+        try (
+            var display = new SingleDayDisplay(puzzle);
+            var output = new DisplayConsoleNotificationsOutput(display.display(), runtime.render());
+            var _ = new RedirectedSystemOut(display.display(), runtime.render());
+            var _ = runtime.notifications().subscribe(output);
+        ) {
+            Flux
+                .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())
+                .withLatestFrom(states, (_, state) -> state)
+                .takeUntil(tests -> tests.stream().allMatch(test -> test.state().isFinished()))
+                .doOnNext(display::renderTests)
+                .blockLast();
+        }
+    }
+
+    public void wholeEvent(int event, boolean isTest, Flux<EventState> states) throws Exception {
         try (
             var display = new WholeEventDisplay(event, isTest);
             var output = new DisplayConsoleNotificationsOutput(display.display(), runtime.render());
             var _ = new RedirectedSystemOut(display.display(), runtime.render());
             var _ = runtime.notifications().subscribe(output);
         ) {
-            var executor = new MultiSolutionExecutor(runtime.solver(), runtime.notifications());
-            var execution = isTest
-                ? executor.executeTests(event)
-                : executor.execute(event, dataProvider, validate);
-
             Flux
                 .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())
-                .withLatestFrom(execution, (_, state) -> state)
+                .withLatestFrom(states, (_, state) -> state)
                 .takeUntil(EventState::isFinished)
                 .doOnNext(display::render)
                 .blockLast();
