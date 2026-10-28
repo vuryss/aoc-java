@@ -4,7 +4,7 @@ import com.vuryss.aoc.Configuration;
 import io.github.kusoroadeolu.clique.Clique;
 import io.github.kusoroadeolu.clique.configuration.BoxConfiguration;
 
-public class PrettyPrintConsoleNotificationOutput implements NotificationOutputInterface {
+public class PrettyPrintConsoleNotificationsOutput implements NotificationsOutputInterface {
     private static final String blankNewLIne = "\u00A0\n\u00A0";
 
     @Override

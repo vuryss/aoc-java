@@ -1,7 +1,7 @@
 package com.vuryss.aoc.client;
 
 import com.vuryss.aoc.Configuration;
-import com.vuryss.aoc.cli.NotificationOutputInterface;
+import com.vuryss.aoc.cli.NotificationsOutputInterface;
 import com.vuryss.aoc.PuzzleDayReference;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.cookie.Cookie;
@@ -30,7 +30,7 @@ public class ReactiveAdventOfCodeClient implements AdventOfCodeClient {
     private final HttpClient httpClient;
 
     @Setter
-    private NotificationOutputInterface output;
+    private NotificationsOutputInterface output;
 
     private ReactiveAdventOfCodeClient() {
         httpClient = HttpClient.create()

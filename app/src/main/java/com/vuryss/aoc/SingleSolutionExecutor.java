@@ -1,6 +1,6 @@
 package com.vuryss.aoc;
 
-import com.vuryss.aoc.cli.NotificationOutputInterface;
+import com.vuryss.aoc.cli.NotificationsOutputInterface;
 import com.vuryss.aoc.cli.display.DayState;
 import com.vuryss.aoc.cli.display.StateUpdate;
 import com.vuryss.aoc.cli.display.PartState;
@@ -25,7 +25,7 @@ public class SingleSolutionExecutor {
     private final SolutionRepository solutionRepository = SolutionRepository.instance();
     private final DataProviderInterface dataProvider;
     private final Scheduler solverScheduler;
-    private final NotificationOutputInterface notificationsOutput;
+    private final NotificationsOutputInterface notificationsOutput;
 
     public Flux<DayState> execute(PuzzleDayReference puzzle, boolean validate) {
         return executeUpdates(puzzle, validate)

@@ -2,7 +2,6 @@ package com.vuryss.aoc.cli.display;
 
 import com.vuryss.aoc.*;
 import com.vuryss.aoc.cli.AppRuntime;
-import com.vuryss.aoc.cli.NotificationOutputInterface;
 import com.vuryss.aoc.data.DataProviderInterface;
 import dev.tamboui.inline.InlineDisplay;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +10,6 @@ import reactor.core.scheduler.Scheduler;
 
 import java.io.*;
 import java.time.Duration;
-import java.util.function.Function;
 
 @RequiredArgsConstructor
 public class RichTerminalOutput implements OutputInterface {
@@ -21,15 +19,16 @@ public class RichTerminalOutput implements OutputInterface {
         PuzzleDayReference puzzle,
         boolean isTest,
         boolean validate,
-        Function<NotificationOutputInterface, DataProviderInterface> generateDataProvider
+        DataProviderInterface dataProvider
     ) throws Exception {
         try (
             var display = new SingleDayDisplay(puzzle);
-            var output = new DisplayConsoleNotificationOutput(display.display(), runtime.render());
-            var _ = new RedirectedSystemOut(display.display(), runtime.render())
+            var output = new DisplayConsoleNotificationsOutput(display.display(), runtime.render());
+            var _ = new RedirectedSystemOut(display.display(), runtime.render());
+            var _ = runtime.notifications().subscribe(output);
         ) {
             if (isTest) {
-                var executor = new SingleSolutionTestExecutor(runtime.solver(), output);
+                var executor = new SingleSolutionTestExecutor(runtime.solver(), runtime.notifications());
 
                 Flux
                     .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())
@@ -41,7 +40,7 @@ public class RichTerminalOutput implements OutputInterface {
                 return;
             }
 
-            var executor = new SingleSolutionExecutor(generateDataProvider.apply(output), runtime.solver(), output);
+            var executor = new SingleSolutionExecutor(dataProvider, runtime.solver(), runtime.notifications());
 
             Flux
                 .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())
@@ -56,17 +55,18 @@ public class RichTerminalOutput implements OutputInterface {
         int event,
         boolean isTest,
         boolean validate,
-        Function<NotificationOutputInterface, DataProviderInterface> generateDataProvider
+        DataProviderInterface dataProvider
     ) throws Exception {
         try (
             var display = new WholeEventDisplay(event, isTest);
-            var output = new DisplayConsoleNotificationOutput(display.display(), runtime.render());
-            var _ = new RedirectedSystemOut(display.display(), runtime.render())
+            var output = new DisplayConsoleNotificationsOutput(display.display(), runtime.render());
+            var _ = new RedirectedSystemOut(display.display(), runtime.render());
+            var _ = runtime.notifications().subscribe(output);
         ) {
-            var executor = new MultiSolutionExecutor(runtime.solver(), output);
+            var executor = new MultiSolutionExecutor(runtime.solver(), runtime.notifications());
             var execution = isTest
                 ? executor.executeTests(event)
-                : executor.execute(event, generateDataProvider.apply(output), validate);
+                : executor.execute(event, dataProvider, validate);
 
             Flux
                 .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())

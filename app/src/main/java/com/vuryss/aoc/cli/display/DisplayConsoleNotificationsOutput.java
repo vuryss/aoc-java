@@ -1,7 +1,7 @@
 package com.vuryss.aoc.cli.display;
 
 import com.vuryss.aoc.Configuration;
-import com.vuryss.aoc.cli.NotificationOutputInterface;
+import com.vuryss.aoc.cli.NotificationsOutputInterface;
 import dev.tamboui.inline.InlineDisplay;
 import io.github.kusoroadeolu.clique.Clique;
 import io.github.kusoroadeolu.clique.configuration.BoxConfiguration;
@@ -11,7 +11,7 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 
 @RequiredArgsConstructor
-public class DisplayConsoleNotificationOutput implements NotificationOutputInterface, AutoCloseable {
+public class DisplayConsoleNotificationsOutput implements NotificationsOutputInterface, AutoCloseable {
     private static final String blankNewLIne = "\u00A0\n\u00A0";
     private final InlineDisplay display;
     private final Scheduler renderScheduler;

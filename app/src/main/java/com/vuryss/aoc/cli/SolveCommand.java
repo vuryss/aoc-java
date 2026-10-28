@@ -68,6 +68,7 @@ public class SolveCommand implements Runnable {
         var inputSelection = inputSelection();
         var manualInput = inputSelection.manual == null ? null : inputSelection.manual.resolveInput();
         var validate = inputSelection.user != null && inputSelection.user.validate;
+        var dataProvider = dataProvider(runtime.notifications(), manualInput);
         OutputInterface output;
 
         if (printStacktrace) Configuration.enableExceptionStacktrace();
@@ -99,22 +100,12 @@ public class SolveCommand implements Runnable {
                 );
             }
 
-            output.singleDay(
-                puzzle,
-                inputSelection.test,
-                validate,
-                notificationsOutput -> dataProvider(notificationsOutput, manualInput)
-            );
+            output.singleDay(puzzle, inputSelection.test, validate, dataProvider);
             return;
         }
 
         for (int selectedEvent: events) {
-            output.wholeEvent(
-                selectedEvent,
-                inputSelection.test,
-                validate,
-                notificationsOutput -> dataProvider(notificationsOutput, manualInput)
-            );
+            output.wholeEvent(selectedEvent, inputSelection.test, validate, dataProvider);
         }
     }
 
@@ -124,7 +115,7 @@ public class SolveCommand implements Runnable {
         return !jsonOutput && console != null && console.isTerminal();
     }
 
-    private AdventOfCodeClient adventOfCodeClient(boolean freshData, boolean noCache, NotificationOutputInterface output) {
+    private AdventOfCodeClient adventOfCodeClient(boolean freshData, boolean noCache, NotificationsOutputInterface output) {
         var client = ReactiveAdventOfCodeClient.instance();
         client.setOutput(output);
 
@@ -142,7 +133,7 @@ public class SolveCommand implements Runnable {
         return inputSelection;
     }
 
-    private DataProviderInterface dataProvider(NotificationOutputInterface output, String manualInput) {
+    private DataProviderInterface dataProvider(NotificationsOutputInterface output, String manualInput) {
         var inputSelection = inputSelection();
 
         if (inputSelection.manual != null) {

@@ -1,6 +1,6 @@
 package com.vuryss.aoc;
 
-import com.vuryss.aoc.cli.NotificationOutputInterface;
+import com.vuryss.aoc.cli.NotificationsOutputInterface;
 import com.vuryss.aoc.cli.display.EventState;
 import com.vuryss.aoc.cli.display.PartState;
 import com.vuryss.aoc.cli.display.StateUpdate;
@@ -16,7 +16,7 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class MultiSolutionExecutor {
     private final Scheduler solverScheduler;
-    private final NotificationOutputInterface notificationOutput;
+    private final NotificationsOutputInterface notificationOutput;
 
     public Flux<EventState> execute(int event, DataProviderInterface dataProvider, boolean validate) {
         var executor = new SingleSolutionExecutor(dataProvider, solverScheduler, notificationOutput);

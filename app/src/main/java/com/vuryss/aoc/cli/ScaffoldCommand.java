@@ -38,7 +38,7 @@ public class ScaffoldCommand implements Runnable {
     @Override
     public void run() {
         var scaffolder = new SolutionScaffolding(ReactiveAdventOfCodeClient.instance(), sourceRoot);
-        var printer = new PrettyPrintConsoleNotificationOutput();
+        var printer = new PrettyPrintConsoleNotificationsOutput();
 
         printer.announce("Scaffolding event %s, day %s".formatted(event, day));
 

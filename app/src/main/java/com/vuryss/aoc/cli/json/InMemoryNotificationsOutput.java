@@ -1,13 +1,13 @@
 package com.vuryss.aoc.cli.json;
 
 import com.vuryss.aoc.Configuration;
-import com.vuryss.aoc.cli.NotificationOutputInterface;
+import com.vuryss.aoc.cli.NotificationsOutputInterface;
 import lombok.Getter;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class InMemoryNotificationOutputInterface implements NotificationOutputInterface {
+public class InMemoryNotificationsOutput implements NotificationsOutputInterface {
     @Getter
     private final List<String> errors = new CopyOnWriteArrayList<>();
 
