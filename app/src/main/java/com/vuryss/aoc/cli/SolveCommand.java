@@ -91,7 +91,7 @@ public class SolveCommand implements Runnable {
             output = new JsonOutput(runtime);
         }
 
-        var executor = new MultiSolutionExecutor(runtime.solver(), runtime.notifications());
+        var runner = new Runner(runtime.solver(), runtime.notifications());
         Mono<Void> solving;
 
         if (events.size() == 1 && day != null) {
@@ -111,7 +111,7 @@ public class SolveCommand implements Runnable {
                 var testExecutor = new SingleSolutionTestExecutor(runtime.solver(), runtime.notifications());
                 solving = output.singleDayTests(puzzle, testExecutor.execute(puzzle));
             } else {
-                var updates = executor.execute(Flux.just(puzzle), dataProvider, validate);
+                var updates = runner.run(Flux.just(puzzle), dataProvider, validate);
                 solving = output.singleDay(puzzle, DayState.queued(validate), updates);
             }
         } else {
@@ -124,8 +124,8 @@ public class SolveCommand implements Runnable {
                     var puzzles = Flux.range(1, Configuration.getMaxChallengesForYear(selectedEvent))
                         .map(d -> new PuzzleDayReference(selectedEvent, d));
                     var updates = inputSelection.test
-                        ? executor.executeTests(puzzles)
-                        : executor.execute(puzzles, dataProvider, validate);
+                        ? runner.runTests(puzzles)
+                        : runner.run(puzzles, dataProvider, validate);
 
                     return output.wholeEvent(selectedEvent, inputSelection.test, initial, updates);
                 })

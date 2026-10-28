@@ -13,27 +13,27 @@ import java.util.List;
 import java.util.function.Function;
 
 @RequiredArgsConstructor
-public class MultiSolutionExecutor {
+public class Runner {
     private final Scheduler solverScheduler;
     private final NotificationsOutputInterface notificationOutput;
 
-    public Flux<StateUpdate> execute(Flux<PuzzleDayReference> puzzles, DataProviderInterface dataProvider, boolean validate) {
+    public Flux<StateUpdate> run(Flux<PuzzleDayReference> puzzles, DataProviderInterface dataProvider, boolean validate) {
         var executor = new SingleSolutionExecutor(dataProvider, solverScheduler, notificationOutput);
 
-        return executeDays(puzzles, puzzle -> executor.executeUpdates(puzzle, validate));
+        return runDays(puzzles, puzzle -> executor.executeUpdates(puzzle, validate));
     }
 
-    public Flux<StateUpdate> executeTests(Flux<PuzzleDayReference> puzzles) {
+    public Flux<StateUpdate> runTests(Flux<PuzzleDayReference> puzzles) {
         var executor = new SingleSolutionTestExecutor(solverScheduler, notificationOutput);
 
-        return executeDays(puzzles, puzzle ->
+        return runDays(puzzles, puzzle ->
             executor.execute(puzzle).flatMap(tests ->
                 Flux.just(1, 2)
                     .map(part -> new StateUpdate(new PuzzlePartReference(puzzle, part), _ -> summarize(tests, part))))
         );
     }
 
-    private Flux<StateUpdate> executeDays(
+    private Flux<StateUpdate> runDays(
         Flux<PuzzleDayReference> puzzles,
         Function<PuzzleDayReference, Flux<StateUpdate>> executeDay
     ) {
