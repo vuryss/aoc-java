@@ -5,7 +5,9 @@ import com.vuryss.aoc.*;
 import com.vuryss.aoc.cli.AppRuntime;
 import com.vuryss.aoc.cli.display.*;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -53,28 +55,36 @@ public class JsonOutput implements OutputInterface {
         }
     }
 
-    public void wholeEvent(int event, boolean isTest, Flux<EventState> states) throws Exception {
+    public Mono<Void> wholeEvent(int event, boolean isTest, Flux<EventState> states) {
         var output = new InMemoryNotificationsOutput();
 
-        try (var _ = runtime.notifications().subscribe(output)) {
-            var eventState = states
+        return Mono.using(
+            () -> runtime.notifications().subscribe(output),
+            _ -> states
                 .takeUntil(EventState::isFinished)
                 .onBackpressureLatest()
                 .publishOn(runtime.render())
-                .blockLast();
+                .last()
+                .doOnNext(eventState -> {
+                    var eventOutput = IntStream.range(0, eventState.days().size())
+                        .mapToObj(i -> {
+                            var dayState = eventState.days().get(i);
+                            return WholeEventOutputDto.DayDto.from(new PuzzleDayReference(event, i + 1), dayState);
+                        })
+                        .toList();
 
-            assert eventState != null;
-            var eventOutput = IntStream.range(0, eventState.days().size())
-                .mapToObj(i -> {
-                    var dayState = eventState.days().get(i);
-                    return WholeEventOutputDto.DayDto.from(new PuzzleDayReference(event, i + 1), dayState);
+                    print(
+                        WholeEventOutputDto.from(eventOutput)
+                            .withErrors(output.getErrors())
+                            .withNotices(output.getNotices())
+                    );
                 })
-                .toList();
-            var outputDto = WholeEventOutputDto.from(eventOutput)
-                .withErrors(output.getErrors())
-                .withNotices(output.getNotices());
+                .then()
+        );
+    }
 
-            System.out.println(objectMapper.writeValueAsString(outputDto));
-        }
+    @SneakyThrows
+    private void print(Object dto) {
+        System.out.println(objectMapper.writeValueAsString(dto));
     }
 }

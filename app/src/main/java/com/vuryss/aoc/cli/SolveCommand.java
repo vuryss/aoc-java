@@ -12,6 +12,7 @@ import com.vuryss.aoc.data.ManualDataProvider;
 import com.vuryss.aoc.data.UserDataProvider;
 import lombok.SneakyThrows;
 import picocli.CommandLine;
+import reactor.core.publisher.Flux;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -113,13 +114,15 @@ public class SolveCommand implements Runnable {
 
         var executor = new MultiSolutionExecutor(runtime.solver(), runtime.notifications());
 
-        for (int selectedEvent: events) {
-            var states = inputSelection.test
-                ? executor.executeTests(selectedEvent)
-                : executor.execute(selectedEvent, dataProvider, validate);
+        Flux.fromIterable(events)
+            .concatMap(selectedEvent -> {
+                var states = inputSelection.test
+                    ? executor.executeTests(selectedEvent)
+                    : executor.execute(selectedEvent, dataProvider, validate);
 
-            output.wholeEvent(selectedEvent, inputSelection.test, states);
-        }
+                return output.wholeEvent(selectedEvent, inputSelection.test, states);
+            })
+            .blockLast();
     }
 
     private boolean canUseRichTerminal() {

@@ -5,6 +5,7 @@ import com.vuryss.aoc.cli.AppRuntime;
 import dev.tamboui.inline.InlineDisplay;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 
 import java.io.*;
@@ -47,20 +48,30 @@ public class RichTerminalOutput implements OutputInterface {
         }
     }
 
-    public void wholeEvent(int event, boolean isTest, Flux<EventState> states) throws Exception {
-        try (
-            var display = new WholeEventDisplay(event, isTest);
-            var output = new DisplayConsoleNotificationsOutput(display.display(), runtime.render());
-            var _ = new RedirectedSystemOut(display.display(), runtime.render());
-            var _ = runtime.notifications().subscribe(output);
-        ) {
-            Flux
-                .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())
-                .withLatestFrom(states, (_, state) -> state)
-                .takeUntil(EventState::isFinished)
-                .doOnNext(display::render)
-                .blockLast();
-        }
+    public Mono<Void> wholeEvent(int event, boolean isTest, Flux<EventState> states) {
+        return Mono.using(
+            () -> new WholeEventDisplay(event, isTest),
+            display -> Mono.using(
+                () -> attach(display.display()),
+                _ -> Flux
+                    .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())
+                    .withLatestFrom(states, (_, state) -> state)
+                    .takeUntil(EventState::isFinished)
+                    .doOnNext(display::render)
+                    .then()
+            ).publishOn(runtime.render())
+        );
+    }
+
+    private AutoCloseable attach(InlineDisplay display) {
+        var redirectedOut = new RedirectedSystemOut(display, runtime.render());
+        var notificationsOutput = new DisplayConsoleNotificationsOutput(display, runtime.render());
+        var notifications = runtime.notifications().subscribe(notificationsOutput);
+
+        return () -> {
+            notifications.close();
+            redirectedOut.close();
+        };
     }
 }
 
