@@ -55,16 +55,14 @@ public class JsonOutput implements OutputInterface {
         }
     }
 
-    public Mono<Void> wholeEvent(int event, boolean isTest, Flux<EventState> states) {
+    public Mono<Void> wholeEvent(int event, boolean isTest, EventState initial, Flux<StateUpdate> updates) {
         var output = new InMemoryNotificationsOutput();
 
         return Mono.using(
             () -> runtime.notifications().subscribe(output),
-            _ -> states
-                .takeUntil(EventState::isFinished)
-                .onBackpressureLatest()
+            _ -> updates
+                .reduce(initial, EventState::withUpdate)
                 .publishOn(runtime.render())
-                .last()
                 .doOnNext(eventState -> {
                     var eventOutput = IntStream.range(0, eventState.days().size())
                         .mapToObj(i -> {

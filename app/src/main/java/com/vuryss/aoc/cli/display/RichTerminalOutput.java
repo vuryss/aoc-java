@@ -48,14 +48,14 @@ public class RichTerminalOutput implements OutputInterface {
         }
     }
 
-    public Mono<Void> wholeEvent(int event, boolean isTest, Flux<EventState> states) {
+    public Mono<Void> wholeEvent(int event, boolean isTest, EventState initial, Flux<StateUpdate> updates) {
         return Mono.using(
             () -> new WholeEventDisplay(event, isTest),
             display -> Mono.using(
                 () -> attach(display.display()),
                 _ -> Flux
                     .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())
-                    .withLatestFrom(states, (_, state) -> state)
+                    .withLatestFrom(updates.scan(initial, EventState::withUpdate), (_, state) -> state)
                     .takeUntil(EventState::isFinished)
                     .doOnNext(display::render)
                     .then()

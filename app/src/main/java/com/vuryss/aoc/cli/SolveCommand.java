@@ -2,6 +2,7 @@ package com.vuryss.aoc.cli;
 
 import com.vuryss.aoc.*;
 import com.vuryss.aoc.cache.FileCache;
+import com.vuryss.aoc.cli.display.EventState;
 import com.vuryss.aoc.cli.display.RichTerminalOutput;
 import com.vuryss.aoc.cli.json.JsonOutput;
 import com.vuryss.aoc.client.AdventOfCodeClient;
@@ -116,11 +117,15 @@ public class SolveCommand implements Runnable {
 
         Flux.fromIterable(events)
             .concatMap(selectedEvent -> {
-                var states = inputSelection.test
+                var initial = EventState.queued(
+                    Configuration.getMaxChallengesForYear(selectedEvent),
+                    validate || inputSelection.test
+                );
+                var updates = inputSelection.test
                     ? executor.executeTests(selectedEvent)
                     : executor.execute(selectedEvent, dataProvider, validate);
 
-                return output.wholeEvent(selectedEvent, inputSelection.test, states);
+                return output.wholeEvent(selectedEvent, inputSelection.test, initial, updates);
             })
             .blockLast();
     }

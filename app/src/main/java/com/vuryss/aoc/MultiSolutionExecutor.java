@@ -1,7 +1,6 @@
 package com.vuryss.aoc;
 
 import com.vuryss.aoc.cli.NotificationsOutputInterface;
-import com.vuryss.aoc.cli.display.EventState;
 import com.vuryss.aoc.cli.display.PartState;
 import com.vuryss.aoc.cli.display.StateUpdate;
 import com.vuryss.aoc.cli.display.TestCaseState;
@@ -18,35 +17,28 @@ public class MultiSolutionExecutor {
     private final Scheduler solverScheduler;
     private final NotificationsOutputInterface notificationOutput;
 
-    public Flux<EventState> execute(int event, DataProviderInterface dataProvider, boolean validate) {
+    public Flux<StateUpdate> execute(int event, DataProviderInterface dataProvider, boolean validate) {
         var executor = new SingleSolutionExecutor(dataProvider, solverScheduler, notificationOutput);
 
-        return executeDays(event, validate, puzzle -> executor.executeUpdates(puzzle, validate));
+        return executeDays(event, puzzle -> executor.executeUpdates(puzzle, validate));
     }
 
-    public Flux<EventState> executeTests(int event) {
+    public Flux<StateUpdate> executeTests(int event) {
         var executor = new SingleSolutionTestExecutor(solverScheduler, notificationOutput);
 
-        return executeDays(event, true, puzzle ->
+        return executeDays(event, puzzle ->
             executor.execute(puzzle).flatMap(tests ->
                 Flux.just(1, 2)
                     .map(part -> new StateUpdate(new PuzzlePartReference(puzzle, part), _ -> summarize(tests, part))))
         );
     }
 
-    private Flux<EventState> executeDays(
+    private Flux<StateUpdate> executeDays(
         int event,
-        boolean validate,
         Function<PuzzleDayReference, Flux<StateUpdate>> executeDay
     ) {
-        int dayCount = Configuration.getMaxChallengesForYear(event);
-
-        return Flux.range(1, dayCount)
-            .flatMap(day -> runDay(new PuzzleDayReference(event, day), executeDay))
-            .scanWith(
-                () -> EventState.queued(dayCount, validate),
-                EventState::withUpdate
-            );
+        return Flux.range(1, Configuration.getMaxChallengesForYear(event))
+            .flatMap(day -> runDay(new PuzzleDayReference(event, day), executeDay));
     }
 
     private Flux<StateUpdate> runDay(
