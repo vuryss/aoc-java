@@ -1,9 +1,11 @@
 package com.vuryss.aoc;
 
+import com.vuryss.aoc.cli.NotificationsOutputInterface;
 import com.vuryss.aoc.cli.display.StateUpdate;
 import com.vuryss.aoc.cli.display.PartState;
 import com.vuryss.aoc.client.Answers;
 import com.vuryss.aoc.client.Download;
+import com.vuryss.aoc.client.ResponseException;
 import com.vuryss.aoc.data.DataProviderInterface;
 import com.vuryss.aoc.solutions.SolutionRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ public class SingleSolutionExecutor {
     private final SolutionRepository solutionRepository = SolutionRepository.instance();
     private final DataProviderInterface dataProvider;
     private final Scheduler solverScheduler;
+    private final NotificationsOutputInterface notifications;
 
     Flux<StateUpdate> executeUpdates(PuzzleDayReference puzzle, boolean validate) {
         return Flux.defer(() -> {
@@ -25,9 +28,22 @@ public class SingleSolutionExecutor {
                 );
             }
 
-            var answers = dataProvider.getAnswers(puzzle).cache();
+            var answers = dataProvider.getAnswers(puzzle)
+                .doOnNext(download -> {
+                    if (download instanceof Download.Started<Answers>) {
+                        notifications.notice("Downloading answers for event %s, day %s".formatted(puzzle.event(), puzzle.day()));
+                    }
+                })
+                .doOnError(ResponseException.class, e -> notifications.error("Error response body: " + e.getBody()))
+                .cache();
 
             return dataProvider.getInput(puzzle)
+                .doOnNext(download -> {
+                    if (download instanceof Download.Started<String>) {
+                        notifications.notice("Downloading input for event %s, day %s".formatted(puzzle.event(), puzzle.day()));
+                    }
+                })
+                .doOnError(ResponseException.class, e -> notifications.error("Error response body: " + e.getBody()))
                 .concatMap(download ->
                     switch (download) {
                         case Download.Started<String> _ -> puzzle.parts()

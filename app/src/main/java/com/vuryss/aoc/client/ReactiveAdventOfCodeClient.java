@@ -1,12 +1,10 @@
 package com.vuryss.aoc.client;
 
 import com.vuryss.aoc.Configuration;
-import com.vuryss.aoc.cli.NotificationsOutputInterface;
 import com.vuryss.aoc.PuzzleDayReference;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.DefaultCookie;
-import lombok.Setter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
@@ -19,6 +17,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("ReactiveStreamsThrowInOperator")
 public class ReactiveAdventOfCodeClient implements AdventOfCodeClient {
     private static class Holder {
         public static final ReactiveAdventOfCodeClient INSTANCE = new ReactiveAdventOfCodeClient();
@@ -29,8 +28,62 @@ public class ReactiveAdventOfCodeClient implements AdventOfCodeClient {
 
     private final HttpClient httpClient;
 
-    @Setter
-    private NotificationsOutputInterface output;
+    public static ReactiveAdventOfCodeClient instance() {
+        return Holder.INSTANCE;
+    }
+
+    public Flux<Download<String>> getPlayerInput(PuzzleDayReference puzzle) {
+        return download(() -> fetch("/%s/day/%s/input".formatted(puzzle.event(), puzzle.day()))
+            .map(responseBody -> {
+                if (responseBody.contains("Puzzle inputs differ by user.  Please log in to get your puzzle input.")) {
+                    throw new RuntimeException("Invalid session token, cannot get user input");
+                }
+
+                return responseBody;
+            }));
+    }
+
+    public Flux<Download<Answers>> getCorrectAnswers(PuzzleDayReference puzzle) {
+        return download(() -> fetch("/%s/day/%s".formatted(puzzle.event(), puzzle.day()))
+            .map(responseBody -> {
+                var elements = Jsoup.parse(responseBody)
+                    .select("p:containsOwn(Your puzzle answer was) > code");
+
+                if (elements.size() == 2) {
+                    return new Answers(elements.get(0).text(), elements.get(1).text());
+                }
+
+                // Last day there would be just 1 answer
+                if (elements.size() == 1 && responseBody.contains("Both parts of this puzzle are complete!")) {
+                    return new Answers(elements.getFirst().text(), "Merry Christmas!");
+                }
+
+                // Only part 1 solved
+                if (elements.size() == 1) {
+                    return new Answers(elements.getFirst().text(), null);
+                }
+
+                throw new RuntimeException(
+                    "Cannot resolve answers for event %s day %s (found %s submitted answers)".formatted(
+                        puzzle.event(), puzzle.day(), elements.size()
+                    )
+                );
+            }));
+    }
+
+    public Mono<String> getDayDescription(PuzzleDayReference puzzle) {
+        return waitUntilNextAllowedTimeSlot()
+            .then(Mono.defer(() -> fetch("/%s/day/%s".formatted(puzzle.event(), puzzle.day()))))
+            .map(responseBody -> {
+                var articles = Jsoup.parse(responseBody).select("article.day-desc");
+
+                if (articles.isEmpty()) throw new RuntimeException(
+                    "No puzzle description found for event %s, day %s".formatted(puzzle.event(), puzzle.day())
+                );
+
+                return articles.stream().map(this::convertHtmlToJavadoc).collect(Collectors.joining("\n\n"));
+            });
+    }
 
     private ReactiveAdventOfCodeClient() {
         httpClient = HttpClient.create()
@@ -50,125 +103,23 @@ public class ReactiveAdventOfCodeClient implements AdventOfCodeClient {
         return httpClient.cookie(sessionCookie);
     }
 
-    public static ReactiveAdventOfCodeClient instance() {
-        return Holder.INSTANCE;
-    }
+    private Mono<String> fetch(String uri) {
+        return authenticatedHttpClient()
+            .get()
+            .uri(uri)
+            .responseSingle((response, body) -> body.asString()
+                .defaultIfEmpty("")
+                .map(responseBody -> {
+                    if (response.status().code() != 200) {
+                        throw new ResponseException(
+                            "Request to %s failed (status code: %d)".formatted(uri, response.status().code()),
+                            responseBody
+                        );
+                    }
 
-    public Flux<Download<String>> getPlayerInput(PuzzleDayReference puzzle) {
-        return download(() -> {
-            notice("Downloading input for event %s, day %s".formatted(puzzle.event(), puzzle.day()));
-
-            return authenticatedHttpClient()
-                .get()
-                .uri("/%s/day/%s/input".formatted(puzzle.event(), puzzle.day()))
-                .responseSingle((response, body) ->
-                    body.asString()
-                        .defaultIfEmpty("")
-                        .flatMap(responseBody -> {
-                            if (response.status().code() != 200) {
-                                error("Error response body: " + responseBody);
-
-                                return Mono.error(new ResponseException(
-                                    "Failed to get input (status code: " + response.status().code() + ") Check your session token and try again.",
-                                    responseBody
-                                ));
-                            }
-
-                            if (responseBody.contains("Puzzle inputs differ by user.  Please log in to get your puzzle input.")) {
-                                return Mono.error(new RuntimeException("Invalid session token, cannot get user input"));
-                            }
-
-                            return Mono.just(responseBody);
-                        })
-                );
-        });
-    }
-
-    public Flux<Download<Answers>> getCorrectAnswers(PuzzleDayReference puzzle) {
-        return download(() -> {
-            notice("Downloading answers for event %s, day %s".formatted(puzzle.event(), puzzle.day()));
-
-            return authenticatedHttpClient()
-                .get()
-                .uri("/%s/day/%s".formatted(puzzle.event(), puzzle.day()))
-                .responseSingle((response, body) ->
-                    body.asString()
-                        .defaultIfEmpty("")
-                        .flatMap(responseBody -> {
-                            if (response.status().code() != 200) {
-                                error("Error response body: " + responseBody);
-
-                                return Mono.error(new ResponseException(
-                                    "Failed to get input (status code: " + response.status().code() + ") Check your session token and try again.",
-                                    responseBody
-                                ));
-                            }
-
-                            var elements = Jsoup.parse(responseBody)
-                                .select("p:containsOwn(Your puzzle answer was) > code");
-
-                            if (elements.size() == 2) {
-                                return Mono.just(new Answers(
-                                    elements.get(0).text(),
-                                    elements.get(1).text()
-                                ));
-                            }
-
-                            // Last day there would be just 1 answer
-                            if (elements.size() == 1 && responseBody.contains("Both parts of this puzzle are complete!")) {
-                                return Mono.just(new Answers(elements.getFirst().text(), "Merry Christmas!"));
-                            }
-
-                            // Only part 1 solved
-                            if (elements.size() == 1) {
-                                return Mono.just(new Answers(elements.getFirst().text(), null));
-                            }
-
-                            return Mono.error(new RuntimeException(
-                                "Cannot resolve answers for event %s day %s (found %s submitted answers)".formatted(
-                                    puzzle.event(), puzzle.day(), elements.size()
-                                )
-                            ));
-                        })
-                );
-        });
-    }
-
-    @SuppressWarnings("ReactiveStreamsThrowInOperator")
-    public Mono<String> getDayDescription(PuzzleDayReference puzzle) {
-        return throttle(() -> {
-            notice("Downloading description for event %s, day %s".formatted(puzzle.event(), puzzle.day()));
-
-            return authenticatedHttpClient()
-                .get()
-                .uri("/%s/day/%s".formatted(puzzle.event(), puzzle.day()))
-                .responseSingle((response, body) ->
-                    body.asString()
-                        .defaultIfEmpty("")
-                        .map(responseBody -> {
-                            if (response.status().code() != 200) {
-                                error("Error response body: " + responseBody);
-
-                                throw new ResponseException(
-                                    "Failed to get description for event %s, day %s (status code: %s)".formatted(
-                                        puzzle.event(),
-                                        puzzle.day(),
-                                        response.status().code()
-                                    ),
-                                    responseBody
-                                );
-                            }
-
-                            var articles = Jsoup.parse(responseBody).select("article.day-desc");
-
-                            if (articles.isEmpty()) throw new RuntimeException(
-                                "No puzzle description found for event %s, day %s".formatted(puzzle.event(), puzzle.day())
-                            );
-
-                            return articles.stream().map(this::convertHtmlToJavadoc).collect(Collectors.joining("\n\n"));
-                        })
-                );
-        });
+                    return responseBody;
+                })
+            );
     }
 
     private String convertHtmlToJavadoc(Element element) {
@@ -194,10 +145,6 @@ public class ReactiveAdventOfCodeClient implements AdventOfCodeClient {
         }
 
         return element.text().replace("@NEW_LINE@", "\n").trim();
-    }
-
-    private <T> Mono<T> throttle(Supplier<Mono<T>> request) {
-        return waitUntilNextAllowedTimeSlot().then(Mono.defer(request));
     }
 
     private <T> Flux<Download<T>> download(Supplier<Mono<T>> request) {
@@ -238,17 +185,5 @@ public class ReactiveAdventOfCodeClient implements AdventOfCodeClient {
 
             return Mono.delay(Duration.ofNanos(delay)).then();
         });
-    }
-
-    private void notice(String message) {
-        if (output == null) return;
-
-        output.notice(message);
-    }
-
-    private void error(String message) {
-        if (output == null) return;
-
-        output.error(message);
     }
 }

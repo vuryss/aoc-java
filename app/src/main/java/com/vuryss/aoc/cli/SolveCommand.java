@@ -72,7 +72,7 @@ public class SolveCommand implements Runnable {
         var inputSelection = inputSelection();
         var manualInput = inputSelection.manual == null ? null : inputSelection.manual.resolveInput();
         var validate = inputSelection.user != null && inputSelection.user.validate;
-        var dataProvider = dataProvider(runtime.notifications(), manualInput);
+        var dataProvider = dataProvider(manualInput);
         OutputInterface output;
 
         if (printStacktrace) Configuration.enableExceptionStacktrace();
@@ -91,7 +91,7 @@ public class SolveCommand implements Runnable {
             output = new JsonOutput(runtime);
         }
 
-        var runner = new Runner(runtime.solver());
+        var runner = new Runner(runtime.solver(), runtime.notifications());
         Mono<Void> solving;
 
         if (events.size() == 1 && day != null) {
@@ -141,9 +141,8 @@ public class SolveCommand implements Runnable {
         return !jsonOutput && console != null && console.isTerminal();
     }
 
-    private AdventOfCodeClient adventOfCodeClient(boolean freshData, boolean noCache, NotificationsOutputInterface output) {
+    private AdventOfCodeClient adventOfCodeClient(boolean freshData, boolean noCache) {
         var client = ReactiveAdventOfCodeClient.instance();
-        client.setOutput(output);
 
         if (noCache) return client;
 
@@ -159,7 +158,7 @@ public class SolveCommand implements Runnable {
         return inputSelection;
     }
 
-    private DataProviderInterface dataProvider(NotificationsOutputInterface output, String manualInput) {
+    private DataProviderInterface dataProvider(String manualInput) {
         var inputSelection = inputSelection();
 
         if (inputSelection.manual != null) {
@@ -168,7 +167,7 @@ public class SolveCommand implements Runnable {
 
         if (inputSelection.user != null) {
             return new UserDataProvider(
-                adventOfCodeClient(inputSelection.user.freshData, inputSelection.user.noCache, output)
+                adventOfCodeClient(inputSelection.user.freshData, inputSelection.user.noCache)
             );
         }
 

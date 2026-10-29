@@ -41,6 +41,7 @@ public class ScaffoldCommand implements Runnable {
         var printer = new PrettyPrintConsoleNotificationsOutput();
 
         printer.announce("Scaffolding event %s, day %s".formatted(event, day));
+        printer.notice("Downloading description for event %s, day %s".formatted(event, day));
 
         scaffolder.scaffold(new PuzzleDayReference(event, day));
     }

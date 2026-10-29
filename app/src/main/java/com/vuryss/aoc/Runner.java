@@ -1,5 +1,6 @@
 package com.vuryss.aoc;
 
+import com.vuryss.aoc.cli.NotificationsOutputInterface;
 import com.vuryss.aoc.cli.display.PartState;
 import com.vuryss.aoc.cli.display.StateUpdate;
 import com.vuryss.aoc.cli.display.TestCaseState;
@@ -14,9 +15,10 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class Runner {
     private final Scheduler solverScheduler;
+    private final NotificationsOutputInterface notifications;
 
     public Flux<StateUpdate> run(Flux<PuzzleDayReference> puzzles, DataProviderInterface dataProvider, boolean validate) {
-        var executor = new SingleSolutionExecutor(dataProvider, solverScheduler);
+        var executor = new SingleSolutionExecutor(dataProvider, solverScheduler, notifications);
 
         return runDays(puzzles, puzzle -> executor.executeUpdates(puzzle, validate));
     }
