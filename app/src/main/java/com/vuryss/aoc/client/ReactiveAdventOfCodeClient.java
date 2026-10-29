@@ -139,7 +139,7 @@ public class ReactiveAdventOfCodeClient implements AdventOfCodeClient {
         element.select("li").forEach(li -> li.prepend("@NEW_LINE@- "));
 
         for (var node: element.childNodes()) {
-            if (node instanceof TextNode && ((TextNode) node).isBlank()) {
+            if (node instanceof TextNode tn && tn.isBlank()) {
                 node.remove();
             }
         }
