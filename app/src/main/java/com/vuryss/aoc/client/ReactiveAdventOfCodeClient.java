@@ -68,8 +68,9 @@ public class ReactiveAdventOfCodeClient implements AdventOfCodeClient {
                             if (response.status().code() != 200) {
                                 error("Error response body: " + responseBody);
 
-                                return Mono.error(new RuntimeException(
-                                    "Failed to get input (status code: " + response.status().code() + ") Check your session token and try again."
+                                return Mono.error(new ResponseException(
+                                    "Failed to get input (status code: " + response.status().code() + ") Check your session token and try again.",
+                                    responseBody
                                 ));
                             }
 
@@ -97,8 +98,9 @@ public class ReactiveAdventOfCodeClient implements AdventOfCodeClient {
                             if (response.status().code() != 200) {
                                 error("Error response body: " + responseBody);
 
-                                return Mono.error(new RuntimeException(
-                                    "Failed to get input (status code: " + response.status().code() + ") Check your session token and try again."
+                                return Mono.error(new ResponseException(
+                                    "Failed to get input (status code: " + response.status().code() + ") Check your session token and try again.",
+                                    responseBody
                                 ));
                             }
 
@@ -147,12 +149,13 @@ public class ReactiveAdventOfCodeClient implements AdventOfCodeClient {
                             if (response.status().code() != 200) {
                                 error("Error response body: " + responseBody);
 
-                                throw new RuntimeException(
+                                throw new ResponseException(
                                     "Failed to get description for event %s, day %s (status code: %s)".formatted(
                                         puzzle.event(),
                                         puzzle.day(),
                                         response.status().code()
-                                    )
+                                    ),
+                                    responseBody
                                 );
                             }
 
