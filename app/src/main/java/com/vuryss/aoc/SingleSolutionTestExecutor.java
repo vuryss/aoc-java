@@ -44,9 +44,7 @@ public class SingleSolutionTestExecutor {
 
                 Mono.fromCallable(() -> {
                     var solution = solutionRepository.find(puzzle);
-                    var result = test.part() == 1
-                        ? solution.part1Solution(test.input(), true)
-                        : solution.part2Solution(test.input(), true);
+                    var result = solution.solve(test.part(), test.input(), true);
                     var validation = test.expected().equals(result)
                         ? PartState.ValidationStatus.VALID
                         : PartState.ValidationStatus.INVALID;

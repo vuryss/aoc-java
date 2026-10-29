@@ -12,8 +12,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 
-import java.util.Objects;
-
 @RequiredArgsConstructor
 public class SingleSolutionExecutor {
     private final SolutionRepository solutionRepository = SolutionRepository.instance();
@@ -72,31 +70,20 @@ public class SingleSolutionExecutor {
             .defer(() -> {
                 long startedAtNs = System.nanoTime();
 
-                Mono<Solved> calculation = Mono.fromCallable(() -> {
-                    try {
-                        String result = switch (part.part()) {
-                            case 1 -> solution.part1Solution(input, false);
-                            case 2 -> solution.part2Solution(input, false);
-                            default -> throw new IllegalStateException("Invalid part: " + part.part());
-                        };
-
-                        Objects.requireNonNull(result);
-
-                        return new Solved(result, System.nanoTime());
-                    } catch (VirtualMachineError e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-
                 return Flux.concat(
                     Mono.just(new StateUpdate(part, state -> state.started(startedAtNs))),
 
-                    calculation.flatMapMany(solved ->
-                        Flux.concat(
-                            Mono.just(new StateUpdate(part, state -> state.completed(solved.result(), solved.finishedAtNs()))),
-                            validate ? validatePart(part, solved.result(), answers) : Flux.empty()
+                    Mono
+                        .fromCallable(() -> new Solved(
+                            solution.solve(part.part(), input, false),
+                            System.nanoTime()
+                        ))
+                        .flatMapMany(solved ->
+                            Flux.concat(
+                                Mono.just(new StateUpdate(part, state -> state.completed(solved.result(), solved.finishedAtNs()))),
+                                validate ? validatePart(part, solved.result(), answers) : Flux.empty()
+                            )
                         )
-                    )
                 );
             })
             .subscribeOn(solverScheduler);
