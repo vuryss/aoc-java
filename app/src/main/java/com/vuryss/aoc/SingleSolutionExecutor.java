@@ -49,26 +49,22 @@ public class SingleSolutionExecutor {
         boolean validate
     ) {
         return Flux
-            .defer(() -> {
-                var solution = solutionRepository.find(part.puzzle());
-                long startedAtNs = System.nanoTime();
+            .concat(
+                Mono.fromSupplier(System::nanoTime)
+                    .map(startedAtNs -> new StateUpdate(part, state -> state.started(startedAtNs))),
 
-                return Flux.concat(
-                    Mono.just(new StateUpdate(part, state -> state.started(startedAtNs))),
-
-                    Mono
-                        .fromCallable(() -> new Solved(
-                            solution.solve(part.part(), input, false),
-                            System.nanoTime()
-                        ))
-                        .flatMapMany(solved ->
-                            Flux.concat(
-                                Mono.just(new StateUpdate(part, state -> state.completed(solved.result(), solved.finishedAtNs()))),
-                                validate ? validatePart(part, solved.result(), answers) : Flux.empty()
-                            )
+                Mono
+                    .fromCallable(() -> new Solved(
+                        solutionRepository.find(part.puzzle()).solve(part.part(), input, false),
+                        System.nanoTime()
+                    ))
+                    .flatMapMany(solved ->
+                        Flux.concat(
+                            Mono.just(new StateUpdate(part, state -> state.completed(solved.result(), solved.finishedAtNs()))),
+                            validate ? validatePart(part, solved.result(), answers) : Flux.empty()
                         )
-                );
-            })
+                    )
+            )
             .subscribeOn(solverScheduler)
             .onErrorResume(failure -> {
                 long failedAtNs = System.nanoTime();

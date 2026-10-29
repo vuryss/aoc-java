@@ -52,8 +52,7 @@ public class Runner {
                         part,
                         state -> state.isFinished() ? state : state.failed(failure, failedAtNs)
                     ));
-            })
-            .subscribeOn(solverScheduler);
+            });
     }
 
     private PartState summarize(List<TestCaseState> tests, int part) {
