@@ -1,6 +1,7 @@
 package com.vuryss.aoc;
 
 import com.vuryss.aoc.cli.NotificationsOutputInterface;
+import com.vuryss.aoc.cli.display.DayTestsState;
 import com.vuryss.aoc.cli.display.PartState;
 import com.vuryss.aoc.cli.display.StateUpdate;
 import com.vuryss.aoc.cli.display.TestCaseState;
@@ -26,11 +27,16 @@ public class Runner {
     public Flux<StateUpdate> runTests(Flux<PuzzleDayReference> puzzles) {
         var executor = new SingleSolutionTestExecutor(solverScheduler);
 
-        return runDays(puzzles, puzzle ->
-            executor.execute(puzzle).flatMap(tests ->
-                puzzle.parts()
-                    .map(part -> new StateUpdate(part, _ -> summarize(tests, part.part()))))
-        );
+        return runDays(puzzles, puzzle -> {
+            var initial = executor.queued(puzzle);
+
+            return executor.execute(puzzle, initial)
+                .scan(initial, DayTestsState::withUpdate)
+                .flatMap(state ->
+                    puzzle.parts()
+                        .map(part -> new StateUpdate(part, _ -> summarize(state.tests(), part.part())))
+                );
+        });
     }
 
     private Flux<StateUpdate> runDays(

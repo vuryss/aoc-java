@@ -11,7 +11,6 @@ import reactor.core.scheduler.Scheduler;
 
 import java.io.*;
 import java.time.Duration;
-import java.util.List;
 
 @RequiredArgsConstructor
 public class RichTerminalOutput implements OutputInterface {
@@ -35,7 +34,7 @@ public class RichTerminalOutput implements OutputInterface {
             .then();
     }
 
-    public Mono<Void> singleDayTests(PuzzleDayReference puzzle, Flux<List<TestCaseState>> states) {
+    public Mono<Void> singleDayTests(PuzzleDayReference puzzle, DayTestsState initial, Flux<TestUpdate> updates) {
         return Mono
             .using(
                 () -> new SingleDayDisplay(puzzle),
@@ -43,13 +42,13 @@ public class RichTerminalOutput implements OutputInterface {
                     () -> attach(display.display()),
                     _ -> Flux
                         .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())
-                        .withLatestFrom(states, (_, state) -> state)
-                        .takeUntil(tests -> tests.stream().allMatch(test -> test.state().isFinished()))
-                        .doOnNext(display::renderTests)
+                        .withLatestFrom(updates.scan(initial, DayTestsState::withUpdate), (_, state) -> state)
+                        .takeUntil(DayTestsState::isFinished)
+                        .doOnNext(state -> display.renderTests(state.tests()))
                         .last()
                 ).publishOn(runtime.render())
             )
-            .doOnNext(tests -> StackTraces.print(tests.stream().map(TestCaseState::state)))
+            .doOnNext(state -> StackTraces.print(state.parts()))
             .then();
     }
 

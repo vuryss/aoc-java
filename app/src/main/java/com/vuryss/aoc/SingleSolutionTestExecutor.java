@@ -1,38 +1,27 @@
 package com.vuryss.aoc;
 
+import com.vuryss.aoc.cli.display.DayTestsState;
 import com.vuryss.aoc.cli.display.PartState;
 import com.vuryss.aoc.cli.display.TestCaseState;
+import com.vuryss.aoc.cli.display.TestUpdate;
 import com.vuryss.aoc.solutions.SolutionRepository;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
-import reactor.util.function.Tuples;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @RequiredArgsConstructor
 public class SingleSolutionTestExecutor {
     private final SolutionRepository solutionRepository = SolutionRepository.instance();
     private final Scheduler solverScheduler;
 
-    public Flux<List<TestCaseState>> execute(PuzzleDayReference puzzle) {
-        return Flux.defer(() -> {
-            var testsStates = initialTestCasesStates(puzzle);
+    public Flux<TestUpdate> execute(PuzzleDayReference puzzle, DayTestsState initial) {
+        var tests = initial.tests();
 
-            return Flux.fromIterable(testsStates)
-                .index()
-                .flatMap(indexed ->
-                    runTest(puzzle, indexed.getT2()).map(state -> Tuples.of(indexed.getT1().intValue(), state))
-                )
-                .scan(testsStates, (current, change) -> {
-                    var copy = new ArrayList<>(current);
-                    int index = change.getT1();
-                    copy.set(index, copy.get(index).withState(change.getT2()));
-                    return copy;
-                });
-        });
+        return Flux.range(0, tests.size())
+            .flatMap(index -> runTest(puzzle, tests.get(index)).map(state -> new TestUpdate(index, state)));
     }
 
     private Flux<PartState> runTest(PuzzleDayReference puzzle, TestCaseState test) {
@@ -65,7 +54,7 @@ public class SingleSolutionTestExecutor {
         }).subscribeOn(solverScheduler);
     }
 
-    private List<TestCaseState> initialTestCasesStates(PuzzleDayReference puzzle) {
+    public DayTestsState queued(PuzzleDayReference puzzle) {
         var solution = solutionRepository.find(puzzle);
 
         if (solution == null) {
@@ -89,6 +78,6 @@ public class SingleSolutionTestExecutor {
             }
         }
 
-        return cases;
+        return new DayTestsState(cases);
     }
 }

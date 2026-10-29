@@ -109,7 +109,8 @@ public class SolveCommand implements Runnable {
 
             if (inputSelection.test) {
                 var testExecutor = new SingleSolutionTestExecutor(runtime.solver());
-                solving = output.singleDayTests(puzzle, testExecutor.execute(puzzle));
+                var initial = testExecutor.queued(puzzle);
+                solving = output.singleDayTests(puzzle, initial, testExecutor.execute(puzzle, initial));
             } else {
                 var updates = runner.run(Flux.just(puzzle), dataProvider, validate);
                 solving = output.singleDay(puzzle, DayState.queued(validate), updates);

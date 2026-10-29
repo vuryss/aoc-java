@@ -10,7 +10,6 @@ import lombok.SneakyThrows;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
 import java.util.stream.IntStream;
 
 @RequiredArgsConstructor
@@ -36,17 +35,17 @@ public class JsonOutput implements OutputInterface {
         );
     }
 
-    public Mono<Void> singleDayTests(PuzzleDayReference puzzle, Flux<List<TestCaseState>> states) {
+    public Mono<Void> singleDayTests(PuzzleDayReference puzzle, DayTestsState initial, Flux<TestUpdate> updates) {
         var output = new InMemoryNotificationsOutput();
 
         return Mono.using(
             () -> runtime.notifications().subscribe(output),
-            _ -> states
-                .last()
+            _ -> updates
+                .reduce(initial, DayTestsState::withUpdate)
                 .publishOn(runtime.render())
-                .doOnNext(tests -> StackTraces.print(tests.stream().map(TestCaseState::state)))
-                .doOnNext(tests -> print(
-                    SingleDayTestOutputDto.from(puzzle, tests)
+                .doOnNext(state -> StackTraces.print(state.parts()))
+                .doOnNext(state -> print(
+                    SingleDayTestOutputDto.from(puzzle, state.tests())
                         .addErrors(output.getErrors())
                         .addNotices(output.getNotices())
                 ))
