@@ -1,4 +1,4 @@
-package com.vuryss.aoc.cli.display;
+package com.vuryss.aoc.cli.state;
 
 import java.util.ArrayList;
 import java.util.Collections;

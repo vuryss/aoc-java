@@ -1,6 +1,9 @@
 package com.vuryss.aoc.cli.display;
 
 import com.vuryss.aoc.PuzzleDayReference;
+import com.vuryss.aoc.cli.state.DayState;
+import com.vuryss.aoc.cli.state.PartState;
+import com.vuryss.aoc.cli.state.TestCaseState;
 import dev.tamboui.buffer.Buffer;
 import dev.tamboui.inline.InlineDisplay;
 import dev.tamboui.layout.Rect;

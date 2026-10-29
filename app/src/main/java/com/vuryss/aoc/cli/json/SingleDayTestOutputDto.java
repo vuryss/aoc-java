@@ -1,7 +1,7 @@
 package com.vuryss.aoc.cli.json;
 
 import com.vuryss.aoc.PuzzleDayReference;
-import com.vuryss.aoc.cli.display.TestCaseState;
+import com.vuryss.aoc.cli.state.TestCaseState;
 
 import java.util.ArrayList;
 import java.util.List;

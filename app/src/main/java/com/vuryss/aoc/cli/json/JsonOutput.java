@@ -1,10 +1,11 @@
 package com.vuryss.aoc.cli.json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vuryss.aoc.*;
+import com.vuryss.aoc.OutputInterface;
+import com.vuryss.aoc.PuzzleDayReference;
 import com.vuryss.aoc.cli.AppRuntime;
 import com.vuryss.aoc.cli.StackTraces;
-import com.vuryss.aoc.cli.display.*;
+import com.vuryss.aoc.cli.state.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import reactor.core.publisher.Flux;

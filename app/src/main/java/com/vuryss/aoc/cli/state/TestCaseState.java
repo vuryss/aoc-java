@@ -1,4 +1,4 @@
-package com.vuryss.aoc.cli.display;
+package com.vuryss.aoc.cli.state;
 
 public record TestCaseState(
     int part,

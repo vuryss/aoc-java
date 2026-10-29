@@ -1,6 +1,8 @@
 package com.vuryss.aoc.cli.display;
 
 import com.vuryss.aoc.Configuration;
+import com.vuryss.aoc.cli.state.EventState;
+import com.vuryss.aoc.cli.state.PartState;
 import dev.tamboui.inline.InlineDisplay;
 import dev.tamboui.layout.Rect;
 import dev.tamboui.style.Color;

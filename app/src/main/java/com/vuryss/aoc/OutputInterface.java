@@ -1,6 +1,6 @@
 package com.vuryss.aoc;
 
-import com.vuryss.aoc.cli.display.*;
+import com.vuryss.aoc.cli.state.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 

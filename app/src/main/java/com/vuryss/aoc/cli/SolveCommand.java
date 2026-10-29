@@ -2,8 +2,8 @@ package com.vuryss.aoc.cli;
 
 import com.vuryss.aoc.*;
 import com.vuryss.aoc.cache.FileCache;
-import com.vuryss.aoc.cli.display.DayState;
-import com.vuryss.aoc.cli.display.EventState;
+import com.vuryss.aoc.cli.state.DayState;
+import com.vuryss.aoc.cli.state.EventState;
 import com.vuryss.aoc.cli.display.RichTerminalOutput;
 import com.vuryss.aoc.cli.json.JsonOutput;
 import com.vuryss.aoc.client.AdventOfCodeClient;

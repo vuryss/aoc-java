@@ -1,9 +1,9 @@
 package com.vuryss.aoc;
 
-import com.vuryss.aoc.cli.display.DayTestsState;
-import com.vuryss.aoc.cli.display.PartState;
-import com.vuryss.aoc.cli.display.TestCaseState;
-import com.vuryss.aoc.cli.display.TestUpdate;
+import com.vuryss.aoc.cli.state.DayTestsState;
+import com.vuryss.aoc.cli.state.PartState;
+import com.vuryss.aoc.cli.state.TestCaseState;
+import com.vuryss.aoc.cli.state.TestUpdate;
 import com.vuryss.aoc.solutions.SolutionRepository;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;

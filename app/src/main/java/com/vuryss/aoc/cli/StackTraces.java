@@ -1,7 +1,7 @@
 package com.vuryss.aoc.cli;
 
 import com.vuryss.aoc.Configuration;
-import com.vuryss.aoc.cli.display.PartState;
+import com.vuryss.aoc.cli.state.PartState;
 
 import java.util.Objects;
 import java.util.stream.Stream;

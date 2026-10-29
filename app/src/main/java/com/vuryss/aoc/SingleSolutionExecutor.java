@@ -1,8 +1,8 @@
 package com.vuryss.aoc;
 
 import com.vuryss.aoc.cli.NotificationsOutputInterface;
-import com.vuryss.aoc.cli.display.StateUpdate;
-import com.vuryss.aoc.cli.display.PartState;
+import com.vuryss.aoc.cli.state.StateUpdate;
+import com.vuryss.aoc.cli.state.PartState;
 import com.vuryss.aoc.client.Answers;
 import com.vuryss.aoc.client.Download;
 import com.vuryss.aoc.client.ResponseException;
