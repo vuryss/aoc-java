@@ -26,8 +26,8 @@ public class Runner {
 
         return runDays(puzzles, puzzle ->
             executor.execute(puzzle).flatMap(tests ->
-                Flux.just(1, 2)
-                    .map(part -> new StateUpdate(new PuzzlePartReference(puzzle, part), _ -> summarize(tests, part))))
+                puzzle.parts()
+                    .map(part -> new StateUpdate(part, _ -> summarize(tests, part.part()))))
         );
     }
 
@@ -47,9 +47,9 @@ public class Runner {
             .onErrorResume(failure -> {
                 var failedAtNs = System.nanoTime();
 
-                return Flux.just(1, 2)
+                return puzzle.parts()
                     .map(part -> new StateUpdate(
-                        new PuzzlePartReference(puzzle, part),
+                        part,
                         state -> state.isFinished() ? state : state.failed(failure, failedAtNs)
                     ));
             })

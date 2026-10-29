@@ -5,7 +5,6 @@ import com.vuryss.aoc.cli.display.PartState;
 import com.vuryss.aoc.client.Answers;
 import com.vuryss.aoc.client.Download;
 import com.vuryss.aoc.data.DataProviderInterface;
-import com.vuryss.aoc.solutions.SolutionInterface;
 import com.vuryss.aoc.solutions.SolutionRepository;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
@@ -20,47 +19,30 @@ public class SingleSolutionExecutor {
 
     Flux<StateUpdate> executeUpdates(PuzzleDayReference puzzle, boolean validate) {
         return Flux.defer(() -> {
-            var input = dataProvider.getInput(puzzle).cache();
+            if (solutionRepository.find(puzzle) == null) {
+                return Flux.error(
+                    new IllegalStateException("No solution found for event " + puzzle.event() + " day " + puzzle.day())
+                );
+            }
+
             var answers = dataProvider.getAnswers(puzzle).cache();
 
-            return Flux.just(1, 2)
-                .flatMap(part -> runPart(new PuzzlePartReference(puzzle, part), input, answers, validate));
+            return dataProvider.getInput(puzzle)
+                .concatMap(download ->
+                    switch (download) {
+                        case Download.Started<String> _ -> puzzle.parts()
+                            .map(part ->
+                                new StateUpdate(part, state -> state.withStatus(PartState.Status.LOADING_INPUT))
+                            );
+
+                        case Download.Done<String>(var inputValue) -> puzzle.parts()
+                            .flatMap(part -> solvePart(part, inputValue, answers, validate));
+                    }
+                );
         });
     }
 
-    private Flux<StateUpdate> runPart(
-        PuzzlePartReference part,
-        Flux<Download<String>> input,
-        Flux<Download<Answers>> answers,
-        boolean validate
-    ) {
-        return Flux
-            .defer(() -> {
-                var solution = solutionRepository.find(part.puzzle());
-
-                if (solution == null) {
-                    return Flux.error(
-                        new IllegalStateException("No solution found for event " + part.event() + " day " + part.day())
-                    );
-                }
-
-                return input.concatMap(download -> switch (download) {
-                    case Download.Started<String> _ ->
-                        Mono.just(new StateUpdate(part, state -> state.withStatus(PartState.Status.LOADING_INPUT)));
-                    case Download.Done<String>(var inputValue) ->
-                        solvePart(solution, part, inputValue, answers, validate);
-                });
-            })
-            .subscribeOn(solverScheduler)
-            .onErrorResume(failure -> {
-                long failedAtNs = System.nanoTime();
-
-                return Mono.just(new StateUpdate(part, state -> state.failed(failure, failedAtNs)));
-            });
-    }
-
     private Flux<StateUpdate> solvePart(
-        SolutionInterface solution,
         PuzzlePartReference part,
         String input,
         Flux<Download<Answers>> answers,
@@ -68,6 +50,7 @@ public class SingleSolutionExecutor {
     ) {
         return Flux
             .defer(() -> {
+                var solution = solutionRepository.find(part.puzzle());
                 long startedAtNs = System.nanoTime();
 
                 return Flux.concat(
@@ -86,7 +69,12 @@ public class SingleSolutionExecutor {
                         )
                 );
             })
-            .subscribeOn(solverScheduler);
+            .subscribeOn(solverScheduler)
+            .onErrorResume(failure -> {
+                long failedAtNs = System.nanoTime();
+
+                return Mono.just(new StateUpdate(part, state -> state.failed(failure, failedAtNs)));
+            });
     }
 
     private Flux<StateUpdate> validatePart(PuzzlePartReference part, String result, Flux<Download<Answers>> answers) {
