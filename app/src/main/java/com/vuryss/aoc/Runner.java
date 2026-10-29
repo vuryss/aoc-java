@@ -1,6 +1,5 @@
 package com.vuryss.aoc;
 
-import com.vuryss.aoc.cli.NotificationsOutputInterface;
 import com.vuryss.aoc.cli.display.PartState;
 import com.vuryss.aoc.cli.display.StateUpdate;
 import com.vuryss.aoc.cli.display.TestCaseState;
@@ -15,16 +14,15 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class Runner {
     private final Scheduler solverScheduler;
-    private final NotificationsOutputInterface notificationOutput;
 
     public Flux<StateUpdate> run(Flux<PuzzleDayReference> puzzles, DataProviderInterface dataProvider, boolean validate) {
-        var executor = new SingleSolutionExecutor(dataProvider, solverScheduler, notificationOutput);
+        var executor = new SingleSolutionExecutor(dataProvider, solverScheduler);
 
         return runDays(puzzles, puzzle -> executor.executeUpdates(puzzle, validate));
     }
 
     public Flux<StateUpdate> runTests(Flux<PuzzleDayReference> puzzles) {
-        var executor = new SingleSolutionTestExecutor(solverScheduler, notificationOutput);
+        var executor = new SingleSolutionTestExecutor(solverScheduler);
 
         return runDays(puzzles, puzzle ->
             executor.execute(puzzle).flatMap(tests ->
@@ -48,7 +46,6 @@ public class Runner {
             .defer(() -> executeDay.apply(puzzle))
             .onErrorResume(failure -> {
                 var failedAtNs = System.nanoTime();
-                notificationOutput.exception(failure);
 
                 return Flux.just(1, 2)
                     .map(part -> new StateUpdate(
@@ -77,13 +74,14 @@ public class Runner {
         var validation = PartState.ValidationStatus.VALID;
 
         if (states.isEmpty()) validation = PartState.ValidationStatus.UNAVAILABLE;
-        else if (failure.isPresent()) validation = PartState.ValidationStatus.ERROR;
         else if (passed != states.size()) validation = PartState.ValidationStatus.INVALID;
 
         long finishedAtNs = states.stream().mapToLong(PartState::finishedAtNs).max().orElse(-1);
 
-        return summary
-            .completed(passed + "/" + states.size(), finishedAtNs)
-            .withValidation(validation, null, failure.map(PartState::error).orElse(null));
+        var completed = summary.completed(passed + "/" + states.size(), finishedAtNs);
+
+        return failure
+            .map(test -> completed.validationFailed(test.failure()))
+            .orElse(completed.withValidation(validation, null, null));
     }
 }

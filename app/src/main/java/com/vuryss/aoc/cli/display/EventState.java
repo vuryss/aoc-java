@@ -3,16 +3,11 @@ package com.vuryss.aoc.cli.display;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 public record EventState(List<DayState> days) {
     public static EventState queued(int dayCount, boolean validate) {
         return new EventState(Collections.nCopies(dayCount, DayState.queued(validate)));
-    }
-
-    public EventState updateDayState(int day, DayState state) {
-        var copy = new ArrayList<>(days);
-        copy.set(day - 1, state);
-        return new EventState(copy);
     }
 
     public EventState withUpdate(StateUpdate change) {
@@ -31,5 +26,9 @@ public record EventState(List<DayState> days) {
 
     public long finishedDays() {
         return days.stream().filter(DayState::isFinished).count();
+    }
+
+    public Stream<PartState> parts() {
+        return days.stream().flatMap(DayState::parts);
     }
 }

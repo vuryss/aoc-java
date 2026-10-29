@@ -1,12 +1,10 @@
 package com.vuryss.aoc.cli.display;
 
-import com.vuryss.aoc.Configuration;
 import com.vuryss.aoc.cli.NotificationsOutputInterface;
 import dev.tamboui.inline.InlineDisplay;
 import io.github.kusoroadeolu.clique.Clique;
 import io.github.kusoroadeolu.clique.configuration.BoxConfiguration;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Scheduler;
 
@@ -46,13 +44,6 @@ public class DisplayConsoleNotificationsOutput implements NotificationsOutputInt
             .build();
 
         println(Clique.box(config).content(content).get());
-    }
-
-    @Override
-    public void exception(Throwable e) {
-        if (!Configuration.exceptionStacktraceEnabled()) return;
-
-        println("\n" + ExceptionUtils.getStackTrace(e) + "\n");
     }
 
     private void println(String message) {

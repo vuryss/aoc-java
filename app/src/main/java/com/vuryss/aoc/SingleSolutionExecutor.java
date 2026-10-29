@@ -1,6 +1,5 @@
 package com.vuryss.aoc;
 
-import com.vuryss.aoc.cli.NotificationsOutputInterface;
 import com.vuryss.aoc.cli.display.StateUpdate;
 import com.vuryss.aoc.cli.display.PartState;
 import com.vuryss.aoc.client.Answers;
@@ -20,7 +19,6 @@ public class SingleSolutionExecutor {
     private final SolutionRepository solutionRepository = SolutionRepository.instance();
     private final DataProviderInterface dataProvider;
     private final Scheduler solverScheduler;
-    private final NotificationsOutputInterface notificationsOutput;
 
     Flux<StateUpdate> executeUpdates(PuzzleDayReference puzzle, boolean validate) {
         return Flux.defer(() -> {
@@ -58,7 +56,6 @@ public class SingleSolutionExecutor {
             .subscribeOn(solverScheduler)
             .onErrorResume(failure -> {
                 long failedAtNs = System.nanoTime();
-                notificationsOutput.exception(failure);
 
                 return Mono.just(new StateUpdate(part, state -> state.failed(failure, failedAtNs)));
             });
@@ -125,13 +122,7 @@ public class SingleSolutionExecutor {
                     );
                 }
             })
-            .onErrorResume(failure -> {
-                notificationsOutput.exception(failure);
-                return Mono.just(new StateUpdate(
-                    part,
-                    state -> state.withValidation(PartState.ValidationStatus.ERROR, null, failure.getMessage())
-                ));
-            });
+            .onErrorResume(failure -> Mono.just(new StateUpdate(part, state -> state.validationFailed(failure))));
     }
 
     private record Solved(String result, long finishedAtNs) {}

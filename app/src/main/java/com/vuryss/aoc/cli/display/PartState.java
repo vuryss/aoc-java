@@ -1,8 +1,5 @@
 package com.vuryss.aoc.cli.display;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public record PartState(
     Status status,
     String result,
@@ -11,7 +8,7 @@ public record PartState(
     ValidationStatus validationStatus,
     String expectedResult,
     String error,
-    List<Throwable> exceptions
+    Throwable failure
 ) {
     public static PartState queued(boolean validate) {
         return new PartState(
@@ -22,14 +19,12 @@ public record PartState(
             validate ? ValidationStatus.QUEUED : ValidationStatus.NOT_REQUESTED,
             null,
             null,
-            new ArrayList<>()
+            null
         );
     }
 
     public PartState failed(Throwable failure, long failureAtNs) {
         long end = status == Status.RUNNING ? failureAtNs : finishedAtNs;
-        var updatedList = new ArrayList<>(exceptions);
-        updatedList.add(failure);
 
         return new PartState(
             Status.ERROR,
@@ -39,7 +34,20 @@ public record PartState(
             validationStatus,
             null,
             failure.toString(),
-            updatedList
+            failure
+        );
+    }
+
+    public PartState validationFailed(Throwable failure) {
+        return new PartState(
+            status,
+            result,
+            startedAtNs,
+            finishedAtNs,
+            ValidationStatus.ERROR,
+            null,
+            failure.getMessage(),
+            failure
         );
     }
 
@@ -52,7 +60,7 @@ public record PartState(
             validationStatus,
             expectedResult,
             error,
-            new ArrayList<>()
+            failure
         );
     }
 
@@ -65,7 +73,7 @@ public record PartState(
             validationStatus,
             expectedResult,
             error,
-            new ArrayList<>()
+            failure
         );
     }
 
@@ -78,7 +86,7 @@ public record PartState(
             validationStatus,
             expectedResult,
             error,
-            new ArrayList<>()
+            failure
         );
     }
 
@@ -91,7 +99,7 @@ public record PartState(
             nextValidationStatus,
             expectedResult,
             error,
-            new ArrayList<>()
+            failure
         );
     }
 

@@ -20,11 +20,6 @@ public class NotificationsOutput implements NotificationsOutputInterface {
         emit(new Notification.Notice(message));
     }
 
-    @Override
-    public void exception(Throwable e) {
-        emit(new Notification.Failure(e));
-    }
-
     public AutoCloseable subscribe(NotificationsOutputInterface output) {
         var subscription = sink.asFlux().subscribe(output::show);
 

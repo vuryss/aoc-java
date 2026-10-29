@@ -1,5 +1,7 @@
 package com.vuryss.aoc.cli.display;
 
+import java.util.stream.Stream;
+
 public record DayState(
     PartState part1,
     PartState part2
@@ -21,5 +23,9 @@ public record DayState(
 
     public boolean isFinished() {
         return part1.isFinished() && part2.isFinished();
+    }
+
+    public Stream<PartState> parts() {
+        return Stream.of(part1, part2);
     }
 }

@@ -3,6 +3,7 @@ package com.vuryss.aoc.cli.json;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vuryss.aoc.*;
 import com.vuryss.aoc.cli.AppRuntime;
+import com.vuryss.aoc.cli.StackTraces;
 import com.vuryss.aoc.cli.display.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -25,6 +26,7 @@ public class JsonOutput implements OutputInterface {
             _ -> updates
                 .reduce(initial, DayState::withUpdate)
                 .publishOn(runtime.render())
+                .doOnNext(dayState -> StackTraces.print(dayState.parts()))
                 .doOnNext(dayState -> print(
                     SingleDayOutputDto.from(puzzle, dayState)
                         .withErrors(output.getErrors())
@@ -42,6 +44,7 @@ public class JsonOutput implements OutputInterface {
             _ -> states
                 .last()
                 .publishOn(runtime.render())
+                .doOnNext(tests -> StackTraces.print(tests.stream().map(TestCaseState::state)))
                 .doOnNext(tests -> print(
                     SingleDayTestOutputDto.from(puzzle, tests)
                         .addErrors(output.getErrors())
@@ -59,6 +62,7 @@ public class JsonOutput implements OutputInterface {
             _ -> updates
                 .reduce(initial, EventState::withUpdate)
                 .publishOn(runtime.render())
+                .doOnNext(eventState -> StackTraces.print(eventState.parts()))
                 .doOnNext(eventState -> {
                     var eventOutput = IntStream.range(0, eventState.days().size())
                         .mapToObj(i -> {

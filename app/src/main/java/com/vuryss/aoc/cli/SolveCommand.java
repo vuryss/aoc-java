@@ -91,7 +91,7 @@ public class SolveCommand implements Runnable {
             output = new JsonOutput(runtime);
         }
 
-        var runner = new Runner(runtime.solver(), runtime.notifications());
+        var runner = new Runner(runtime.solver());
         Mono<Void> solving;
 
         if (events.size() == 1 && day != null) {
@@ -108,7 +108,7 @@ public class SolveCommand implements Runnable {
             }
 
             if (inputSelection.test) {
-                var testExecutor = new SingleSolutionTestExecutor(runtime.solver(), runtime.notifications());
+                var testExecutor = new SingleSolutionTestExecutor(runtime.solver());
                 solving = output.singleDayTests(puzzle, testExecutor.execute(puzzle));
             } else {
                 var updates = runner.run(Flux.just(puzzle), dataProvider, validate);

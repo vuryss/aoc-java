@@ -2,6 +2,7 @@ package com.vuryss.aoc.cli.display;
 
 import com.vuryss.aoc.*;
 import com.vuryss.aoc.cli.AppRuntime;
+import com.vuryss.aoc.cli.StackTraces;
 import dev.tamboui.inline.InlineDisplay;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
@@ -17,48 +18,57 @@ public class RichTerminalOutput implements OutputInterface {
     private final AppRuntime runtime;
 
     public Mono<Void> singleDay(PuzzleDayReference puzzle, DayState initial, Flux<StateUpdate> updates) {
-        return Mono.using(
-            () -> new SingleDayDisplay(puzzle),
-            display -> Mono.using(
-                () -> attach(display.display()),
-                _ -> Flux
-                    .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())
-                    .withLatestFrom(updates.scan(initial, DayState::withUpdate), (_, state) -> state)
-                    .takeUntil(DayState::isFinished)
-                    .doOnNext(display::render)
-                    .then()
-            ).publishOn(runtime.render())
-        );
+        return Mono
+            .using(
+                () -> new SingleDayDisplay(puzzle),
+                display -> Mono.using(
+                    () -> attach(display.display()),
+                    _ -> Flux
+                        .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())
+                        .withLatestFrom(updates.scan(initial, DayState::withUpdate), (_, state) -> state)
+                        .takeUntil(DayState::isFinished)
+                        .doOnNext(display::render)
+                        .last()
+                ).publishOn(runtime.render())
+            )
+            .doOnNext(dayState -> StackTraces.print(dayState.parts()))
+            .then();
     }
 
     public Mono<Void> singleDayTests(PuzzleDayReference puzzle, Flux<List<TestCaseState>> states) {
-        return Mono.using(
-            () -> new SingleDayDisplay(puzzle),
-            display -> Mono.using(
-                () -> attach(display.display()),
-                _ -> Flux
-                    .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())
-                    .withLatestFrom(states, (_, state) -> state)
-                    .takeUntil(tests -> tests.stream().allMatch(test -> test.state().isFinished()))
-                    .doOnNext(display::renderTests)
-                    .then()
-            ).publishOn(runtime.render())
-        );
+        return Mono
+            .using(
+                () -> new SingleDayDisplay(puzzle),
+                display -> Mono.using(
+                    () -> attach(display.display()),
+                    _ -> Flux
+                        .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())
+                        .withLatestFrom(states, (_, state) -> state)
+                        .takeUntil(tests -> tests.stream().allMatch(test -> test.state().isFinished()))
+                        .doOnNext(display::renderTests)
+                        .last()
+                ).publishOn(runtime.render())
+            )
+            .doOnNext(tests -> StackTraces.print(tests.stream().map(TestCaseState::state)))
+            .then();
     }
 
     public Mono<Void> wholeEvent(int event, boolean isTest, EventState initial, Flux<StateUpdate> updates) {
-        return Mono.using(
-            () -> new WholeEventDisplay(event, isTest),
-            display -> Mono.using(
-                () -> attach(display.display()),
-                _ -> Flux
-                    .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())
-                    .withLatestFrom(updates.scan(initial, EventState::withUpdate), (_, state) -> state)
-                    .takeUntil(EventState::isFinished)
-                    .doOnNext(display::render)
-                    .then()
-            ).publishOn(runtime.render())
-        );
+        return Mono
+            .using(
+                () -> new WholeEventDisplay(event, isTest),
+                display -> Mono.using(
+                    () -> attach(display.display()),
+                    _ -> Flux
+                        .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())
+                        .withLatestFrom(updates.scan(initial, EventState::withUpdate), (_, state) -> state)
+                        .takeUntil(EventState::isFinished)
+                        .doOnNext(display::render)
+                        .last()
+                ).publishOn(runtime.render())
+            )
+            .doOnNext(eventState -> StackTraces.print(eventState.parts()))
+            .then();
     }
 
     private AutoCloseable attach(InlineDisplay display) {

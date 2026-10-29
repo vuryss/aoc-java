@@ -1,6 +1,5 @@
 package com.vuryss.aoc.cli;
 
-import com.vuryss.aoc.Configuration;
 import io.github.kusoroadeolu.clique.Clique;
 import io.github.kusoroadeolu.clique.configuration.BoxConfiguration;
 
@@ -44,14 +43,5 @@ public class PrettyPrintConsoleNotificationsOutput implements NotificationsOutpu
         Clique.box(config)
             .content(content)
             .render();
-    }
-
-    @Override
-    public void exception(Throwable e) {
-        if (!Configuration.exceptionStacktraceEnabled()) return;
-
-        System.err.println();
-        e.printStackTrace(System.err);
-        System.err.println();
     }
 }

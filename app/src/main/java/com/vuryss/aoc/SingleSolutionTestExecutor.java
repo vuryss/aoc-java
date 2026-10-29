@@ -1,6 +1,5 @@
 package com.vuryss.aoc;
 
-import com.vuryss.aoc.cli.NotificationsOutputInterface;
 import com.vuryss.aoc.cli.display.PartState;
 import com.vuryss.aoc.cli.display.TestCaseState;
 import com.vuryss.aoc.solutions.SolutionRepository;
@@ -17,7 +16,6 @@ import java.util.List;
 public class SingleSolutionTestExecutor {
     private final SolutionRepository solutionRepository = SolutionRepository.instance();
     private final Scheduler solverScheduler;
-    private final NotificationsOutputInterface notificationOutput;
 
     public Flux<List<TestCaseState>> execute(PuzzleDayReference puzzle) {
         return Flux.defer(() -> {
@@ -56,19 +54,15 @@ public class SingleSolutionTestExecutor {
                     return started
                         .completed(result, System.nanoTime())
                         .withValidation(validation, test.expected(), null);
-                }).onErrorResume(failure -> {
-                    notificationOutput.exception(failure);
-
-                    return Mono.just(
-                        started
-                            .failed(failure, System.nanoTime())
-                            .withValidation(
-                                PartState.ValidationStatus.ERROR,
-                                test.expected(),
-                                failure.toString()
-                            )
-                    );
-                })
+                }).onErrorResume(failure -> Mono.just(
+                    started
+                        .failed(failure, System.nanoTime())
+                        .withValidation(
+                            PartState.ValidationStatus.ERROR,
+                            test.expected(),
+                            failure.toString()
+                        )
+                ))
             );
         }).subscribeOn(solverScheduler);
     }
