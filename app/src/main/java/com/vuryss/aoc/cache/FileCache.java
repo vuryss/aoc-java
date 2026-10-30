@@ -48,10 +48,6 @@ public class FileCache {
         }
     }
 
-    public boolean exists(String key) {
-        return Files.exists(getPathForKey(key));
-    }
-
     public void clear() {
         if (!Files.exists(cacheRootPath)) {
             return;

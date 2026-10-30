@@ -23,38 +23,32 @@ public class CachedAdventOfCodeClient implements AdventOfCodeClient {
 
     @Override
     public Flux<Download<String>> getPlayerInput(PuzzleDayReference puzzle) {
-        return Flux
-            .defer(() -> {
-                String cacheKey = String.format("input-%d-%d", puzzle.event(), puzzle.day());
+        String cacheKey = String.format("input-%d-%d", puzzle.event(), puzzle.day());
 
-                if (!requireFreshData && fileCacheService.exists(cacheKey)) {
-                    return Flux.just(new Download.Done<>(fileCacheService.get(cacheKey).orElseThrow()));
-                }
-
-                return adventOfCodeClient.getPlayerInput(puzzle)
+        return readCache(cacheKey)
+            .<Download<String>>map(Download.Done::new)
+            .flux()
+            .switchIfEmpty(
+                adventOfCodeClient.getPlayerInput(puzzle)
                     .publishOn(Schedulers.boundedElastic())
                     .doOnNext(download -> {
                         if (download instanceof Download.Done<String>(var input)) fileCacheService.put(cacheKey, input);
-                    });
-            })
+                    })
+            )
             .subscribeOn(Schedulers.boundedElastic());
     }
 
     @Override
     public Flux<Download<Answers>> getCorrectAnswers(PuzzleDayReference puzzle) {
-        return Flux
-            .defer(() -> {
-                String cacheKeyPart1 = String.format("answer-%d-%d-part%d", puzzle.event(), puzzle.day(), 1);
-                String cacheKeyPart2 = String.format("answer-%d-%d-part%d", puzzle.event(), puzzle.day(), 2);
+        String cacheKeyPart1 = String.format("answer-%d-%d-part%d", puzzle.event(), puzzle.day(), 1);
+        String cacheKeyPart2 = String.format("answer-%d-%d-part%d", puzzle.event(), puzzle.day(), 2);
 
-                if (!requireFreshData && fileCacheService.exists(cacheKeyPart1) && fileCacheService.exists(cacheKeyPart2)) {
-                    String answer1 = fileCacheService.get(cacheKeyPart1).orElseThrow();
-                    String answer2 = fileCacheService.get(cacheKeyPart2).orElseThrow();
-
-                    return Flux.just(new Download.Done<>(new Answers(answer1, answer2)));
-                }
-
-                return adventOfCodeClient.getCorrectAnswers(puzzle)
+        return readCache(cacheKeyPart1)
+            .zipWith(readCache(cacheKeyPart2), Answers::new)
+            .<Download<Answers>>map(Download.Done::new)
+            .flux()
+            .switchIfEmpty(
+                adventOfCodeClient.getCorrectAnswers(puzzle)
                     .publishOn(Schedulers.boundedElastic())
                     .doOnNext(download -> {
                         if (download instanceof Download.Done<Answers>(var answers)) {
@@ -63,13 +57,19 @@ public class CachedAdventOfCodeClient implements AdventOfCodeClient {
                             if (answers.part2() != null)
                                 fileCacheService.put(cacheKeyPart2, answers.part2());
                         }
-                    });
-            })
+                    })
+            )
             .subscribeOn(Schedulers.boundedElastic());
     }
 
     @Override
     public Mono<String> getDayDescription(PuzzleDayReference puzzle) {
-        return Mono.error(new RuntimeException("Caching of description is not implemented."));
+        return adventOfCodeClient.getDayDescription(puzzle);
+    }
+
+    private Mono<String> readCache(String key) {
+        if (requireFreshData) return Mono.empty();
+
+        return Mono.fromCallable(() -> fileCacheService.get(key).orElse(null)); // null == empty Mono
     }
 }
