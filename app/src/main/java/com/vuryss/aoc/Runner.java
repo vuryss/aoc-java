@@ -2,6 +2,7 @@ package com.vuryss.aoc;
 
 import com.vuryss.aoc.cli.NotificationsOutputInterface;
 import com.vuryss.aoc.cli.state.DayTestsState;
+import com.vuryss.aoc.cli.state.PartState;
 import com.vuryss.aoc.cli.state.StateUpdate;
 import com.vuryss.aoc.data.DataProviderInterface;
 import lombok.RequiredArgsConstructor;
@@ -49,14 +50,22 @@ public class Runner {
     ) {
         return Flux
             .defer(() -> executeDay.apply(puzzle))
-            .onErrorResume(failure -> {
-                var failedAtNs = System.nanoTime();
+            .onErrorResume(failure -> failUnfinished(puzzle, failure))
+            .concatWith(Flux.defer(() -> failUnfinished(puzzle, new IllegalStateException("Ended without a result"))));
+    }
 
-                return puzzle.parts()
-                    .map(part -> new StateUpdate(
-                        part,
-                        state -> state.isFinished() ? state : state.failed(failure, failedAtNs)
-                    ));
-            });
+    private Flux<StateUpdate> failUnfinished(PuzzleDayReference puzzle, Throwable failure) {
+        var failedAtNs = System.nanoTime();
+
+        return puzzle.parts()
+            .map(part -> new StateUpdate(
+                part,
+                state -> {
+                    if (state.isFinished()) return state;
+                    if (state.status() == PartState.Status.COMPLETED) return state.validationFailed(failure);
+
+                    return state.failed(failure, failedAtNs);
+                }
+            ));
     }
 }
