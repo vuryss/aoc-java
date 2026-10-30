@@ -64,22 +64,19 @@ public class SingleSolutionExecutor {
         Flux<Download<Answers>> answers
     ) {
         return Flux
-            .concat(
-                Mono.fromSupplier(System::nanoTime)
-                    .map(startedAtNs -> new StateUpdate(part, state -> state.started(startedAtNs))),
+            .defer(() -> {
+                var startedAtNs = System.nanoTime();
 
-                Mono
-                    .fromCallable(() -> new Solved(
-                        solutionRepository.find(part.puzzle()).solve(part.part(), input, false),
-                        System.nanoTime()
-                    ))
-                    .flatMapMany(solved ->
-                        Flux.concat(
-                            Mono.just(new StateUpdate(part, state -> state.completed(solved.result(), solved.finishedAtNs()))),
-                            validatePart(part, solved.result(), answers)
-                        )
-                    )
-            )
+                return Mono
+                    .fromCallable(() -> solutionRepository.find(part.puzzle()).solve(part.part(), input, false))
+                    .flatMapMany(result -> {
+                        var finishedAtNs = System.nanoTime();
+
+                        return validatePart(part, result, answers)
+                            .startWith(new StateUpdate(part, state -> state.completed(result, finishedAtNs)));
+                    })
+                    .startWith(new StateUpdate(part, state -> state.started(startedAtNs)));
+            })
             .subscribeOn(solverScheduler)
             .onErrorResume(failure -> {
                 long failedAtNs = System.nanoTime();
@@ -110,6 +107,4 @@ public class SingleSolutionExecutor {
             })
             .onErrorResume(failure -> Mono.just(new StateUpdate(part, state -> state.validationFailed(failure))));
     }
-
-    private record Solved(String result, long finishedAtNs) {}
 }
