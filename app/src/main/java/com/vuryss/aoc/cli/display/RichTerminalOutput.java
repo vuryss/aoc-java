@@ -76,11 +76,14 @@ public class RichTerminalOutput implements OutputInterface {
 
     private AutoCloseable attach(InlineDisplay display) {
         var redirectedOut = new RedirectedSystemOut(display, runtime.render());
-        var notificationsOutput = new DisplayConsoleNotificationsOutput(display, runtime.render());
-        var notifications = runtime.notifications().subscribe(notificationsOutput);
+        var notificationsOutput = new DisplayConsoleNotificationsOutput(display);
+        var notifications = runtime.notifications()
+            .flux()
+            .publishOn(runtime.render())
+            .subscribe(notificationsOutput::show);
 
         return () -> {
-            notifications.close();
+            notifications.dispose();
             redirectedOut.close();
         };
     }

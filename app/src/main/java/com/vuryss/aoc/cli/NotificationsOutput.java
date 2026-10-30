@@ -1,5 +1,6 @@
 package com.vuryss.aoc.cli;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
 
 public class NotificationsOutput implements NotificationsOutputInterface {
@@ -20,10 +21,8 @@ public class NotificationsOutput implements NotificationsOutputInterface {
         emit(new Notification.Notice(message));
     }
 
-    public AutoCloseable subscribe(NotificationsOutputInterface output) {
-        var subscription = sink.asFlux().subscribe(output::show);
-
-        return subscription::dispose;
+    public Flux<Notification> flux() {
+        return sink.asFlux();
     }
 
     private synchronized void emit(Notification notification) {

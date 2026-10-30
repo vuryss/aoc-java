@@ -5,14 +5,11 @@ import dev.tamboui.inline.InlineDisplay;
 import io.github.kusoroadeolu.clique.Clique;
 import io.github.kusoroadeolu.clique.configuration.BoxConfiguration;
 import lombok.RequiredArgsConstructor;
-import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Scheduler;
 
 @RequiredArgsConstructor
-public class DisplayConsoleNotificationsOutput implements NotificationsOutputInterface, AutoCloseable {
+public class DisplayConsoleNotificationsOutput implements NotificationsOutputInterface {
     private static final String blankNewLIne = "\u00A0\n\u00A0";
     private final InlineDisplay display;
-    private final Scheduler renderScheduler;
 
     @Override
     public void error(String message) {
@@ -47,11 +44,6 @@ public class DisplayConsoleNotificationsOutput implements NotificationsOutputInt
     }
 
     private void println(String message) {
-        renderScheduler.schedule(() -> message.lines().forEach(display::println));
-    }
-
-    @Override
-    public void close() {
-        Mono.empty().subscribeOn(renderScheduler).block();
+        message.lines().forEach(display::println);
     }
 }

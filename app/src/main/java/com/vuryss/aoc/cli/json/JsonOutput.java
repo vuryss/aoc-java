@@ -8,12 +8,14 @@ import com.vuryss.aoc.cli.StackTraces;
 import com.vuryss.aoc.cli.state.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.function.BiFunction;
 import java.util.stream.IntStream;
 
+@SuppressWarnings("CallingSubscribeInNonBlockingScope")
 @RequiredArgsConstructor
 public class JsonOutput implements OutputInterface {
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -62,12 +64,13 @@ public class JsonOutput implements OutputInterface {
         var output = new InMemoryNotificationsOutput();
 
         return Mono.using(
-            () -> runtime.notifications().subscribe(output),
+            () -> runtime.notifications().flux().subscribe(output::show),
             _ -> finalState
                 .publishOn(runtime.render())
                 .doOnNext(state -> StackTraces.print(state.parts()))
                 .doOnNext(state -> print(toDto.apply(state, output)))
-                .then()
+                .then(),
+            Disposable::dispose
         );
     }
 
