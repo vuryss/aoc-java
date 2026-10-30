@@ -28,7 +28,7 @@ public class SingleSolutionExecutor {
                 );
             }
 
-            var answers = dataProvider.getAnswers(puzzle)
+            var answers = (validate ? dataProvider.getAnswers(puzzle) : Flux.<Download<Answers>>empty())
                 .doOnNext(download -> {
                     if (download instanceof Download.Started<Answers>) {
                         notifications.notice("Downloading answers for event %s, day %s".formatted(puzzle.event(), puzzle.day()));
@@ -52,7 +52,7 @@ public class SingleSolutionExecutor {
                             );
 
                         case Download.Done<String>(var inputValue) -> puzzle.parts()
-                            .flatMap(part -> solvePart(part, inputValue, answers, validate));
+                            .flatMap(part -> solvePart(part, inputValue, answers));
                     }
                 );
         });
@@ -61,8 +61,7 @@ public class SingleSolutionExecutor {
     private Flux<StateUpdate> solvePart(
         PuzzlePartReference part,
         String input,
-        Flux<Download<Answers>> answers,
-        boolean validate
+        Flux<Download<Answers>> answers
     ) {
         return Flux
             .concat(
@@ -77,7 +76,7 @@ public class SingleSolutionExecutor {
                     .flatMapMany(solved ->
                         Flux.concat(
                             Mono.just(new StateUpdate(part, state -> state.completed(solved.result(), solved.finishedAtNs()))),
-                            validate ? validatePart(part, solved.result(), answers) : Flux.empty()
+                            validatePart(part, solved.result(), answers)
                         )
                     )
             )
