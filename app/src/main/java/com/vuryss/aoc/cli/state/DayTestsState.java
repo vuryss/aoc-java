@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-public record DayTestsState(List<TestCaseState> tests) {
+public record DayTestsState(List<TestCaseState> tests) implements RunState {
     public DayTestsState {
         tests = List.copyOf(tests);
     }

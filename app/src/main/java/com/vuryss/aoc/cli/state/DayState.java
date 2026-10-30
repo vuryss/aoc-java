@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 public record DayState(
     PartState part1,
     PartState part2
-) {
+) implements RunState {
     public static DayState queued(boolean validate) {
         return new DayState(
             PartState.queued(validate),

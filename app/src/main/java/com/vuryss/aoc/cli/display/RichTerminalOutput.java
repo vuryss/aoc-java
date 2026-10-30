@@ -12,6 +12,7 @@ import reactor.core.scheduler.Scheduler;
 
 import java.io.*;
 import java.time.Duration;
+import java.util.function.Consumer;
 
 @RequiredArgsConstructor
 public class RichTerminalOutput implements OutputInterface {
@@ -21,15 +22,11 @@ public class RichTerminalOutput implements OutputInterface {
         return Mono
             .using(
                 () -> new SingleDayDisplay(puzzle),
-                display -> Mono.using(
-                    () -> attach(display.display()),
-                    _ -> Flux
-                        .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())
-                        .withLatestFrom(updates.scan(initial, DayState::withUpdate), (_, state) -> state)
-                        .takeUntil(DayState::isFinished)
-                        .doOnNext(display::render)
-                        .last()
-                ).publishOn(runtime.render())
+                display -> renderUntilFinished(
+                    display.display(),
+                    updates.scan(initial, DayState::withUpdate),
+                    display::render
+                )
             )
             .doOnNext(dayState -> StackTraces.print(dayState.parts()))
             .then();
@@ -39,15 +36,11 @@ public class RichTerminalOutput implements OutputInterface {
         return Mono
             .using(
                 () -> new SingleDayDisplay(puzzle),
-                display -> Mono.using(
-                    () -> attach(display.display()),
-                    _ -> Flux
-                        .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())
-                        .withLatestFrom(updates.scan(initial, DayTestsState::withUpdate), (_, state) -> state)
-                        .takeUntil(DayTestsState::isFinished)
-                        .doOnNext(state -> display.renderTests(state.tests()))
-                        .last()
-                ).publishOn(runtime.render())
+                display -> renderUntilFinished(
+                    display.display(),
+                    updates.scan(initial, DayTestsState::withUpdate),
+                    state -> display.renderTests(state.tests())
+                )
             )
             .doOnNext(state -> StackTraces.print(state.parts()))
             .then();
@@ -57,18 +50,28 @@ public class RichTerminalOutput implements OutputInterface {
         return Mono
             .using(
                 () -> new WholeEventDisplay(event, isTest),
-                display -> Mono.using(
-                    () -> attach(display.display()),
-                    _ -> Flux
-                        .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())
-                        .withLatestFrom(updates.scan(initial, EventState::withUpdate), (_, state) -> state)
-                        .takeUntil(EventState::isFinished)
-                        .doOnNext(display::render)
-                        .last()
-                ).publishOn(runtime.render())
+                display -> renderUntilFinished(
+                    display.display(),
+                    updates.scan(initial, EventState::withUpdate),
+                    display::render
+                )
             )
             .doOnNext(eventState -> StackTraces.print(eventState.parts()))
             .then();
+    }
+
+    private <S extends RunState> Mono<S> renderUntilFinished(InlineDisplay display, Flux<S> states, Consumer<S> render) {
+        return Mono
+            .using(
+                () -> attach(display),
+                _ -> Flux
+                    .interval(Duration.ZERO, Duration.ofMillis(100), runtime.render())
+                    .withLatestFrom(states, (_, state) -> state)
+                    .takeUntil(RunState::isFinished)
+                    .doOnNext(render)
+                    .last()
+            )
+            .publishOn(runtime.render());
     }
 
     private AutoCloseable attach(InlineDisplay display) {

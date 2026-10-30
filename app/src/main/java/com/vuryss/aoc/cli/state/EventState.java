@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
-public record EventState(List<DayState> days) {
+public record EventState(List<DayState> days) implements RunState {
     public static EventState queued(int dayCount, boolean validate) {
         return new EventState(Collections.nCopies(dayCount, DayState.queued(validate)));
     }
